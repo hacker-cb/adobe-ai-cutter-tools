@@ -28,9 +28,17 @@ PlotterMarks.prototype._prepareLayer = function() {
         $.writeln('Layer "' + this.layerName + '" alreays exist, reuse');
     } catch (e){
         $.writeln('Layer "' + this.layerName + '" not exist, creating');
-        marksLayer = doc.layers.add();
+        marksLayer = this.doc.layers.add();
         marksLayer.name = this.layerName;
     }
+
+    var currentLayer = this.doc.activeLayer;
+
+    // Move layer to the end of list
+    marksLayer.locked = false;
+    marksLayer.move(this.doc, ElementPlacement.PLACEATEND);
+    marksLayer.locked = true
+
     return marksLayer;
 }
 
