@@ -48,6 +48,7 @@ PlotterMarks.prototype.clearLayer = function() {
 }
 
 PlotterMarks.prototype.generateMarks = function(){
+    var pt = this.plotter;
 
     this.layer.locked = false; // Unlock layer
 
@@ -71,13 +72,13 @@ PlotterMarks.prototype.generateMarks = function(){
         // pathItems.ellipse([top][, left][, width][, height])
         var marks = [
             // left top
-            this.layer.pathItems.ellipse(top - markDistance, left + markDistance, markDiameter, markDiameter),
+            this.layer.pathItems.ellipse(top - pt.markDistance, left + pt.markDistance, pt.markDiameter, pt.markDiameter),
             // right top
-            this.layer.pathItems.ellipse(top - markDistance, right - markDistance - markDiameter, markDiameter, markDiameter),
+            this.layer.pathItems.ellipse(top - pt.markDistance, right - pt.markDistance - pt.markDiameter, pt.markDiameter, pt.markDiameter),
             // left bottom
-            this.layer.pathItems.ellipse(bottom + markDistance + markDiameter, left + markDistance, markDiameter, markDiameter),
+            this.layer.pathItems.ellipse(bottom + pt.markDistance + pt.markDiameter, left + pt.markDistance, pt.markDiameter, pt.markDiameter),
             // right bottom
-            this.layer.pathItems.ellipse(bottom + markDistance + markDiameter, right - markDistance - markDiameter, markDiameter, markDiameter),
+            this.layer.pathItems.ellipse(bottom + pt.markDistance +pt.markDiameter, right - pt.markDistance - pt.markDiameter, pt.markDiameter, pt.markDiameter),
         ];
 
         marks[0].name = ab.name + ' [left top]';
@@ -97,7 +98,7 @@ PlotterMarks.prototype.run = function(){
 }
 
 
-
+// TODO: Move call to ScriptUI dialog
 var pm = new PlotterMarks(app.activeDocument, 'Vulcan FC-500VC');
 
 pm.run();
