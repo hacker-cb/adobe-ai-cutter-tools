@@ -24,8 +24,9 @@ RegMarks.PATHSTYLE = {
 
 RegMarks.PROFILES = {
     'Vulcan FC-500VC': {
-        'markDistance': new UnitValue(10.0, 'mm').as('pt'),
-        'markDiameter': new UnitValue(5.0, 'mm').as('pt'),
+        'units': 'mm',
+        'markDistance': 10.0,
+        'markDiameter': 5.0,
         'pathStyle': 'FILLED_BLACK',
     }
 };
@@ -129,17 +130,20 @@ RegMarks.prototype.generateMarks = function(profileName){
 
         $.writeln('Creating regmarks for artboard: "' + ab.name + '", size: [' + abRect + '] (' + width + '*' + height + ')');
 
+        var dist = new UnitValue(p.markDistance, p.units).as('pt');
+        var diam = new UnitValue(p.markDiameter, p.units).as('pt');
+
         // Create circle in each corner.
         // pathItems.ellipse([top][, left][, width][, height])
         var marks = [
             // left top
-            l.pathItems.ellipse(top - p.markDistance, left + p.markDistance, p.markDiameter, p.markDiameter),
+            l.pathItems.ellipse(top - dist, left + dist, diam, diam),
             // right top
-            l.pathItems.ellipse(top - p.markDistance, right - p.markDistance - p.markDiameter, p.markDiameter, p.markDiameter),
+            l.pathItems.ellipse(top - dist, right - dist - diam, diam, diam),
             // left bottom
-            l.pathItems.ellipse(bottom + p.markDistance + p.markDiameter, left + p.markDistance, p.markDiameter, p.markDiameter),
+            l.pathItems.ellipse(bottom + dist + diam, left + dist, diam, diam),
             // right bottom
-            l.pathItems.ellipse(bottom + p.markDistance +p.markDiameter, right - p.markDistance - p.markDiameter, p.markDiameter, p.markDiameter),
+            l.pathItems.ellipse(bottom + dist +diam, right - dist - diam, diam, diam),
         ];
 
         marks[0].name = ab.name + ' [left top]';
