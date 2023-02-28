@@ -1,0 +1,146 @@
+var regmarks_panel = (function () {
+
+    /*
+    Code for Import https://scriptui.joonas.me — (Triple click to select):
+    {"activeId":20,"items":{"item-0":{"id":0,"type":"Dialog","parentId":false,"style":{"enabled":true,"varName":"regmarks_panel","windowType":"Palette","creationProps":{"su1PanelCoordinates":false,"maximizeButton":false,"minimizeButton":false,"independent":false,"closeButton":true,"borderless":false,"resizeable":true},"text":"Registration marks","preferredSize":[0,0],"margins":16,"orientation":"column","spacing":10,"alignChildren":["fill","top"]}},"item-2":{"id":2,"type":"DropDownList","parentId":5,"style":{"enabled":true,"varName":"preset","text":"DropDownList","listItems":"","preferredSize":[0,0],"alignment":null,"selection":0,"helpTip":null}},"item-5":{"id":5,"type":"Panel","parentId":0,"style":{"enabled":true,"varName":"preset_panel","creationProps":{"borderStyle":"etched","su1PanelCoordinates":false},"text":"Preset","preferredSize":[0,0],"margins":10,"orientation":"column","spacing":10,"alignChildren":["fill","top"],"alignment":null}},"item-6":{"id":6,"type":"Button","parentId":8,"style":{"enabled":false,"varName":"save_preset_button","text":"Save","justify":"center","preferredSize":[0,0],"alignment":null,"helpTip":null}},"item-7":{"id":7,"type":"Button","parentId":8,"style":{"enabled":false,"varName":"delete_preset_button","text":"Delete","justify":"center","preferredSize":[0,0],"alignment":null,"helpTip":null}},"item-8":{"id":8,"type":"Group","parentId":5,"style":{"enabled":true,"varName":"buttons","preferredSize":[0,0],"margins":0,"orientation":"row","spacing":10,"alignChildren":["left","center"],"alignment":null}},"item-9":{"id":9,"type":"Panel","parentId":0,"style":{"enabled":true,"varName":"settings","creationProps":{"borderStyle":"etched","su1PanelCoordinates":false},"text":"Settings","preferredSize":[0,0],"margins":10,"orientation":"column","spacing":10,"alignChildren":["fill","top"],"alignment":null}},"item-10":{"id":10,"type":"Group","parentId":9,"style":{"enabled":true,"varName":"units_group","preferredSize":[0,0],"margins":0,"orientation":"row","spacing":10,"alignChildren":["left","top"],"alignment":null}},"item-11":{"id":11,"type":"StaticText","parentId":10,"style":{"enabled":true,"varName":"units_label","creationProps":{"truncate":"none","multiline":false,"scrolling":false},"softWrap":false,"text":"Units:","justify":"left","preferredSize":[0,0],"alignment":null,"helpTip":null}},"item-12":{"id":12,"type":"DropDownList","parentId":10,"style":{"enabled":true,"varName":"units","text":"DropDownList","listItems":"mm,pt","preferredSize":[0,0],"alignment":null,"selection":0,"helpTip":null}},"item-13":{"id":13,"type":"Group","parentId":9,"style":{"enabled":true,"varName":"parameters_group","preferredSize":[0,0],"margins":0,"orientation":"row","spacing":10,"alignChildren":["left","center"],"alignment":null}},"item-15":{"id":15,"type":"StaticText","parentId":13,"style":{"enabled":true,"varName":"distanance_label","creationProps":{"truncate":"none","multiline":false,"scrolling":false},"softWrap":false,"text":"Distance: ","justify":"left","preferredSize":[0,0],"alignment":null,"helpTip":null}},"item-16":{"id":16,"type":"EditText","parentId":13,"style":{"enabled":true,"varName":"distance","creationProps":{"noecho":false,"readonly":false,"multiline":false,"scrollable":false,"borderless":false,"enterKeySignalsOnChange":false},"softWrap":false,"text":"","justify":"left","preferredSize":[80,0],"alignment":null,"helpTip":null}},"item-17":{"id":17,"type":"StaticText","parentId":13,"style":{"enabled":true,"varName":"radius_label","creationProps":{"truncate":"none","multiline":false,"scrolling":false},"softWrap":false,"text":"Radius:","justify":"left","preferredSize":[0,0],"alignment":null,"helpTip":null}},"item-18":{"id":18,"type":"EditText","parentId":13,"style":{"enabled":true,"varName":"radius","creationProps":{"noecho":false,"readonly":false,"multiline":false,"scrollable":false,"borderless":false,"enterKeySignalsOnChange":false},"softWrap":false,"text":"","justify":"left","preferredSize":[80,0],"alignment":null,"helpTip":null}},"item-19":{"id":19,"type":"Button","parentId":20,"style":{"enabled":true,"varName":"create_regmarks_button","text":"Create","justify":"center","preferredSize":[0,0],"alignment":null,"helpTip":null}},"item-20":{"id":20,"type":"Group","parentId":0,"style":{"enabled":true,"varName":"main_buttons_group","preferredSize":[0,0],"margins":0,"orientation":"row","spacing":10,"alignChildren":["center","center"],"alignment":null}},"item-21":{"id":21,"type":"Button","parentId":20,"style":{"enabled":true,"varName":"clear_regmarks_button","text":"Clear","justify":"center","preferredSize":[0,0],"alignment":null,"helpTip":null}},"item-22":{"id":22,"type":"DropDownList","parentId":25,"style":{"enabled":true,"varName":"style","text":"DropDownList","listItems":"","preferredSize":[250,0],"alignment":null,"selection":0,"helpTip":null}},"item-24":{"id":24,"type":"StaticText","parentId":25,"style":{"enabled":true,"varName":"style_label","creationProps":{"truncate":"none","multiline":false,"scrolling":false},"softWrap":false,"text":"Style:","justify":"left","preferredSize":[0,0],"alignment":null,"helpTip":null}},"item-25":{"id":25,"type":"Group","parentId":9,"style":{"enabled":true,"varName":"style_group","preferredSize":[0,0],"margins":0,"orientation":"row","spacing":10,"alignChildren":["left","center"],"alignment":null}}},"order":[0,5,2,8,6,7,9,25,24,22,10,11,12,13,15,16,17,18,20,19,21],"settings":{"importJSON":true,"indentSize":false,"cepExport":false,"includeCSSJS":true,"showDialog":false,"functionWrapper":true,"afterEffectsDockable":false,"itemReferenceList":"var"}}
+    */
+
+    // REGMARKS_PANEL
+    // ==============
+    var regmarks_panel = new Window("palette", undefined, undefined, {resizeable: true});
+        regmarks_panel.text = "Registration marks";
+        regmarks_panel.orientation = "column";
+        regmarks_panel.alignChildren = ["fill","top"];
+        regmarks_panel.spacing = 10;
+        regmarks_panel.margins = 16;
+
+    // PRESET_PANEL
+    // ============
+    var preset_panel = regmarks_panel.add("panel", undefined, undefined, {name: "preset_panel"});
+        preset_panel.text = "Preset";
+        preset_panel.orientation = "column";
+        preset_panel.alignChildren = ["fill","top"];
+        preset_panel.spacing = 10;
+        preset_panel.margins = 10;
+
+    var preset = preset_panel.add("dropdownlist", undefined, undefined, {name: "preset"});
+        preset.selection = 0;
+
+    // BUTTONS
+    // =======
+    var buttons = preset_panel.add("group", undefined, {name: "buttons"});
+        buttons.orientation = "row";
+        buttons.alignChildren = ["left","center"];
+        buttons.spacing = 10;
+        buttons.margins = 0;
+
+    var save_preset_button = buttons.add("button", undefined, undefined, {name: "save_preset_button"});
+        save_preset_button.enabled = false;
+        save_preset_button.text = "Save";
+
+    var delete_preset_button = buttons.add("button", undefined, undefined, {name: "delete_preset_button"});
+        delete_preset_button.enabled = false;
+        delete_preset_button.text = "Delete";
+
+    // SETTINGS
+    // ========
+    var settings = regmarks_panel.add("panel", undefined, undefined, {name: "settings"});
+        settings.text = "Settings";
+        settings.orientation = "column";
+        settings.alignChildren = ["fill","top"];
+        settings.spacing = 10;
+        settings.margins = 10;
+
+    // STYLE_GROUP
+    // ===========
+    var style_group = settings.add("group", undefined, {name: "style_group"});
+        style_group.orientation = "row";
+        style_group.alignChildren = ["left","center"];
+        style_group.spacing = 10;
+        style_group.margins = 0;
+
+    var style_label = style_group.add("statictext", undefined, undefined, {name: "style_label"});
+        style_label.text = "Style:";
+
+    var style = style_group.add("dropdownlist", undefined, undefined, {name: "style"});
+        style.selection = 0;
+        style.preferredSize.width = 250;
+
+    // UNITS_GROUP
+    // ===========
+    var units_group = settings.add("group", undefined, {name: "units_group"});
+        units_group.orientation = "row";
+        units_group.alignChildren = ["left","top"];
+        units_group.spacing = 10;
+        units_group.margins = 0;
+
+    var units_label = units_group.add("statictext", undefined, undefined, {name: "units_label"});
+        units_label.text = "Units:";
+
+    var units_array = ["mm","pt"];
+    var units = units_group.add("dropdownlist", undefined, undefined, {name: "units", items: units_array});
+        units.selection = 0;
+
+    // PARAMETERS_GROUP
+    // ================
+    var parameters_group = settings.add("group", undefined, {name: "parameters_group"});
+        parameters_group.orientation = "row";
+        parameters_group.alignChildren = ["left","center"];
+        parameters_group.spacing = 10;
+        parameters_group.margins = 0;
+
+    var distanance_label = parameters_group.add("statictext", undefined, undefined, {name: "distanance_label"});
+        distanance_label.text = "Distance: ";
+
+    var distance = parameters_group.add('edittext {properties: {name: "distance"}}');
+        distance.preferredSize.width = 80;
+
+    var radius_label = parameters_group.add("statictext", undefined, undefined, {name: "radius_label"});
+        radius_label.text = "Radius:";
+
+    var radius = parameters_group.add('edittext {properties: {name: "radius"}}');
+        radius.preferredSize.width = 80;
+
+    // MAIN_BUTTONS_GROUP
+    // ==================
+    var main_buttons_group = regmarks_panel.add("group", undefined, {name: "main_buttons_group"});
+        main_buttons_group.orientation = "row";
+        main_buttons_group.alignChildren = ["center","center"];
+        main_buttons_group.spacing = 10;
+        main_buttons_group.margins = 0;
+
+    var create_regmarks_button = main_buttons_group.add("button", undefined, undefined, {name: "create_regmarks_button"});
+        create_regmarks_button.text = "Create";
+
+    var clear_regmarks_button = main_buttons_group.add("button", undefined, undefined, {name: "clear_regmarks_button"});
+        clear_regmarks_button.text = "Clear";
+
+    // ITEM REFERENCE LIST ( Info: http://jongware.mit.edu/Sui/index_1.html )
+    regmarks_panel.items = {
+      regmarks_panel: regmarks_panel, // palette
+      preset_panel: preset_panel, // panel
+      preset: preset, // dropdownlist
+      buttons: buttons, // group
+      save_preset_button: save_preset_button, // button
+      delete_preset_button: delete_preset_button, // button
+      settings: settings, // panel
+      style_group: style_group, // group
+      style_label: style_label, // statictext
+      style: style, // dropdownlist
+      units_group: units_group, // group
+      units_label: units_label, // statictext
+      units: units, // dropdownlist
+      parameters_group: parameters_group, // group
+      distanance_label: distanance_label, // statictext
+      distance: distance, // edittext
+      radius_label: radius_label, // statictext
+      radius: radius, // edittext
+      main_buttons_group: main_buttons_group, // group
+      create_regmarks_button: create_regmarks_button, // button
+      clear_regmarks_button: clear_regmarks_button // button
+    };
+    regmarks_panel.itemsArray = [regmarks_panel, preset_panel, preset, buttons, save_preset_button, delete_preset_button, settings, style_group, style_label, style, units_group, units_label, units, parameters_group, distanance_label, distance, radius_label, radius, main_buttons_group, create_regmarks_button, clear_regmarks_button];
+
+    return regmarks_panel;
+
+  }());
