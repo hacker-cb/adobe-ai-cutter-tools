@@ -5,12 +5,31 @@ function RegMarks(doc, plotter) {
     this.layerName = 'plotter_marks';
 }
 
+RegMarks.PATHSTYLE = {
+    'FILLED_BLACK': {
+        'name': 'Filled with black, no stroke',
+        'stroke': false,
+        'fill': {
+            'color': {
+                'black': 100,
+                'cyan': 0,
+                'magenta': 0,
+                'yellow': 0,
+            }
+        }
+    },
+
+};
+
+
 RegMarks.PROFILES = {
     'Vulcan FC-500VC': {
         'markDistance': new UnitValue(10.0, 'mm').as('pt'),
         'markDiameter': new UnitValue(5.0, 'mm').as('pt'),
+        'pathStyle': 'FILLED_BLACK',
     }
 };
+
 
 RegMarks.prototype._getLayer = function() {
     try {
@@ -79,6 +98,12 @@ RegMarks.prototype.generateMarks = function(profileName){
 
     var p = RegMarks.PROFILES[profileName];
 
+    if (!(p.pathStyle in RegMarks.PATHSTYLE)) {
+        throw 'Unknown pathStyle "' + p.pathStyle;
+    }
+
+    var pathStyle = RegMarks.PATHSTYLE[p.pathStyle];
+
     var l = this._getLayer();
     if (!l) {
         l = this._createLayer();
@@ -121,6 +146,40 @@ RegMarks.prototype.generateMarks = function(profileName){
         marks[1].name = ab.name + ' [right top]';
         marks[2].name = ab.name + ' [left bottom]';
         marks[3].name = ab.name + ' [right bottom]';
+
+        // Apply path style
+        for (var j = 0; j < marks.length; j++) {
+
+            // Fill
+            if (!pathStyle.fill){
+                marks[j].filled = false;
+            } else {
+                marks[j].filled = true;
+
+                var c = new CMYKColor();
+                c.black = pathStyle.fill.color.black;
+                c.cyan = pathStyle.fill.color.cyan;
+                c.magenta = pathStyle.fill.color.magenta;
+                c.yellow = pathStyle.fill.color.yellow;
+
+                marks[j].fillColor = c;
+            }
+
+            // Stroke
+            if (!pathStyle.stroke){
+                marks[j].stroked = false;
+            } else {
+                marks[j].stroked = true;
+
+                var c = new CMYKColor();
+                c.black = pathStyle.stroke.color.black;
+                c.cyan = pathStyle.stroke.color.cyan;
+                c.magenta = pathStyle.stroke.color.magenta;
+                c.yellow = pathStyle.stroke.color.yellow;
+
+                marks[j].strokeColor = c;
+            }
+        }
     }
 
     l.locked = true; // Lock layer
