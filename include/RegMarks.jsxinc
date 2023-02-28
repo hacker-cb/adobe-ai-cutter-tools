@@ -4,28 +4,40 @@ function RegMarks(doc) {
 }
 
 RegMarks.PATHSTYLE = {
-    'FILLED_BLACK': {
-        'name': 'Filled with black, no stroke',
-        'stroke': false,
-        'fill': {
-            'color': {
-                'black': 100,
-                'cyan': 0,
-                'magenta': 0,
-                'yellow': 0,
+    items: {
+        'Filled with black, no stroke': {
+            'stroke': false,
+            'fill': {
+                'color': {
+                    'black': 100,
+                    'cyan': 0,
+                    'magenta': 0,
+                    'yellow': 0,
+                }
             }
-        }
+        },
     },
 
+    get: function(name){
+        return name in this.items ? this.items[name] : null;
+    }
 };
 
 
 RegMarks.PROFILES = {
-    'Vulcan FC-500VC': {
-        'units': 'mm',
-        'markDistance': 10.0,
-        'markDiameter': 5.0,
-        'pathStyle': 'FILLED_BLACK',
+    items : {
+        'Vulcan FC-500VC': {
+            'bundled': true,
+            'units': 'mm',
+            'markDistance': 10.0,
+            'markDiameter': 5.0,
+            'pathStyle': 'Filled with black, no stroke',
+        },
+    },
+
+
+    get: function(name){
+        return name in this.items ? this.items[name] : null;
     }
 };
 
@@ -89,19 +101,20 @@ RegMarks.prototype.deleteLayer = function() {
 }
 
 
-RegMarks.prototype.generateMarks = function(profileName){
+RegMarks.prototype.generateMarks = function(preset){
 
-    if (!(profileName in RegMarks.PROFILES)) {
-        throw 'Unknown profile "' + profileName;
+    // If preset is onject, use it as is
+    var p = typeof preset === 'object' ? preset : RegMarks.PROFILES.get(preset);
+
+    if (!p) {
+        throw 'Unknown profile "' + preset;
     }
 
-    var p = RegMarks.PROFILES[profileName];
+    var pathStyle = RegMarks.PATHSTYLE.get(p.pathStyle);
 
-    if (!(p.pathStyle in RegMarks.PATHSTYLE)) {
+    if (!pathStyle) {
         throw 'Unknown pathStyle "' + p.pathStyle;
     }
-
-    var pathStyle = RegMarks.PATHSTYLE[p.pathStyle];
 
     var l = this._getLayer();
     if (!l) {
