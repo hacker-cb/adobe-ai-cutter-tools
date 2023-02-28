@@ -7,7 +7,7 @@ var regmarks_panel = (function () {
 
     // REGMARKS_PANEL
     // ==============
-    var regmarks_panel = new Window("palette", undefined, undefined, {resizeable: true});
+    var regmarks_panel = new Window("dialog", undefined, undefined, {resizeable: true});
         regmarks_panel.text = "Registration marks";
         regmarks_panel.orientation = "column";
         regmarks_panel.alignChildren = ["fill","top"];
