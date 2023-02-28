@@ -1,10 +1,10 @@
 
 
-function PlotterMarks(doc, plotter) {
+function RegMarks(doc, plotter) {
     this.doc = doc;
 
-    if (plotter in PlotterMarks.PLOTTERS) {
-        this.plotter = PlotterMarks.PLOTTERS[plotter];
+    if (plotter in RegMarks.PROFILES) {
+        this.plotter = RegMarks.PROFILES[plotter];
     } else {
         Window.alert('Plotter "' + plotter + '" not supported');
         throw 'Plotter "' + plotter + '" not supported';
@@ -14,14 +14,14 @@ function PlotterMarks(doc, plotter) {
     this.layer = this._prepareLayer();
 }
 
-PlotterMarks.PLOTTERS = {
+RegMarks.PROFILES = {
     'Vulcan FC-500VC': {
         'markDistance': new UnitValue(10.0, 'mm').as('pt'),
         'markDiameter': new UnitValue(5.0, 'mm').as('pt'),
     }
 };
 
-PlotterMarks.prototype._prepareLayer = function() {
+RegMarks.prototype._prepareLayer = function() {
     var marksLayer;
     try {
         marksLayer = this.doc.layers.getByName(this.layerName);
@@ -42,7 +42,7 @@ PlotterMarks.prototype._prepareLayer = function() {
     return marksLayer;
 }
 
-PlotterMarks.prototype.clearLayer = function() {
+RegMarks.prototype.clearLayer = function() {
     this.layer.locked = false; // Unlock layer
 
     while (this.layer.pageItems.length > 0){
@@ -55,7 +55,7 @@ PlotterMarks.prototype.clearLayer = function() {
     this.layer.locked = true; // Lock layer
 }
 
-PlotterMarks.prototype.generateMarks = function(){
+RegMarks.prototype.generateMarks = function(){
     var pt = this.plotter;
 
     this.layer.locked = false; // Unlock layer
@@ -98,7 +98,7 @@ PlotterMarks.prototype.generateMarks = function(){
     this.layer.locked = true; // Lock layer
 }
 
-PlotterMarks.prototype.run = function(){
+RegMarks.prototype.run = function(){
     this.clearLayer();
     this.generateMarks();
 
@@ -107,7 +107,7 @@ PlotterMarks.prototype.run = function(){
 
 
 // TODO: Move call to ScriptUI dialog
-var pm = new PlotterMarks(app.activeDocument, 'Vulcan FC-500VC');
+var pm = new RegMarks(app.activeDocument, 'Vulcan FC-500VC');
 
 pm.run();
 
