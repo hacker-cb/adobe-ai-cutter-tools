@@ -1,6 +1,4 @@
-
-
-function RegMarks(doc, plotter) {
+function RegMarks(doc) {
     this.doc = doc;
     this.layerName = 'plotter_marks';
 }
