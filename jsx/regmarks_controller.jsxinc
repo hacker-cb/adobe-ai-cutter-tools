@@ -1,0 +1,147 @@
+//@include "../lib/polyfills.js"
+//@include "regmarks_panel.jsxinc"
+//@include "RegMarks.jsxinc"
+
+var regmarks_controller = (function () {
+    var regmarks = {};
+
+    // FIXME: Eval regmarks_panel.jsxinc in this context
+
+    var panel = regmarks_panel;
+
+    var get_active_doc = function(){
+        var docRef = app.activeDocument;
+        if (!docRef){
+            alert('No active document');
+            return null;
+        }
+        $.writeln('docRef:' + docRef);
+        $.writeln("document name: " + docRef.name);
+        return docRef;
+    };
+
+    var fill_presets = function(){
+        panel.items.preset.removeAll();
+
+        for (profile in RegMarks.PROFILES.items){
+            panel.items.preset.add('item', profile);
+        }
+
+    };
+
+    var select_preset = function(presetName){
+        var found = panel.items.preset.find(presetName);
+        if (found != null){
+            panel.items.preset.selection = found;
+        } else {
+            $.writeln('Preset not found: ' + presetName);
+            panel.items.preset.selection = panel.items.preset.items[0];
+        }
+    };
+
+
+    var fill_styles = function(){
+        panel.items.style.removeAll();
+
+        for (profile in RegMarks.PATHSTYLE.items){
+            panel.items.style.add('item', profile);
+        }
+
+    };
+
+    var select_style = function(styleName){
+        var found = panel.items.style.find(styleName);
+        if (found != null){
+            panel.items.style.selection = found;
+        } else {
+            $.writeln('Style not found: ' + styleName);
+            panel.items.style.selection = panel.items.style.items[0];
+        }
+    };
+
+    var select_units = function(unitName){
+        var found = panel.items.units.find(unitName);
+        if (found != null){
+            panel.items.units.selection = found;
+        } else {
+            $.writeln('Unit not found: ' + unitName);
+            panel.items.units.selection = panel.items.units.items[0];
+        }
+    }
+
+    var setup_handlers = function(){
+
+        panel.items.preset.onChange = function(){
+            var curSelection = this.selection ? this.selection.text : null;
+
+            $.writeln('selection: curSelection' + curSelection);
+
+            var profile = RegMarks.PROFILES.get(curSelection);
+
+            select_style(profile.pathStyle);
+            select_units(profile.units);
+
+            panel.items.distance.text = profile.markDistance;
+            panel.items.radius.text = profile.markDiameter;
+        }
+
+        panel.items.create_regmarks_button.onClick = function(){
+            $.writeln('create_regmarks_button');
+
+            var docRef = get_active_doc();
+            if (!docRef) return;
+
+            var profileName = panel.items.preset.selection.text;
+            var preset = RegMarks.PROFILES.get(profileName);
+
+            if (!preset) {
+                throw 'Unknown preset "' + profileName;
+            }
+
+            var rm = new RegMarks(docRef);
+
+            rm.generateMarks(preset);
+        }
+
+        panel.items.clear_regmarks_button.onClick = function(){
+            $.writeln('clear_regmarks_button');
+
+            var docRef = get_active_doc();
+            if (!docRef) return;
+
+            var rm = new RegMarks(docRef);
+
+            rm.deleteLayer();
+        }
+    };
+
+    regmarks.show_panel = function(){
+        setup_handlers();
+
+        fill_styles();
+        fill_presets();
+
+
+        // TODO: Select last used from preferences
+        var last_preset_text = Object.keys(RegMarks.PROFILES.items)[0];
+
+        select_preset(last_preset_text)
+        panel.show();
+    };
+
+    return regmarks;
+}());
+
+
+// $.writeln('regmarks.jsx -init');
+
+// function createRegMarks(){
+//     $.writeln("createRegMarks");
+//     alert("createRegMarks js");
+
+// }
+
+// function clearRegMarks(){
+//     $.writeln("clearRegMarks");
+//     alert("clearRegMarks js");
+// }

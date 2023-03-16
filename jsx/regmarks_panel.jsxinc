@@ -28,19 +28,19 @@ var regmarks_panel = (function () {
 
     // BUTTONS
     // =======
-    var buttons = preset_panel.add("group", undefined, {name: "buttons"});
-        buttons.orientation = "row";
-        buttons.alignChildren = ["left","center"];
-        buttons.spacing = 10;
-        buttons.margins = 0;
+    // var buttons = preset_panel.add("group", undefined, {name: "buttons"});
+    //     buttons.orientation = "row";
+    //     buttons.alignChildren = ["left","center"];
+    //     buttons.spacing = 10;
+    //     buttons.margins = 0;
 
-    var save_preset_button = buttons.add("button", undefined, undefined, {name: "save_preset_button"});
-        save_preset_button.enabled = false;
-        save_preset_button.text = "Save";
+    // var save_preset_button = buttons.add("button", undefined, undefined, {name: "save_preset_button"});
+    //     save_preset_button.enabled = false;
+    //     save_preset_button.text = "Save";
 
-    var delete_preset_button = buttons.add("button", undefined, undefined, {name: "delete_preset_button"});
-        delete_preset_button.enabled = false;
-        delete_preset_button.text = "Delete";
+    // var delete_preset_button = buttons.add("button", undefined, undefined, {name: "delete_preset_button"});
+    //     delete_preset_button.enabled = false;
+    //     delete_preset_button.text = "Delete";
 
     // SETTINGS
     // ========
@@ -120,9 +120,9 @@ var regmarks_panel = (function () {
       regmarks_panel: regmarks_panel, // palette
       preset_panel: preset_panel, // panel
       preset: preset, // dropdownlist
-      buttons: buttons, // group
-      save_preset_button: save_preset_button, // button
-      delete_preset_button: delete_preset_button, // button
+    //   buttons: buttons, // group
+    //   save_preset_button: save_preset_button, // button
+    //   delete_preset_button: delete_preset_button, // button
       settings: settings, // panel
       style_group: style_group, // group
       style_label: style_label, // statictext
@@ -139,7 +139,9 @@ var regmarks_panel = (function () {
       create_regmarks_button: create_regmarks_button, // button
       clear_regmarks_button: clear_regmarks_button // button
     };
-    regmarks_panel.itemsArray = [regmarks_panel, preset_panel, preset, buttons, save_preset_button, delete_preset_button, settings, style_group, style_label, style, units_group, units_label, units, parameters_group, distanance_label, distance, radius_label, radius, main_buttons_group, create_regmarks_button, clear_regmarks_button];
+    //regmarks_panel.itemsArray = [regmarks_panel, preset_panel, preset, buttons, save_preset_button, delete_preset_button, settings, style_group, style_label, style, units_group, units_label, units, parameters_group, distanance_label, distance, radius_label, radius, main_buttons_group, create_regmarks_button, clear_regmarks_button];
+
+    // CUSTOM CODE
 
     return regmarks_panel;
 

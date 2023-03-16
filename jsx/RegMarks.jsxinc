@@ -26,10 +26,17 @@ RegMarks.PATHSTYLE = {
 
 RegMarks.PROFILES = {
     items : {
-        'Vulcan FC-500VC': {
+        'Black circles 5mm, 10mm from borders': {
             'bundled': true,
             'units': 'mm',
             'markDistance': 10.0,
+            'markDiameter': 5.0,
+            'pathStyle': 'Filled with black, no stroke',
+        },
+        'Black circles 5mm, 7mm from borders': {
+            'bundled': true,
+            'units': 'mm',
+            'markDistance': 7.0,
             'markDiameter': 5.0,
             'pathStyle': 'Filled with black, no stroke',
         },
