@@ -5,7 +5,8 @@ function RegMarks(doc) {
 
 RegMarks.PATHSTYLE = {
     items: {
-        'Filled with black, no stroke': {
+        'Black circles': {
+            'type': 'circles',
             'stroke': false,
             'fill': {
                 'color': {
@@ -26,19 +27,19 @@ RegMarks.PATHSTYLE = {
 
 RegMarks.PROFILES = {
     items : {
-        'Black circles 5mm, 10mm from borders': {
+        'Vulcan DC-500VC (10mm border)': {
             'bundled': true,
             'units': 'mm',
             'markDistance': 10.0,
             'markDiameter': 5.0,
-            'pathStyle': 'Filled with black, no stroke',
+            'pathStyle': 'Black circles',
         },
-        'Black circles 5mm, 7mm from borders': {
+        'Vulcan DC-500VC (7mm border)': {
             'bundled': true,
             'units': 'mm',
             'markDistance': 7.0,
             'markDiameter': 5.0,
-            'pathStyle': 'Filled with black, no stroke',
+            'pathStyle': 'Black circles',
         },
     },
 
