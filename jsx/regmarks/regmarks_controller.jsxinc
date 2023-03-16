@@ -1,4 +1,4 @@
-//@include "../../lib/polyfills.js"
+//@include "../../lib/underscore-umd.js"
 //@include "regmarks_panel.jsxinc"
 //@include "RegMarks.jsxinc"
 
@@ -140,7 +140,7 @@ var regmarks_controller = (function () {
 
 
         // TODO: Select last used from preferences
-        var last_preset_text = Object.keys(RegMarks.PROFILES.items)[0];
+        var last_preset_text = _.keys(RegMarks.PROFILES.items)[0];
 
         select_preset(last_preset_text)
         panel.show();
