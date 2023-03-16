@@ -96,7 +96,12 @@ var regmarks_controller = (function () {
             if (!docRef) return;
 
             var profileName = panel.items.preset.selection.text;
-            var preset = RegMarks.PROFILES.get(profileName);
+            var preset = {
+                'units': panel.items.units.selection.text,
+                'markDistance': panel.items.distance.text,
+                'markDiameter': panel.items.radius.text,
+                'pathStyle': panel.items.style.selection.text,
+            }
 
             if (!preset) {
                 throw 'Unknown preset "' + profileName;
