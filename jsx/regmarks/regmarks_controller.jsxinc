@@ -85,6 +85,10 @@ var regmarks_controller = (function () {
             panel.items.radius.text = profile.markDiameter;
         }
 
+        panel.items.close_button.onClick = function(){
+            panel.close();
+        };
+
         panel.items.create_regmarks_button.onClick = function(){
             $.writeln('create_regmarks_button');
 
