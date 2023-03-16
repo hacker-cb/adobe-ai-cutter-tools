@@ -1,4 +1,4 @@
-//@include "../lib/polyfills.js"
+//@include "../../lib/polyfills.js"
 //@include "regmarks_panel.jsxinc"
 //@include "RegMarks.jsxinc"
 
