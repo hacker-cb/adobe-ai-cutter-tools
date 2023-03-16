@@ -101,6 +101,12 @@ var regmarks_controller = (function () {
             var rm = new RegMarks(docRef);
 
             rm.generateMarks(preset);
+
+            // Refresh document
+            docRef.activeLayer.visible = false;
+            docRef.activeLayer.visible = true;
+
+            app.redraw();
         }
 
         panel.items.clear_regmarks_button.onClick = function(){
@@ -112,6 +118,8 @@ var regmarks_controller = (function () {
             var rm = new RegMarks(docRef);
 
             rm.deleteLayer();
+
+            app.redraw();
         }
     };
 
