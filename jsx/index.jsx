@@ -1,10 +1,10 @@
 function createRegMarks(){
     $.writeln("createRegMarks");
-    alert("createRegMarks js");
+    alert("createRegMarks jsx");
 
 }
 
 function clearRegMarks(){
     $.writeln("clearRegMarks");
-    alert("clearRegMarks js");
+    alert("clearRegMarks jsx");
 }
