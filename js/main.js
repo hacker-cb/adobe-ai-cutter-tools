@@ -3,7 +3,7 @@ document.querySelector("#open-regmarks-button").addEventListener("click", functi
   console.log('test1');
   alert('test 1');
   jsx.evalScript('app.documents.length', function(n){alert('You have ' + n + ' open.');}, true);
-  //jsx.file("../jsx/regmarks/fab/open-regmarks.jsx");
+  //jsx.file("./jsx/regmarks/fab/open-regmarks.jsx");
   alert('test 2');
 });
 
@@ -23,9 +23,9 @@ document.querySelector("#restart-ext-button").addEventListener("click", function
     // Then reset the UI to load it's page (if it hasn't change page)                                 //
     ////////////////////////////////////////////////////////////////////////////////////////////////////
     process.removeAllListeners();
-    window.location.href = "../html/index.html";
+    window.location.href = "./index.html";
   } catch (e) {
-    window.location.href = "../html/index.html";
+    window.location.href = "./index.html";
   }
 });
 

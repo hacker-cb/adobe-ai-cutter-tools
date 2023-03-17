@@ -19,7 +19,7 @@
     <Extension Id="com.hackercb.cuttertools">
       <DispatchInfo>
         <Resources>
-          <MainPath>./html/index.html</MainPath>
+          <MainPath>./index.html</MainPath>
           <!--
             We use JSX.
             https://creative-scripts.com/jsx-js/#jsx
