@@ -20,7 +20,12 @@
       <DispatchInfo>
         <Resources>
           <MainPath>./html/index.html</MainPath>
-          <ScriptPath>./jsx/index.jsx</ScriptPath>
+          <!--
+            We use JSX.
+            https://creative-scripts.com/jsx-js/#jsx
+            https://community.adobe.com/t5/illustrator-discussions/reload-cep-panel-extension-and-its-extendscript-without-restarting-illustrator/td-p/10844579
+          -->
+          <!-- <ScriptPath>./jsx/index.jsx</ScriptPath> -->
           <CEFCommandLine />
         </Resources>
         <Lifecycle>
