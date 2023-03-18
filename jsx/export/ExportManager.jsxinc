@@ -1,0 +1,10 @@
+ExportManager = (function() {
+    var em = {};
+
+    em.exportPrintAndCut = function(){
+        $.writeln("Export All");
+        alert("Export All");
+    }
+
+    return em;
+})();
