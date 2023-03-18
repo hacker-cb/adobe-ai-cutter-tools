@@ -13,8 +13,11 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "@spectrum-css/actionbutton": "^3.0.20",
     "@spectrum-css/button": "^9.0.8",
+    "@spectrum-css/divider": "^2.0.19",
     "@spectrum-css/page": "^5.0.19",
+    "@spectrum-css/typography": "^4.0.29",
     "@spectrum-css/vars": "^8.0.5",
     "types-for-adobe": "^7.0.12"
   }

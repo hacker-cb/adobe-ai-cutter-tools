@@ -28,27 +28,64 @@
     <!-- Include index-vars.css for all components you need -->
     <link rel="stylesheet" href="node_modules/@spectrum-css/page/dist/index-vars.css">
     <link rel="stylesheet" href="node_modules/@spectrum-css/button/dist/index-vars.css">
-    <!-- <link rel="stylesheet" href="node_modules/@spectrum-css/typography/dist/index-vars.css"> -->
+    <link rel="stylesheet" href="node_modules/@spectrum-css/typography/dist/index-vars.css">
+    <link rel="stylesheet" href="node_modules/@spectrum-css/divider/dist/index-vars.css">
+    <link rel="stylesheet" href="node_modules/@spectrum-css/actionbutton/dist/index-vars.css">
     <!-- <link rel="stylesheet" href="node_modules/@spectrum-css/icon/dist/index-vars.css"> -->
 </head>
 <body>
-    <!-- <div class="spectrum-ButtonGroup">
-        <button class="spectrum-Button spectrum-Button--sizeM spectrum-Button--outline spectrum-Button--secondary spectrum-ButtonGroup-item">
-          <span class="spectrum-Button-label">No, thanks</span>
-        </button>
-        <button class="spectrum-Button spectrum-Button--sizeM spectrum-Button--outline spectrum-Button--secondary spectrum-ButtonGroup-item">
-          <span class="spectrum-Button-label">Remind me later</span>
-        </button>
-        <button class="spectrum-Button spectrum-Button--sizeM spectrum-Button--fill spectrum-Button--primary spectrum-ButtonGroup-item">
-          <span class="spectrum-Button-label">Rate now</span>
-        </button>
-    </div> -->
+    <div class="spectrum-Accordion" role="region">
+        <!-- Layers management -->
+        <h2 class="spectrum-Heading spectrum-Heading--sizeXS">Layers management</h2>
+        <hr class="spectrum-Divider spectrum-Divider--sizeXS">
 
-    <button id="restart-ext-button" class="spectrum-Button spectrum-Button--sizeS spectrum-Button--secondary">
-        <span class="spectrum-Button-label">Restart Extension</span>
-    </button>
+        <div>
+            <div class="spectrum-ButtonGroup spectrum-ButtonGroup--sizeS">
+                <button id="display-layers-print-and-cut-button" class="spectrum-Button spectrum-Button--sizeS spectrum-Button--outline spectrum-Button--secondary spectrum-ButtonGroup-item">
+                    <span class="spectrum-Button-label">Print and Cut</span>
+                </button>
+                <button id="display-layers-print-button"         class="spectrum-Button spectrum-Button--sizeS spectrum-Button--outline spectrum-Button--secondary spectrum-ButtonGroup-item">
+                    <span class="spectrum-Button-label">Print</span>
+                </button>
+                <button id="display-layers-cut-button"           class="spectrum-Button spectrum-Button--sizeS spectrum-Button--outline spectrum-Button--secondary spectrum-ButtonGroup-item">
+                    <span class="spectrum-Button-label">Cut</span>
+                </button>
+            </div>
+        </div>
+        <br/>
 
-    <button id="open-regmarks-button">Registration marks</button>
+        <!-- Registration marks -->
+        <h2 class="spectrum-Heading spectrum-Heading--sizeXS">Registration marks</h2>
+        <hr class="spectrum-Divider spectrum-Divider--sizeXS">
+
+        <div>
+            <button id="open-regmarks-button" class="spectrum-Button spectrum-Button--sizeS spectrum-Button--outline spectrum-Button--secondary">
+                <span class="spectrum-ActionButton-label">Open registration marks dialog</span>
+            </button>
+        </div>
+        <br/>
+
+        <!-- Export -->
+        <h2 class="spectrum-Heading spectrum-Heading--sizeXS">Export</h2>
+        <hr class="spectrum-Divider spectrum-Divider--sizeXS">
+        <div>
+            <button id="export-print-and-cut-button" class="spectrum-Button spectrum-Button--sizeS spectrum-Button--outline spectrum-Button--secondary">
+                <span class="spectrum-ActionButton-label">Export Print and Cut files</span>
+            </button>
+        </div>
+        <br/>
+
+        <!-- Debug -->
+        <hr class="spectrum-Divider spectrum-Divider--sizeXS">
+        <!-- Align content: right -->
+        <div width="100%" style="float: right;">
+            <button id="restart-ext-button" class="spectrum-Button spectrum-Button--sizeS spectrum-Button--secondary">
+                <span class="spectrum-Button-label">Restart Extension</span>
+            </button>
+        </div>
+
+
+    </div>
 
     <!-- <script type="text/javascript" src="../js/CSInterface.js"></script> -->
     <script type="text/javascript" src="lib/JSX.js"></script>
