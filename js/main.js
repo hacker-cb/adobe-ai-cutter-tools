@@ -5,17 +5,17 @@ document.querySelector("#open-regmarks-button").addEventListener("click", functi
 
 // set-mode-print-and-cut-button
 document.querySelector("#set-mode-print-and-cut-button").addEventListener("click", function(){
-  jsx.file("./jsx/layermanager/fab/set_mode_print_and_cut.jsx");
+  jsx.file("./jsx/layers/fab/set_mode_print_and_cut.jsx");
 });
 
 // set-mode-print-button
 document.querySelector("#set-mode-print-button").addEventListener("click", function(){
-  jsx.file("./jsx/layermanager/fab/set_mode_print.jsx");
+  jsx.file("./jsx/layers/fab/set_mode_print.jsx");
 });
 
 // set-mode-cut-button
 document.querySelector("#set-mode-cut-button").addEventListener("click", function(){
-  jsx.file("./jsx/layermanager/fab/set_mode_cut.jsx");
+  jsx.file("./jsx/layers/fab/set_mode_cut.jsx");
 });
 
 // export-print-and-cut-button
