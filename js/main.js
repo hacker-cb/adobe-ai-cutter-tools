@@ -1,10 +1,21 @@
 // open-regmarks-button
 document.querySelector("#open-regmarks-button").addEventListener("click", function(){
-  console.log('test1');
-  alert('test 1');
-  jsx.evalScript('app.documents.length', function(n){alert('You have ' + n + ' open.');}, true);
-  //jsx.file("./jsx/regmarks/fab/open-regmarks.jsx");
-  alert('test 2');
+  jsx.file("./jsx/regmarks/fab/open_regmarks_dialog.jsx");
+});
+
+// set-mode-print-and-cut-button
+document.querySelector("#set-mode-print-and-cut-button").addEventListener("click", function(){
+  jsx.file("./jsx/layermanager/fab/set_mode_print_and_cut.jsx");
+});
+
+// set-mode-print-button
+document.querySelector("#set-mode-print-button").addEventListener("click", function(){
+  jsx.file("./jsx/layermanager/fab/set_mode_print.jsx");
+});
+
+// set-mode-cut-button
+document.querySelector("#set-mode-cut-button").addEventListener("click", function(){
+  jsx.file("./jsx/layermanager/fab/set_mode_cut.jsx");
 });
 
 // restart-ext-button

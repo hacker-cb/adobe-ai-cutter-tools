@@ -1,0 +1,25 @@
+LayerManager = (function() {
+    var lm = {};
+
+    var PRINT_LAYER_NAME = "Print";
+    var CUT_LAYER_NAME = "Cut";
+
+
+    lm.setModePrintAndCut = function(){
+        $.writeln("Mode: Print and Cut");
+        alert("Mode: Print and Cut");
+
+    };
+
+    lm.setModePrint = function(){
+        $.writeln("Mode: Print");
+        alert("Mode: Print");
+    }
+
+    lm.setModeCut = function(){
+        $.writeln("Mode: Cut");
+        alert("Mode: Cut");
+    }
+
+    return lm;
+})();
