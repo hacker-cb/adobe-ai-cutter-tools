@@ -1,9 +1,28 @@
+//@include "../lib/DocUtils.jsxinc"
+
 ExportManager = (function() {
     var em = {};
 
+
     em.exportPrintAndCut = function(){
+        var srcDoc = app.activeDocument;
+
+        var docCopy = DocUtils.duplicate(srcDoc);
+
+        DocUtils.convertSymbolsToShapes(docCopy);
+
+        // app.activeDocument = srcDoc;
+
+        // for (var i = 0; i < doc.artboards.length; i++) {
+            // var artBoard = doc.artboards[i];
+            //var path = doc.path + "/" + artLayer.name + ".pdf";
+            //$.writeln("Exporting: " + path);
+            //docCopy.exportFile(path, ExportType.PDF_TYPE, exportOptionsPDF);
+            //docCopy.close(SaveOptions.DONOTSAVECHANGES);
+        // }
+
         $.writeln("Export All");
-        alert("Export All");
+        // alert("Export All");
     }
 
     return em;

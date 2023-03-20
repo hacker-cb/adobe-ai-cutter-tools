@@ -87,3 +87,21 @@ DocUtils.duplicate = function(srcDoc) {
 
     return dstDoc;
 };
+
+/**
+ * Convert all symbols to shapes
+ *
+ * @param doc
+ */
+DocUtils.convertSymbolsToShapes = function(doc){
+    for (var i = 0; i < doc.symbolItems.length; i++) {
+        var symbolItem = doc.symbolItems[i];
+        var symbol = symbolItem.symbol;
+
+        symbolItem.breakLink();
+
+        // FIXME: Set new group name according to symbol.name
+    }
+
+    doc.symbols.removeAll();
+};
