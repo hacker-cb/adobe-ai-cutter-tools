@@ -4,7 +4,7 @@ var PREFS_FILENAME = Folder.userData + "/com.hackercb.cuttertools.json";
 
 
 // Store prefernces as JSON object
-var pt_prefs = (function () {
+var CutterToolsPrefs = (function () {
     var prefs = {};
 
     var loaded = false;

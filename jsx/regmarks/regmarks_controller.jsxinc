@@ -1,5 +1,5 @@
 //@include "../../lib/underscore-umd.js"
-//@include "../pt_prefs.jsxinc"
+//@include "../CutterToolsPrefs.jsxinc"
 //@include "regmarks_panel.jsxinc"
 //@include "RegMarks.jsxinc"
 
@@ -86,7 +86,7 @@ var regmarks_controller = (function () {
             panel.items.radius.text = profile.markDiameter;
 
             // Save preset
-            pt_prefs.set('regmarks.last_preset', curSelection);
+            CutterToolsPrefs.set('regmarks.last_preset', curSelection);
         }
 
         panel.items.close_button.onClick = function(){
@@ -142,7 +142,7 @@ var regmarks_controller = (function () {
         fill_styles();
         fill_presets();
 
-        var last_preset_text = pt_prefs.get('regmarks.last_preset');
+        var last_preset_text = CutterToolsPrefs.get('regmarks.last_preset');
         if (!last_preset_text){
             last_preset_text = _.keys(RegMarks.PROFILES.items)[0];
         }
