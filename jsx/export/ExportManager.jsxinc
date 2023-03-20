@@ -10,6 +10,10 @@ ExportManager = (function() {
         var docCopy = DocUtils.duplicate(srcDoc);
 
         DocUtils.convertSymbolsToShapes(docCopy);
+        DocUtils.setGroupsVisible(docCopy, ['Cut'], true);
+        DocUtils.setGroupsVisible(docCopy, ['Print'], false);
+
+        app.redraw();
 
         // app.activeDocument = srcDoc;
 

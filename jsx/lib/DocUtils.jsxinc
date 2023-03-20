@@ -1,3 +1,5 @@
+//@include "../../lib/underscore-umd.js"
+
 DocUtils = {};
 
 /**
@@ -105,3 +107,30 @@ DocUtils.convertSymbolsToShapes = function(doc){
 
     doc.symbols.removeAll();
 };
+
+/**
+ * Set visibility of groups
+ *
+ * @param doc Document
+ * @param names Array of group names
+ * @param visible Visibility
+ */
+DocUtils.setGroupsVisible = function(doc, names, visible){
+    for (var i = 0; i < doc.groupItems.length; i++) {
+        var group = doc.groupItems[i];
+
+        if (_.indexOf(names, group.name) != -1) {
+            $.writeln("Set group " + group.name + " visible: " + visible);
+            var locked = group.locked;
+            if (locked){
+                group.locked = false;
+            }
+            group.hidden = !visible;
+            if (locked){
+                group.locked = true;
+            }
+        } else {
+            // $.writeln("Skip group " + group.name);
+        }
+    }
+}
