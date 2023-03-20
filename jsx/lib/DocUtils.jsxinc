@@ -1,0 +1,89 @@
+DocUtils = {};
+
+/**
+ * Make copy of document
+ *
+ * @param srcDoc Source document
+ * @returns
+ */
+DocUtils.duplicate = function(srcDoc) {
+
+    // See https://community.adobe.com/t5/illustrator-discussions/copy-artboard-and-art-to-another-document/m-p/3907417/page/2#M10827
+
+    // Save source docuemtn data
+    var srcDocData = {
+        documentColorSpace: srcDoc.documentColorSpace,
+        units: srcDoc.rulerUnits,
+        width: srcDoc.width,
+        height: srcDoc.height,
+        rulerOrigin: srcDoc.rulerOrigin,
+    };
+
+    // Save source artboard data
+    var srcAbData = [];
+    for (var i = 0; i < srcDoc.artboards.length; i++) {
+        var srcAb = srcDoc.artboards[i];
+        srcAbData.push({
+            name: srcAb.name,
+            artboardRect: srcAb.artboardRect,
+            rulerOrigin: srcAb.rulerOrigin,
+        })
+    }
+
+    // This actually does not needed.
+    //var docPreset = new DocumentPreset();
+    //docPreset.units = srcDocData.units;
+    //var dstDoc = app.documents.addDocument(srcDocData.documentColorSpace, docPreset);
+
+    // Create new document
+    var dstDoc = app.documents.add(srcDocData.documentColorSpace);
+    dstDoc.rulerOrigin = srcDocData.rulerOrigin;
+
+    // Create ArtBoards
+    var defaultArtboard = dstDoc.artboards[0];
+    for (var i = 0; i < srcAbData.length; i++) {
+        var ab = dstDoc.artboards.add(srcAbData[i].artboardRect);
+        ab.name = srcAbData[i].name;
+        ab.rulerOrigin = srcAbData[i].rulerOrigin;
+    }
+    defaultArtboard.remove(); // Remove default artboard
+
+
+    // Duplicate layers structure
+    var lockedLayers = [];
+    var defaultLayer = dstDoc.layers[0];
+    for (var i = 0; i < srcDoc.layers.length; i++) {
+        var srcLayer = srcDoc.layers[i];
+        var dstLayer = dstDoc.layers.add();
+
+        dstLayer.move(dstDoc, ElementPlacement.PLACEATEND);
+
+        dstLayer.name = srcLayer.name;
+        dstLayer.visible = srcLayer.visible;
+
+        //dstLayer.locked = srcLayer.locked; // We lock later
+        if (srcLayer.locked) {
+            lockedLayers.push(dstLayer);
+        }
+    }
+    defaultLayer.remove(); // Remove default layer
+
+
+    // Copy page items
+    for (var i = 0; i < srcDoc.pageItems.length; i++) {
+        var srcItem = srcDoc.pageItems[i];
+        if (srcItem.parent instanceof Layer) {
+            var dstItem = srcItem.duplicate(dstDoc.layers[srcItem.layer.name], ElementPlacement.PLACEATEND);
+            dstItem.left = srcItem.left;
+            dstItem.top = srcItem.top;
+        }
+    }
+
+    // Lock locked layers back
+    for (var i = 0; i < lockedLayers.length; i++) {
+        lockedLayers[i].locked = true;
+    }
+
+
+    return dstDoc;
+};
