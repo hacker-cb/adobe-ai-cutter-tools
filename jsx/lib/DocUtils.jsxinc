@@ -1,4 +1,5 @@
 //@include "../../lib/underscore-umd.js"
+//@include "./Progress.jsxinc"
 
 DocUtils = {};
 
@@ -6,9 +7,13 @@ DocUtils = {};
  * Make copy of document
  *
  * @param doc Source document
+ * @param progress Progress instance
  * @returns
  */
-DocUtils.duplicate = function(doc) {
+DocUtils.duplicate = function(doc, progress) {
+
+    // Set empty progress if not set
+    if (!progress) progress = new Progress();
 
     // See https://community.adobe.com/t5/illustrator-discussions/copy-artboard-and-art-to-another-document/m-p/3907417/page/2#M10827
 
@@ -42,16 +47,21 @@ DocUtils.duplicate = function(doc) {
     dstDoc.rulerOrigin = srcDocData.rulerOrigin;
 
     // Create ArtBoards
+    var abp = progress.subProgress('Creating artboards', 10);
     var defaultArtboard = dstDoc.artboards[0];
     for (var i = 0; i < srcAbData.length; i++) {
         var ab = dstDoc.artboards.add(srcAbData[i].artboardRect);
         ab.name = srcAbData[i].name;
         ab.rulerOrigin = srcAbData[i].rulerOrigin;
+
+        abp.setPercent(i / srcAbData.length * 100);
     }
     defaultArtboard.remove(); // Remove default artboard
+    abp.setPercent(100);
 
 
     // Duplicate layers structure
+    var dlp = progress.subProgress('Duplicate layers structure', 20);
     var lockedLayers = [];
     var defaultLayer = dstDoc.layers[0];
     for (var i = 0; i < doc.layers.length; i++) {
@@ -67,11 +77,15 @@ DocUtils.duplicate = function(doc) {
         if (srcLayer.locked) {
             lockedLayers.push(dstLayer);
         }
+
+        dlp.setPercent(i / doc.layers.length * 100);
     }
     defaultLayer.remove(); // Remove default layer
+    dlp.setPercent(100);
 
 
     // Copy page items
+    var cpip = progress.subProgress('Copy page items', 95);
     for (var i = 0; i < doc.pageItems.length; i++) {
         var srcItem = doc.pageItems[i];
         if (srcItem.parent instanceof Layer) {
@@ -79,13 +93,19 @@ DocUtils.duplicate = function(doc) {
             dstItem.left = srcItem.left;
             dstItem.top = srcItem.top;
         }
+        cpip.setPercent(i / doc.pageItems.length * 100);
     }
+    cpip.setPercent(100);
 
     // Lock locked layers back
+    var lockLockedLayersProgress = progress.subProgress('Lock locked layers', 100);
     for (var i = 0; i < lockedLayers.length; i++) {
         lockedLayers[i].locked = true;
+        lockLockedLayersProgress.setPercent(i / lockedLayers.length * 100);
     }
+    lockLockedLayersProgress.setPercent(100);
 
+    progress.setPercent(100);
 
     return dstDoc;
 };
@@ -93,43 +113,43 @@ DocUtils.duplicate = function(doc) {
 /**
  * Convert all symbols to shapes
  *
- * @param doc
+ * @param doc Source document
+ * @param progress Progress instance
  */
-DocUtils.convertSymbolsToShapes = function(doc){
+DocUtils.convertSymbolsToShapes = function(doc, progress){
+    // Set empty progress if not set
+    if (!progress) progress = new Progress();
 
-    var calls = 0;
+    var pass = 0;
 
-    var disassamble = function(){
-        var startSymbolItemsCount = doc.symbolItems.length;
+    var totalItemsToProcess = doc.symbolItems.length;
+    var totalItemsProcessed = 0;
 
-        if (startSymbolItemsCount == 0){
-            return;
-        }
-        calls++;
+    var dp = progress.subProgress('Disassamble', 95);
 
-        $.writeln('Disassamble call #' + calls + ' with ' + startSymbolItemsCount + ' symbols');
+    while (doc.symbolItems.length != 0){
 
-        for (var i = 0; i < doc.symbolItems.length; i++) {
-            var symbolItem = doc.symbolItems[i];
-            var symbol = symbolItem.symbol;
+        var lenBefore = doc.symbolItems.length;
 
-            symbolItem.breakLink();
+        var symbolItem = doc.symbolItems[0];
+        symbolItem.breakLink();
 
-            // FIXME: Set new group name according to symbol.name?
-        }
+        var diff = doc.symbolItems.length - lenBefore;
 
-        var finishSymbolItemsCount = doc.symbolItems.length;
+        totalItemsToProcess += diff + 1;
 
-        if (finishSymbolItemsCount == startSymbolItemsCount){
-            throw new Error('Cannot disassamble symbols');
-        }
+        totalItemsProcessed++;
 
-        disassamble(); // Recusive call until all symbols are converted to shapes
-    };
+        dp.setPercent(totalItemsProcessed / totalItemsToProcess * 100);
+    }
 
-    disassamble();
+    dp.setPercent(100);
+
+    var rsp = progress.subProgress('Remove symbols', 100);
 
     doc.symbols.removeAll();
+
+    rsp.setPercent(100);
 };
 
 /**

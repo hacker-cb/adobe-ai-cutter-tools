@@ -1,17 +1,54 @@
 //@include "../lib/DocUtils.jsxinc"
+//@include "../lib/Progress.jsxinc"
 
 ExportManager = (function() {
     var em = {};
 
+    var CUT_LAYER_NAME = 'Cut';
+    var PRINT_LAYER_NAME = 'Print';
 
-    em.exportPrintAndCut = function(){
+    var CUT_GROUP_NAME = 'Cut';
+    var PRINT_GROUP_NAME = 'Print';
+
+    var splitObjectsToLayers = function(doc) {
+
+        var cutLayer = DocUtils.getOrCreateLayerByName(doc, CUT_LAYER_NAME);
+        var printLayer = DocUtils.getOrCreateLayerByName(doc, PRINT_LAYER_NAME);
+
+        DocUtils.unlockAllLayers(doc);
+
+        // Move CUT layer to the top, print layer after it
+        cutLayer.move(doc, ElementPlacement.PLACEATBEGINNING);
+        printLayer.move(cutLayer, ElementPlacement.PLACEAFTER);
+
+        // Move all groups to the correct layer
+        for (var i = 0; i < doc.groupItems.length; i++) {
+            var group = doc.groupItems[i];
+            if (group.name == CUT_GROUP_NAME) {
+                group.move(cutLayer, ElementPlacement.PLACEATEND);
+            }
+            else if (group.name == PRINT_GROUP_NAME) {
+                group.move(printLayer, ElementPlacement.PLACEATEND);
+            }
+        }
+    };
+
+
+    var runExport = function(progress){
+
         var srcDoc = app.activeDocument;
 
-        var docCopy = DocUtils.duplicate(srcDoc);
+        var doc = DocUtils.duplicate(srcDoc,
+            progress.subProgress("Duplicate", 50)
+            );
 
-        DocUtils.convertSymbolsToShapes(docCopy);
-        DocUtils.setGroupsVisibility(docCopy, ['Cut'], true);
-        DocUtils.setGroupsVisibility(docCopy, ['Print'], false);
+        DocUtils.convertSymbolsToShapes(doc,
+            progress.subProgress("Symbols to shapes", 70)
+            );
+
+        //splitObjectsToLayers(doc);
+
+        progress.setPercent(100);
 
         app.redraw();
 
@@ -27,6 +64,81 @@ ExportManager = (function() {
 
         $.writeln("Export All");
         // alert("Export All");
+    }
+
+    em.exportPrintAndCut = function(){
+
+
+        /*
+        Code for Import https://scriptui.joonas.me — (Triple click to select):
+        {"activeId":0,"items":{"item-0":{"id":0,"type":"Dialog","parentId":false,"style":{"enabled":true,"varName":"exportDialog","windowType":"Dialog","creationProps":{"su1PanelCoordinates":false,"maximizeButton":false,"minimizeButton":false,"independent":false,"closeButton":false,"borderless":false,"resizeable":false},"text":"PlotterTools export","preferredSize":[0,0],"margins":16,"orientation":"column","spacing":10,"alignChildren":["fill","top"]}},"item-1":{"id":1,"type":"Progressbar","parentId":0,"style":{"enabled":true,"varName":"progressBar","preferredSize":[400,10],"alignment":null,"helpTip":null}},"item-3":{"id":3,"type":"StaticText","parentId":0,"style":{"enabled":true,"varName":"currentOperation","creationProps":{"truncate":"none","multiline":false,"scrolling":false},"softWrap":false,"text":"Operation","justify":"left","preferredSize":[0,0],"alignment":null,"helpTip":null}},"item-4":{"id":4,"type":"Button","parentId":5,"style":{"enabled":true,"varName":"startButton","text":"Run","justify":"center","preferredSize":[0,0],"alignment":null,"helpTip":null}},"item-5":{"id":5,"type":"Group","parentId":0,"style":{"enabled":true,"varName":"buttonsGroup","preferredSize":[0,0],"margins":0,"orientation":"row","spacing":10,"alignChildren":["center","center"],"alignment":null}},"item-6":{"id":6,"type":"Button","parentId":5,"style":{"enabled":true,"varName":"closeButton","text":"Close","justify":"center","preferredSize":[0,0],"alignment":null,"helpTip":null}},"item-7":{"id":7,"type":"StaticText","parentId":0,"style":{"enabled":true,"varName":"currentStage","creationProps":{"truncate":"none","multiline":false,"scrolling":false},"softWrap":false,"text":"Stage","justify":"left","preferredSize":[0,0],"alignment":"right","helpTip":null}}},"order":[0,3,1,7,5,4,6],"settings":{"importJSON":true,"indentSize":false,"cepExport":false,"includeCSSJS":true,"showDialog":false,"functionWrapper":false,"afterEffectsDockable":false,"itemReferenceList":"none"}}
+        */
+
+        // EXPORTDIALOG
+        // ============
+        var exportDialog = new Window("dialog", undefined, undefined, {closeButton: false});
+            exportDialog.text = "PlotterTools export";
+            exportDialog.orientation = "column";
+            exportDialog.alignChildren = ["fill","top"];
+            exportDialog.spacing = 10;
+            exportDialog.margins = 16;
+
+        var currentOperation = exportDialog.add("statictext", undefined, undefined, {name: "currentOperation"});
+            currentOperation.text = "Operation";
+
+        var progressBar = exportDialog.add("progressbar", undefined, undefined, {name: "progressBar"});
+            progressBar.maxvalue = 100;
+            progressBar.value = 50;
+            progressBar.preferredSize.width = 400;
+            progressBar.preferredSize.height = 10;
+
+        var currentStage = exportDialog.add("statictext", undefined, undefined, {name: "currentStage"});
+            currentStage.text = "Stage";
+            currentStage.alignment = ["right","top"];
+
+        // BUTTONSGROUP
+        // ============
+        var buttonsGroup = exportDialog.add("group", undefined, {name: "buttonsGroup"});
+            buttonsGroup.orientation = "row";
+            buttonsGroup.alignChildren = ["center","center"];
+            buttonsGroup.spacing = 10;
+            buttonsGroup.margins = 0;
+
+        var startButton = buttonsGroup.add("button", undefined, undefined, {name: "startButton"});
+            startButton.text = "Run";
+
+        var closeButton = buttonsGroup.add("button", undefined, undefined, {name: "closeButton"});
+            closeButton.text = "Close";
+
+
+        ////////////////////////////////////////////////////
+
+        currentOperation.text = '';
+        currentStage.text = '';
+        progressBar.value = 0;
+
+        var progress = new Progress(function(stage, totalProgress){
+            progressBar.value = totalProgress;
+            currentStage.text = stage;
+            exportDialog.update();
+            // $.writeln("Progress: " + stage + " " + totalProgress);
+        });
+
+        startButton.onClick = function() {
+            startButton.enabled = false;
+            closeButton.enabled = false;
+
+            runExport(progress);
+
+            // startButton.enabled = true;
+            closeButton.enabled = true;
+        };
+
+        closeButton.onClick = function() {
+            exportDialog.close();
+        };
+
+        exportDialog.show();
     }
 
     return em;

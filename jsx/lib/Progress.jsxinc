@@ -46,9 +46,10 @@ Progress.prototype.setPercent = function(progress, _source){
     if (progress < 0 || progress > 100){
         throw 'Progress must be in range 0..100, current value is ' + progress;
     }
-    if (progress < this.progress){
-        throw 'Progress cannot be decreased from ' + this.progress + ' to ' + progress;
-    };
+    // Ok, for compilcated tasks we can decrease progress
+    // if (progress < this.progress){
+    //     throw 'Progress cannot be decreased from ' + this.progress + ' to ' + progress;
+    // };
 
     this.progress = progress;
 
