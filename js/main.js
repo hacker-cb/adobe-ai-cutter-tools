@@ -3,21 +3,6 @@ document.querySelector("#open-regmarks-button").addEventListener("click", functi
   jsx.file("./jsx/regmarks/fab/open_regmarks_dialog.jsx");
 });
 
-// set-mode-print-and-cut-button
-document.querySelector("#set-mode-print-and-cut-button").addEventListener("click", function(){
-  jsx.file("./jsx/layers/fab/set_mode_print_and_cut.jsx");
-});
-
-// set-mode-print-button
-document.querySelector("#set-mode-print-button").addEventListener("click", function(){
-  jsx.file("./jsx/layers/fab/set_mode_print.jsx");
-});
-
-// set-mode-cut-button
-document.querySelector("#set-mode-cut-button").addEventListener("click", function(){
-  jsx.file("./jsx/layers/fab/set_mode_cut.jsx");
-});
-
 // export-print-and-cut-button
 document.querySelector("#export-print-and-cut-button").addEventListener("click", function(){
   jsx.file("./jsx/export/fab/export_print_and_cut.jsx");
