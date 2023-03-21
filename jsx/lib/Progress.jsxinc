@@ -1,0 +1,67 @@
+
+/**
+ * Progress
+ */
+Progress = function(callback){
+    this.name = null;
+    this.parent = null;
+    this.progress = 0;
+    this.callback = callback;
+};
+
+Progress.prototype._getRoot = function(){
+    if (this.parent){
+        return this.parent._getRoot();
+    }
+    return this;
+};
+
+Progress.prototype.subProgress = function(name, maxParentProgress){
+    if (maxParentProgress < 0 || maxParentProgress > 100){
+        throw 'Max parent progress must be in range 0..100, current value is ' + maxParentProgress;
+    }
+    if (maxParentProgress < this.progress){
+        throw 'Max parent progress cannot be less than current progress ' + this.progress;
+    }
+
+    var subProgress = new Progress();
+
+    subProgress.name = name;
+    subProgress.parent = this;
+
+    subProgress.minParentProgress = this.progress;
+    subProgress.maxParentProgress = maxParentProgress;
+
+    return subProgress;
+};
+
+Progress.prototype.getFullName = function(){
+    if (this.parent && this.parent.getFullName()){
+        return this.parent.getFullName() + ', ' + this.name;
+    }
+    return this.name;
+};
+
+Progress.prototype.setPercent = function(progress, _source){
+    if (progress < 0 || progress > 100){
+        throw 'Progress must be in range 0..100, current value is ' + progress;
+    }
+    if (progress < this.progress){
+        throw 'Progress cannot be decreased from ' + this.progress + ' to ' + progress;
+    };
+
+    this.progress = progress;
+
+    if (this.parent){
+        this.parent.setPercent(
+            this.minParentProgress + (this.maxParentProgress - this.minParentProgress) * (this.progress / 100),
+            _source || this
+            );
+    } else {
+        if (this.callback){
+            var fullName = _source ? _source.getFullName() : this.name;
+            this.callback(fullName, this.progress);
+        }
+    }
+};
+
