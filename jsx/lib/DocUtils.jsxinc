@@ -5,26 +5,26 @@ DocUtils = {};
 /**
  * Make copy of document
  *
- * @param srcDoc Source document
+ * @param doc Source document
  * @returns
  */
-DocUtils.duplicate = function(srcDoc) {
+DocUtils.duplicate = function(doc) {
 
     // See https://community.adobe.com/t5/illustrator-discussions/copy-artboard-and-art-to-another-document/m-p/3907417/page/2#M10827
 
     // Save source docuemtn data
     var srcDocData = {
-        documentColorSpace: srcDoc.documentColorSpace,
-        units: srcDoc.rulerUnits,
-        width: srcDoc.width,
-        height: srcDoc.height,
-        rulerOrigin: srcDoc.rulerOrigin,
+        documentColorSpace: doc.documentColorSpace,
+        units: doc.rulerUnits,
+        width: doc.width,
+        height: doc.height,
+        rulerOrigin: doc.rulerOrigin,
     };
 
     // Save source artboard data
     var srcAbData = [];
-    for (var i = 0; i < srcDoc.artboards.length; i++) {
-        var srcAb = srcDoc.artboards[i];
+    for (var i = 0; i < doc.artboards.length; i++) {
+        var srcAb = doc.artboards[i];
         srcAbData.push({
             name: srcAb.name,
             artboardRect: srcAb.artboardRect,
@@ -54,8 +54,8 @@ DocUtils.duplicate = function(srcDoc) {
     // Duplicate layers structure
     var lockedLayers = [];
     var defaultLayer = dstDoc.layers[0];
-    for (var i = 0; i < srcDoc.layers.length; i++) {
-        var srcLayer = srcDoc.layers[i];
+    for (var i = 0; i < doc.layers.length; i++) {
+        var srcLayer = doc.layers[i];
         var dstLayer = dstDoc.layers.add();
 
         dstLayer.move(dstDoc, ElementPlacement.PLACEATEND);
@@ -72,8 +72,8 @@ DocUtils.duplicate = function(srcDoc) {
 
 
     // Copy page items
-    for (var i = 0; i < srcDoc.pageItems.length; i++) {
-        var srcItem = srcDoc.pageItems[i];
+    for (var i = 0; i < doc.pageItems.length; i++) {
+        var srcItem = doc.pageItems[i];
         if (srcItem.parent instanceof Layer) {
             var dstItem = srcItem.duplicate(dstDoc.layers[srcItem.layer.name], ElementPlacement.PLACEATEND);
             dstItem.left = srcItem.left;
