@@ -215,3 +215,25 @@ DocUtils.getOrCreateLayerByName = function(doc, name){
         return layer;
     }
 }
+
+/**
+ * Get all layers, included inherited
+ *
+ * @param doc Document
+ * @returns Array of layers
+ */
+DocUtils.getAllLayers = function(doc){
+    function getAllLayers(layers){
+        var result = [];
+        for (var i = 0; i < layers.length; i++) {
+            var layer = layers[i];
+            result.push(layer);
+            result = result.concat(getAllLayers(layer.layers));
+        }
+        return result;
+    };
+
+    var layers = getAllLayers(doc.layers);
+
+    return layers;
+}
