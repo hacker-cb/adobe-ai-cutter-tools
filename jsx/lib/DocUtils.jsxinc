@@ -220,14 +220,17 @@ DocUtils.getOrCreateLayerByName = function(doc, name){
  * Get all layers, included inherited
  *
  * @param doc Document
+ * @param cbfilter Callback filter
  * @returns Array of layers
  */
-DocUtils.getAllLayers = function(doc){
+DocUtils.getAllLayers = function(doc, cbfilter){
     function getAllLayers(layers){
         var result = [];
         for (var i = 0; i < layers.length; i++) {
             var layer = layers[i];
-            result.push(layer);
+            if (!cbfilter || cbfilter(layer)){
+                result.push(layer);
+            }
             result = result.concat(getAllLayers(layer.layers));
         }
         return result;
