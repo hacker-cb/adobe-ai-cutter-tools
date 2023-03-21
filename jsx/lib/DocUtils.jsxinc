@@ -96,14 +96,38 @@ DocUtils.duplicate = function(srcDoc) {
  * @param doc
  */
 DocUtils.convertSymbolsToShapes = function(doc){
-    for (var i = 0; i < doc.symbolItems.length; i++) {
-        var symbolItem = doc.symbolItems[i];
-        var symbol = symbolItem.symbol;
 
-        symbolItem.breakLink();
+    var calls = 0;
 
-        // FIXME: Set new group name according to symbol.name
-    }
+    var disassamble = function(){
+        var startSymbolItemsCount = doc.symbolItems.length;
+
+        if (startSymbolItemsCount == 0){
+            return;
+        }
+        calls++;
+
+        $.writeln('Disassamble call #' + calls + ' with ' + startSymbolItemsCount + ' symbols');
+
+        for (var i = 0; i < doc.symbolItems.length; i++) {
+            var symbolItem = doc.symbolItems[i];
+            var symbol = symbolItem.symbol;
+
+            symbolItem.breakLink();
+
+            // FIXME: Set new group name according to symbol.name?
+        }
+
+        var finishSymbolItemsCount = doc.symbolItems.length;
+
+        if (finishSymbolItemsCount == startSymbolItemsCount){
+            throw new Error('Cannot disassamble symbols');
+        }
+
+        disassamble(); // Recusive call until all symbols are converted to shapes
+    };
+
+    disassamble();
 
     doc.symbols.removeAll();
 };
@@ -112,10 +136,13 @@ DocUtils.convertSymbolsToShapes = function(doc){
  * Set visibility of groups
  *
  * @param doc Document
- * @param names Array of group names
+ * @param names Array or string of group names
  * @param visible Visibility
  */
-DocUtils.setGroupsVisible = function(doc, names, visible){
+DocUtils.setGroupsVisibility = function(doc, names, visible){
+    if (!_.isArray(names)){
+        names = [names];
+    }
     for (var i = 0; i < doc.groupItems.length; i++) {
         var group = doc.groupItems[i];
 
@@ -132,5 +159,39 @@ DocUtils.setGroupsVisible = function(doc, names, visible){
         } else {
             // $.writeln("Skip group " + group.name);
         }
+    }
+}
+
+/**
+ * Unlock all layers
+ *
+ * @param doc Document
+ * @returns Array of layers which were locked
+ */
+DocUtils.unlockAllLayers = function(doc){
+    var lockedLayers = [];
+    for (var i = 0; i < doc.layers.length; i++) {
+        var layer = doc.layers[i];
+        layer.locked = false;
+        lockedLayers.push(layer);
+    }
+    return lockedLayers;
+}
+
+/**
+ * Get or create layer by name
+ *
+ * @param doc Document
+ * @param name Layer name
+ * @returns Layer
+ */
+DocUtils.getOrCreateLayerByName = function(doc, name){
+    try {
+        var layer = doc.layers.getByName(name);
+        return layer;
+    } catch (e) {
+        var layer = doc.layers.add();
+        layer.name = name;
+        return layer;
     }
 }
