@@ -4,3 +4,6 @@ var PRINT_LAYER_NAME = 'Print';
 
 var CUT_GROUP_NAME = 'Cut';
 var PRINT_GROUP_NAME = 'Print';
+
+var TEMP_FOLDER_NAME_SUFFIX = '/CutterTools';
+
