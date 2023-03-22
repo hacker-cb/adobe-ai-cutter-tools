@@ -1,3 +1,3 @@
-//@include "../regmarks_controller.jsxinc"
+//@include "../RegMarksController.jsxinc"
 
-regmarks_controller.show_panel();
+RegMarksController.run();

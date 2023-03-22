@@ -3,25 +3,14 @@
 //@include "regmarks_panel.jsxinc"
 //@include "RegMarks.jsxinc"
 
-var regmarks_controller = (function () {
+var RegMarksController = (function () {
     var regmarks = {};
 
     // FIXME: Eval regmarks_panel.jsxinc in this context
 
     var panel = regmarks_panel;
 
-    var get_active_doc = function(){
-        var docRef = app.activeDocument;
-        if (!docRef){
-            alert('No active document');
-            return null;
-        }
-        $.writeln('docRef:' + docRef);
-        $.writeln("document name: " + docRef.name);
-        return docRef;
-    };
-
-    var fill_presets = function(){
+    var fillPresets = function(){
         panel.items.preset.removeAll();
 
         for (profile in RegMarks.PROFILES.items){
@@ -30,7 +19,7 @@ var regmarks_controller = (function () {
 
     };
 
-    var select_preset = function(presetName){
+    var selectPreset = function(presetName){
         var found = panel.items.preset.find(presetName);
         if (found != null){
             panel.items.preset.selection = found;
@@ -41,7 +30,7 @@ var regmarks_controller = (function () {
     };
 
 
-    var fill_styles = function(){
+    var fillStyles = function(){
         panel.items.style.removeAll();
 
         for (profile in RegMarks.PATHSTYLE.items){
@@ -50,7 +39,7 @@ var regmarks_controller = (function () {
 
     };
 
-    var select_style = function(styleName){
+    var selectStyle = function(styleName){
         var found = panel.items.style.find(styleName);
         if (found != null){
             panel.items.style.selection = found;
@@ -60,7 +49,7 @@ var regmarks_controller = (function () {
         }
     };
 
-    var select_units = function(unitName){
+    var selectUnits = function(unitName){
         var found = panel.items.units.find(unitName);
         if (found != null){
             panel.items.units.selection = found;
@@ -70,7 +59,7 @@ var regmarks_controller = (function () {
         }
     }
 
-    var setup_handlers = function(){
+    var setupHandlers = function(){
 
         panel.items.preset.onChange = function(){
             var curSelection = this.selection ? this.selection.text : null;
@@ -79,8 +68,8 @@ var regmarks_controller = (function () {
 
             var profile = RegMarks.PROFILES.get(curSelection);
 
-            select_style(profile.pathStyle);
-            select_units(profile.units);
+            selectStyle(profile.pathStyle);
+            selectUnits(profile.units);
 
             panel.items.distance.text = profile.markDistance;
             panel.items.radius.text = profile.markDiameter;
@@ -96,8 +85,7 @@ var regmarks_controller = (function () {
         panel.items.create_regmarks_button.onClick = function(){
             $.writeln('create_regmarks_button');
 
-            var docRef = get_active_doc();
-            if (!docRef) return;
+            var doc = app.activeDocument;
 
             var profileName = panel.items.preset.selection.text;
             var preset = {
@@ -111,13 +99,13 @@ var regmarks_controller = (function () {
                 throw 'Unknown preset "' + profileName;
             }
 
-            var rm = new RegMarks(docRef);
+            var rm = new RegMarks(doc);
 
             rm.generateMarks(preset);
 
             // Refresh document
-            docRef.activeLayer.visible = false;
-            docRef.activeLayer.visible = true;
+            doc.activeLayer.visible = false;
+            doc.activeLayer.visible = true;
 
             app.redraw();
         }
@@ -125,10 +113,7 @@ var regmarks_controller = (function () {
         panel.items.clear_regmarks_button.onClick = function(){
             $.writeln('clear_regmarks_button');
 
-            var docRef = get_active_doc();
-            if (!docRef) return;
-
-            var rm = new RegMarks(docRef);
+            var rm = new RegMarks(app.activeDocument);
 
             rm.deleteLayer();
 
@@ -136,11 +121,11 @@ var regmarks_controller = (function () {
         }
     };
 
-    regmarks.show_panel = function(){
-        setup_handlers();
+    regmarks.run = function(){
+        setupHandlers();
 
-        fill_styles();
-        fill_presets();
+        fillStyles();
+        fillPresets();
 
         var last_preset_text = CutterToolsPrefs.get('regmarks.last_preset');
         if (!last_preset_text){
@@ -148,7 +133,7 @@ var regmarks_controller = (function () {
         }
 
 
-        select_preset(last_preset_text)
+        selectPreset(last_preset_text)
         panel.show();
     };
 
