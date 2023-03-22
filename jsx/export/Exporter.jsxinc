@@ -1,0 +1,171 @@
+//@include "../const.jsxinc"
+//@include "../lib/AppUtils.jsxinc"
+//@include "../lib/DocUtils.jsxinc"
+//@include "../lib/Progress.jsxinc"
+
+Exporter = (function() {
+    var em = {};
+
+    var splitObjectsToLayers = function(doc, progress) {
+
+        var cutLayer = DocUtils.getOrCreateLayerByName(doc, CUT_LAYER_NAME);
+        var printLayer = DocUtils.getOrCreateLayerByName(doc, PRINT_LAYER_NAME);
+
+        DocUtils.unlockAllLayers(doc);
+
+        // Move CUT layer to the top, print layer after it
+        cutLayer.move(doc, ElementPlacement.PLACEATBEGINNING);
+        printLayer.move(cutLayer, ElementPlacement.PLACEAFTER);
+
+        function getAllLayers(layers){
+            var result = [];
+            for (var i = 0; i < layers.length; i++) {
+                var layer = layers[i];
+                result.push(layer);
+                result = result.concat(getAllLayers(layer.layers));
+            }
+            return result;
+        }
+
+        var pluginLayers = [CUT_LAYER_NAME, PRINT_LAYER_NAME, REGMARKS_LAYER_NAME];
+
+        // Save other layers
+        var otherLayers = DocUtils.getAllLayers(doc, function(l){
+            return _.indexOf(pluginLayers, l.name) == -1;
+        });
+
+        var imp = progress.subProgress("Prepare", 50);
+        var itemsToMove = [];
+        for (var i = 0; i < doc.groupItems.length; i++) {
+            var group = doc.groupItems[i];
+
+            var targetLayer = null;
+            if (group.name == CUT_GROUP_NAME){
+                targetLayer = cutLayer;
+            }
+            if (group.name == PRINT_GROUP_NAME){
+                targetLayer = printLayer;
+            }
+            if (targetLayer){
+                itemsToMove.push({
+                    item: group,
+                    targetLayer: targetLayer
+                });
+            }
+            imp.setPercent(100 * i / doc.groupItems.length);
+        }
+        imp.setPercent(100);
+
+        var mp = progress.subProgress("Move", 100);
+        for (var i = 0; i < itemsToMove.length; i++) {
+            var item = itemsToMove[i];
+            try {
+                item.item.move(item.targetLayer, ElementPlacement.PLACEATEND);
+            } catch (e) {
+                throw "ERROR: moving group " + item.item.name + " from layer " + item.item.layer.name + " to layer " + item.targetLayer.name;
+            }
+            mp.setPercent(100 * i / itemsToMove.length);
+        };
+        mp.setPercent(100);
+    };
+
+    var reopenExportedCopy = function(doc, abIndex, progress) {
+        var ab = doc.artboards[abIndex];
+
+        var tmpFolder = new Folder(Folder.temp + TEMP_FOLDER_NAME_SUFFIX + '/ExportStaging');
+
+        var pdfOptions = new ExportForScreensPDFOptions();
+        var whatToExport = new ExportForScreensItemToExport();
+
+        pdfOptions.pdfPreset = AppUtils.getDefaultPDFPresetName();
+
+        var expectedFileName = tmpFolder.path + '/PDF/' + ab.name + '.pdf';
+        var exportedFile = new File(expectedFileName);
+
+        if (exportedFile.exists) {
+            exportedFile.remove();
+        }
+
+        whatToExport.artboards = abIndex + 1;
+
+        var result = doc.exportForScreens(
+            tmpFolder,
+            ExportForScreensType.SE_PDF,
+            pdfOptions,
+            whatToExport
+        );
+
+        if (!exportedFile.exists) {
+            throw "ERROR: file " + expectedFileName + " not found";
+        } else {
+            $.writeln('Exported artbord [' + abIndex + '] "' +  ab.name + '" to ' + expectedFileName);
+        }
+
+        var newDoc = app.open(exportedFile);
+
+        // FIXME: Delete temprary folder
+
+        progress.setPercent(100);
+
+        return newDoc;
+    };
+
+    em.run = function(doc, artboardIndexes, progress){
+        if (!progress) {
+            progress = new Progress();
+        }
+
+        for (var i = 0; i < artboardIndexes.length; i++) {
+            var abIndex = artboardIndexes[i];
+            var ab = doc.artboards[abIndex];
+
+            var abP = progress.subProgress(ab.name, 0);
+
+            var docCopy = null;
+
+            // Cleanup function to close the document copy
+            var cleanup = function(){
+                if (docCopy) {
+                    docCopy.close(SaveOptions.DONOTSAVECHANGES);
+                }
+            };
+
+            try
+            {
+                docCopy = reopenExportedCopy(doc, abIndex,
+                    abP.subProgress('duplicate', 50)
+                );
+
+                cleanup();
+
+                abP.setPercent(100);
+            } catch (e) {
+                cleanup();
+                throw e;
+            }
+        }
+
+
+        // var doc = app.activeDocument;
+
+        // var newDoc = DocUtils.duplicate(doc,
+        //     progress.subProgress("Duplicate", 40)
+        //     );
+
+        // DocUtils.convertSymbolsToShapes(newDoc,
+        //     progress.subProgress("Symbols to shapes", 60)
+        //     );
+
+        // splitObjectsToLayers(newDoc,
+        //     progress.subProgress("Split to layers", 70)
+        //     );
+
+        // DocUtils.removeUnusedLayers(newDoc,
+        //     progress.subProgress("Remove unused layers", 80)
+        //     );
+        // progress.setPercent(100);
+
+    };
+
+    return em;
+})();

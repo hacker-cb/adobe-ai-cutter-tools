@@ -1,5 +1,5 @@
 //@include "../../../lib/underscore-umd.js"
-//@include "../ExportManager.jsxinc"
+//@include "../Exporter.jsxinc"
 
 (function(){
     /*
@@ -137,7 +137,7 @@
                 artboardIndexes.push(abIndex);
             }
 
-            ExportManager.run(doc, artboardIndexes, progress);
+            Exporter.run(doc, artboardIndexes, progress);
 
             $.writeln('Export done!');
             currentOperation.text = DONE_TEXT;
