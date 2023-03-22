@@ -1,0 +1,36 @@
+AppUtils = {};
+
+/**
+ * Get default PDF preset name
+ *
+ * @returns {string}
+ */
+AppUtils.getDefaultPDFPresetName = function() {
+    // Preset: [Установки Illustrator по умолчанию]
+    // Preset: [PDF/X-1a:2001]
+    // Preset: [PDF/X-3:2002]
+    // Preset: [PDF/X-4:2008]
+    // Preset: [Высококачественная печать]
+    // Preset: [Наименьший размер файла]
+    // Preset: [Наименьший размер файла (PDF 1.6)]
+    // Preset: [Полиграфическое качество]
+
+    // FIXME: Is this preset always default?
+    return app.PDFPresetsList[0];
+};
+
+/**
+ * Get PDF preset by name
+ *
+ * @param name Preset name
+ * @returns {string}
+ */
+AppUtils.getPDFPresetByName = function(name) {
+    for (var i=0; i < app.PDFPresetsList.length; i++) {
+        if (app.PDFPresetsList[i] == name) {
+            return app.PDFPresets[i];
+        }
+    }
+    throw "Preset not found: " + name;
+};
+
