@@ -20,17 +20,17 @@ AppUtils.getDefaultPDFPresetName = function() {
 };
 
 /**
- * Get PDF preset by name
+ * Check if PDF preset exists
  *
  * @param name Preset name
- * @returns {string}
+ * @returns {boolean}
  */
-AppUtils.getPDFPresetByName = function(name) {
+AppUtils.hasPDFPreset = function(name) {
     for (var i=0; i < app.PDFPresetsList.length; i++) {
         if (app.PDFPresetsList[i] == name) {
-            return app.PDFPresetsList[i];
+            return true
         }
     }
-    throw "Preset not found: " + name;
+    return false;
 };
 
