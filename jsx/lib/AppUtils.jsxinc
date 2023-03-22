@@ -28,7 +28,7 @@ AppUtils.getDefaultPDFPresetName = function() {
 AppUtils.getPDFPresetByName = function(name) {
     for (var i=0; i < app.PDFPresetsList.length; i++) {
         if (app.PDFPresetsList[i] == name) {
-            return app.PDFPresets[i];
+            return app.PDFPresetsList[i];
         }
     }
     throw "Preset not found: " + name;
