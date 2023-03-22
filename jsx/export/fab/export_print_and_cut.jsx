@@ -136,7 +136,21 @@
                 artboardIndexes.push(abIndex);
             }
 
-            Exporter.run(doc, artboardIndexes, progress);
+            var options = {
+                exportTypes: {
+                    ALL: true,
+                    CUT: true,
+                    PRINT: true
+                },
+                exportPresets: {
+                    // FIXME: Fill from dialog elements
+                    ALL: '[PDF/X-4:2008]',
+                    CUT: '[PDF/X-3:2002]',
+                    PRINT: '[PDF/X-3:2002]'
+                }
+            };
+
+            Exporter.run(doc, artboardIndexes, options, progress);
 
             $.writeln('Export done!');
             currentOperation.text = DONE_TEXT;
