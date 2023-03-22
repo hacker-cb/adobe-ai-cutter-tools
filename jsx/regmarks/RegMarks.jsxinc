@@ -1,217 +1,217 @@
 //@include "../const.jsxinc"
 
-function RegMarks(doc) {
-    this.doc = doc;
-}
+var RegMarks = (function(){
 
-RegMarks.PATHSTYLE = {
-    items: {
-        'Black circles': {
-            'type': 'circles',
-            'stroke': false,
-            'fill': {
-                'color': {
-                    'black': 100,
-                    'cyan': 0,
-                    'magenta': 0,
-                    'yellow': 0,
+    RegMarks.PATHSTYLE = {
+        items: {
+            'Black circles': {
+                'type': 'circles',
+                'stroke': false,
+                'fill': {
+                    'color': {
+                        'black': 100,
+                        'cyan': 0,
+                        'magenta': 0,
+                        'yellow': 0,
+                    }
+                }
+            },
+        },
+
+        get: function(name){
+            return name in this.items ? this.items[name] : null;
+        }
+    };
+
+
+    RegMarks.PROFILES = {
+        items : {
+            'Vulcan DC-500VC (10mm border)': {
+                'bundled': true,
+                'units': 'mm',
+                'markDistance': 10.0,
+                'markDiameter': 5.0,
+                'pathStyle': 'Black circles',
+            },
+            'Vulcan DC-500VC (7mm border)': {
+                'bundled': true,
+                'units': 'mm',
+                'markDistance': 7.0,
+                'markDiameter': 5.0,
+                'pathStyle': 'Black circles',
+            },
+        },
+
+
+        get: function(name){
+            return name in this.items ? this.items[name] : null;
+        }
+    };
+
+    var getLayer = function(doc) {
+        try {
+            return doc.layers.getByName(REGMARKS_LAYER_NAME);
+        } catch (e){
+            return null;
+        }
+    };
+
+    var createLayer = function(doc) {
+        if (getLayer(doc)){
+            throw 'Layer "' + REGMARKS_LAYER_NAME + '" already exist';
+        }
+
+        var l = doc.layers.add();
+        l.name = REGMARKS_LAYER_NAME;
+
+        // Move layer to the end of list
+        l.locked = false;
+        l.move(doc, ElementPlacement.PLACEATEND);
+        l.locked = true
+
+        return l;
+    };
+
+    var clearLayer = function(doc) {
+        var l = getLayer(doc);
+
+        if (!l) {
+            $.writeln('Layer "' + REGMARKS_LAYER_NAME + '" not exist, nothing to clear')
+            return;
+        }
+
+        l.locked = false; // Unlock layer
+
+        while (l.pageItems.length > 0){
+            var item = l.pageItems[0];
+            //$.writeln('Deleting item: ' + item.name);
+            l.pageItems[0].remove();
+        }
+
+
+        l.locked = true; // Lock layer
+    };
+
+    RegMarks.deleteLayer = function(doc) {
+        var l = getLayer(doc);
+
+        if (!l) {
+            $.writeln('Layer "' + REGMARKS_LAYER_NAME + '" not exist, nothing to delete')
+            return false;
+        }
+
+        l.locked = false; // Unlock layer
+        l.remove();
+
+        return true;
+    };
+
+    RegMarks.generateMarks = function(doc, preset){
+
+        // If preset is onject, use it as is
+        var p = typeof preset === 'object' ? preset : RegMarks.PROFILES.get(preset);
+
+        if (!p) {
+            throw 'Unknown profile "' + preset;
+        }
+
+        var pathStyle = RegMarks.PATHSTYLE.get(p.pathStyle);
+
+        if (!pathStyle) {
+            throw 'Unknown pathStyle "' + p.pathStyle;
+        }
+
+        var layer = getLayer();
+        if (!layer) {
+            layer = createLayer(doc);
+        }
+
+        doc.activeLayer = layer;
+
+        clearLayer(doc);
+
+        layer.locked = false; // Unlock layer
+
+        // Create new items
+        for (var i = 0; i <  doc.artboards.length; i++) {
+            var ab = doc.artboards[i];
+
+            var abRect = ab.artboardRect; // left, top, right, bottom (in `pt` units)
+
+            var left = abRect[0];
+            var top = abRect[1];
+            var right = abRect[2];
+            var bottom = abRect[3];
+
+            var width = right - left;
+            var height = top - bottom;
+
+            $.writeln('Creating regmarks for artboard: "' + ab.name + '", size: [' + abRect + '] (' + width + '*' + height + ')');
+
+            var dist = new UnitValue(p.markDistance, p.units).as('pt');
+            var diam = new UnitValue(p.markDiameter, p.units).as('pt');
+
+            var group = layer.groupItems.add();
+            group.name = ab.name;
+
+            // Create circle in each corner.
+            // pathItems.ellipse([top][, left][, width][, height])
+            var marks = [
+                // left top
+                group.pathItems.ellipse(top - dist, left + dist, diam, diam),
+                // right top
+                group.pathItems.ellipse(top - dist, right - dist - diam, diam, diam),
+                // left bottom
+                group.pathItems.ellipse(bottom + dist + diam, left + dist, diam, diam),
+                // right bottom
+                group.pathItems.ellipse(bottom + dist +diam, right - dist - diam, diam, diam),
+            ];
+
+            marks[0].name = ab.name + ' [left top]';
+            marks[1].name = ab.name + ' [right top]';
+            marks[2].name = ab.name + ' [left bottom]';
+            marks[3].name = ab.name + ' [right bottom]';
+
+            // Apply path style
+            for (var j = 0; j < marks.length; j++) {
+
+                // Fill
+                if (!pathStyle.fill){
+                    marks[j].filled = false;
+                } else {
+                    marks[j].filled = true;
+
+                    var c = new CMYKColor();
+                    c.black = pathStyle.fill.color.black;
+                    c.cyan = pathStyle.fill.color.cyan;
+                    c.magenta = pathStyle.fill.color.magenta;
+                    c.yellow = pathStyle.fill.color.yellow;
+
+                    marks[j].fillColor = c;
+                }
+
+                // Stroke
+                if (!pathStyle.stroke){
+                    marks[j].stroked = false;
+                } else {
+                    marks[j].stroked = true;
+
+                    var c = new CMYKColor();
+                    c.black = pathStyle.stroke.color.black;
+                    c.cyan = pathStyle.stroke.color.cyan;
+                    c.magenta = pathStyle.stroke.color.magenta;
+                    c.yellow = pathStyle.stroke.color.yellow;
+
+                    marks[j].strokeColor = c;
                 }
             }
-        },
-    },
-
-    get: function(name){
-        return name in this.items ? this.items[name] : null;
-    }
-};
-
-
-RegMarks.PROFILES = {
-    items : {
-        'Vulcan DC-500VC (10mm border)': {
-            'bundled': true,
-            'units': 'mm',
-            'markDistance': 10.0,
-            'markDiameter': 5.0,
-            'pathStyle': 'Black circles',
-        },
-        'Vulcan DC-500VC (7mm border)': {
-            'bundled': true,
-            'units': 'mm',
-            'markDistance': 7.0,
-            'markDiameter': 5.0,
-            'pathStyle': 'Black circles',
-        },
-    },
-
-
-    get: function(name){
-        return name in this.items ? this.items[name] : null;
-    }
-};
-
-
-RegMarks.prototype._getLayer = function() {
-    try {
-        return this.doc.layers.getByName(REGMARKS_LAYER_NAME);
-    } catch (e){
-        return null;
-    }
-}
-
-RegMarks.prototype._createLayer = function() {
-    if (this._getLayer()){
-        throw 'Layer "' + REGMARKS_LAYER_NAME + '" already exist';
-    }
-
-    var l = this.doc.layers.add();
-    l.name = REGMARKS_LAYER_NAME;
-
-    // Move layer to the end of list
-    l.locked = false;
-    l.move(this.doc, ElementPlacement.PLACEATEND);
-    l.locked = true
-
-    return l;
-}
-
-RegMarks.prototype._clearLayer = function() {
-    var l = this._getLayer();
-
-    if (!l) {
-        $.writeln('Layer "' + REGMARKS_LAYER_NAME + '" not exist, nothing to clear')
-        return;
-    }
-
-    l.locked = false; // Unlock layer
-
-    while (l.pageItems.length > 0){
-        var item = l.pageItems[0];
-        //$.writeln('Deleting item: ' + item.name);
-        l.pageItems[0].remove();
-    }
-
-
-    l.locked = true; // Lock layer
-}
-
-RegMarks.prototype.deleteLayer = function() {
-    var l = this._getLayer();
-
-    if (!l) {
-        $.writeln('Layer "' + REGMARKS_LAYER_NAME + '" not exist, nothing to delete')
-        return false;
-    }
-
-    l.locked = false; // Unlock layer
-    l.remove();
-
-    return true;
-}
-
-
-RegMarks.prototype.generateMarks = function(preset){
-
-    // If preset is onject, use it as is
-    var p = typeof preset === 'object' ? preset : RegMarks.PROFILES.get(preset);
-
-    if (!p) {
-        throw 'Unknown profile "' + preset;
-    }
-
-    var pathStyle = RegMarks.PATHSTYLE.get(p.pathStyle);
-
-    if (!pathStyle) {
-        throw 'Unknown pathStyle "' + p.pathStyle;
-    }
-
-    var layer = this._getLayer();
-    if (!layer) {
-        layer = this._createLayer();
-    }
-
-    this.doc.activeLayer = layer;
-
-    this._clearLayer();
-
-    layer.locked = false; // Unlock layer
-
-    // Create new items
-    for (var i = 0; i <  this.doc.artboards.length; i++) {
-        var ab = this.doc.artboards[i];
-
-        var abRect = ab.artboardRect; // left, top, right, bottom (in `pt` units)
-
-        var left = abRect[0];
-        var top = abRect[1];
-        var right = abRect[2];
-        var bottom = abRect[3];
-
-        var width = right - left;
-        var height = top - bottom;
-
-        $.writeln('Creating regmarks for artboard: "' + ab.name + '", size: [' + abRect + '] (' + width + '*' + height + ')');
-
-        var dist = new UnitValue(p.markDistance, p.units).as('pt');
-        var diam = new UnitValue(p.markDiameter, p.units).as('pt');
-
-        var group = layer.groupItems.add();
-        group.name = ab.name;
-
-        // Create circle in each corner.
-        // pathItems.ellipse([top][, left][, width][, height])
-        var marks = [
-            // left top
-            group.pathItems.ellipse(top - dist, left + dist, diam, diam),
-            // right top
-            group.pathItems.ellipse(top - dist, right - dist - diam, diam, diam),
-            // left bottom
-            group.pathItems.ellipse(bottom + dist + diam, left + dist, diam, diam),
-            // right bottom
-            group.pathItems.ellipse(bottom + dist +diam, right - dist - diam, diam, diam),
-        ];
-
-        marks[0].name = ab.name + ' [left top]';
-        marks[1].name = ab.name + ' [right top]';
-        marks[2].name = ab.name + ' [left bottom]';
-        marks[3].name = ab.name + ' [right bottom]';
-
-        // Apply path style
-        for (var j = 0; j < marks.length; j++) {
-
-            // Fill
-            if (!pathStyle.fill){
-                marks[j].filled = false;
-            } else {
-                marks[j].filled = true;
-
-                var c = new CMYKColor();
-                c.black = pathStyle.fill.color.black;
-                c.cyan = pathStyle.fill.color.cyan;
-                c.magenta = pathStyle.fill.color.magenta;
-                c.yellow = pathStyle.fill.color.yellow;
-
-                marks[j].fillColor = c;
-            }
-
-            // Stroke
-            if (!pathStyle.stroke){
-                marks[j].stroked = false;
-            } else {
-                marks[j].stroked = true;
-
-                var c = new CMYKColor();
-                c.black = pathStyle.stroke.color.black;
-                c.cyan = pathStyle.stroke.color.cyan;
-                c.magenta = pathStyle.stroke.color.magenta;
-                c.yellow = pathStyle.stroke.color.yellow;
-
-                marks[j].strokeColor = c;
-            }
         }
-    }
 
-    layer.locked = true; // Lock layer
+        layer.locked = true; // Lock layer
 
-    return true;
-}
+        return true;
+    };
+
+    return RegMarks;
+})();
+

@@ -99,9 +99,7 @@ var RegMarksController = (function () {
                 throw 'Unknown preset "' + profileName;
             }
 
-            var rm = new RegMarks(doc);
-
-            rm.generateMarks(preset);
+            RegMarks.generateMarks(doc, preset);
 
             // Refresh document
             doc.activeLayer.visible = false;
@@ -113,9 +111,7 @@ var RegMarksController = (function () {
         panel.items.clear_regmarks_button.onClick = function(){
             $.writeln('clear_regmarks_button');
 
-            var rm = new RegMarks(app.activeDocument);
-
-            rm.deleteLayer();
+            RegMarks.deleteLayer(app.activeDocument);
 
             app.redraw();
         }
