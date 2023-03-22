@@ -26,85 +26,86 @@ ExportManager = (function() {
             return result;
         }
 
+        var pluginLayers = [CUT_LAYER_NAME, PRINT_LAYER_NAME, REGMARKS_LAYER_NAME];
+
         // Save other layers
         var otherLayers = DocUtils.getAllLayers(doc, function(l){
-            // FIXME: Add regmarks layers
-            return l.name != CUT_LAYER_NAME && l.name != PRINT_LAYER_NAME;
+            return _.indexOf(pluginLayers, l.name) == -1;
         });
 
-        // Move all groups to the correct layer
-        // for (var i = 0; i < otherLayers.length; i++) {
-        //     var layer = otherLayers[i];
-        //     while(true){
-        //         var item = layer.groupItems.getByName(CUT_GROUP_NAME);
-        //         if (item){
-        //             try {
-        //                 item.move(cutLayer, ElementPlacement.PLACEATEND);
-        //                 $.writeln("Moved group " + item.name + " to layer " + cutLayer.name);
-        //             } catch (e) {
-        //                 $.writeln("Error moving from layer " + layer.name + " to layer " + cutLayer.name);
-        //             }
-        //         } else {
-        //             break;
-        //         }
-        //     }
-        //     while(true){
-        //         var item = layer.groupItems.getByName(PRINT_GROUP_NAME);
-        //         if (item){
-        //             try {
-        //                 item.move(printLayer, ElementPlacement.PLACEATEND);
-        //             } catch (e) {
-        //                 $.writeln("Error moving from layer " + layer.name + " to layer " + printLayer.name);
-        //             }
-        //             $.writeln("Moved group " + item.name + " to layer " + printLayer.name);
-        //         } else {
-        //             break;
-        //         }
-        //     }
-        //     // FIXME: update percent
-        // }
+        var imp = progress.subProgress("Prepare", 50);
+        var itemsToMove = [];
+        for (var i = 0; i < doc.groupItems.length; i++) {
+            var group = doc.groupItems[i];
 
-        progress.setPercent(100);
+            var targetLayer = null;
+            if (group.name == CUT_GROUP_NAME){
+                targetLayer = cutLayer;
+            }
+            if (group.name == PRINT_GROUP_NAME){
+                targetLayer = printLayer;
+            }
+            if (targetLayer){
+                itemsToMove.push({
+                    item: group,
+                    targetLayer: targetLayer
+                });
+            }
+            imp.setPercent(100 * i / doc.groupItems.length);
+        }
+        imp.setPercent(100);
+
+        var mp = progress.subProgress("Move", 100);
+        for (var i = 0; i < itemsToMove.length; i++) {
+            var item = itemsToMove[i];
+            try {
+                item.item.move(item.targetLayer, ElementPlacement.PLACEATEND);
+            } catch (e) {
+                throw "ERROR: moving group " + item.item.name + " from layer " + item.item.layer.name + " to layer " + item.targetLayer.name;
+            }
+            mp.setPercent(100 * i / itemsToMove.length);
+        };
+        mp.setPercent(100);
     };
 
+    var runExport = function(progress, artBoardNames){
 
-    var runExport = function(progress){
+        try {
+            var srcDoc = app.activeDocument;
 
-        var srcDoc = app.activeDocument;
+            var doc = DocUtils.duplicate(srcDoc,
+                progress.subProgress("Duplicate", 40)
+                );
 
-        var doc = DocUtils.duplicate(srcDoc,
-            progress.subProgress("Duplicate", 60)
-            );
+            DocUtils.convertSymbolsToShapes(doc,
+                progress.subProgress("Symbols to shapes", 60)
+                );
 
-        DocUtils.convertSymbolsToShapes(doc,
-            progress.subProgress("Symbols to shapes", 80)
-            );
+            splitObjectsToLayers(doc,
+                progress.subProgress("Split to layers", 70)
+                );
 
-        splitObjectsToLayers(doc,
-            progress.subProgress("Split to layers", 95)
-            );
+            DocUtils.removeUnusedLayers(doc,
+                progress.subProgress("Remove unused layers", 80)
+                );
 
-        progress.setPercent(100);
+            // Export
+            // var ep = progress.subProgress("Exporting", 100);
+            // for (var i = 0; i < artBoardNames.length; i++) {
+            //     var artBoardName = artBoardNames[i];
+            //     exportArtBoardAsPdf(doc, artBoardName);
+            //     ep.setPercent(100 * i / artBoardNames.length);
+            // }
 
-        app.redraw();
+            progress.setPercent(100);
 
-        // app.activeDocument = srcDoc;
-
-        // for (var i = 0; i < doc.artboards.length; i++) {
-            // var artBoard = doc.artboards[i];
-            //var path = doc.path + "/" + artLayer.name + ".pdf";
-            //$.writeln("Exporting: " + path);
-            //docCopy.exportFile(path, ExportType.PDF_TYPE, exportOptionsPDF);
-            //docCopy.close(SaveOptions.DONOTSAVECHANGES);
-        // }
-
-        $.writeln("Export All");
-        // alert("Export All");
-    }
+            app.redraw();
+        } catch (e) {
+            alert(e);
+        }
+    };
 
     em.exportPrintAndCut = function(){
-
-
         /*
         Code for Import https://scriptui.joonas.me — (Triple click to select):
         {"activeId":0,"items":{"item-0":{"id":0,"type":"Dialog","parentId":false,"style":{"enabled":true,"varName":"exportDialog","windowType":"Dialog","creationProps":{"su1PanelCoordinates":false,"maximizeButton":false,"minimizeButton":false,"independent":false,"closeButton":false,"borderless":false,"resizeable":false},"text":"PlotterTools export","preferredSize":[0,0],"margins":16,"orientation":"column","spacing":10,"alignChildren":["fill","top"]}},"item-1":{"id":1,"type":"Progressbar","parentId":0,"style":{"enabled":true,"varName":"progressBar","preferredSize":[400,10],"alignment":null,"helpTip":null}},"item-3":{"id":3,"type":"StaticText","parentId":0,"style":{"enabled":true,"varName":"currentOperation","creationProps":{"truncate":"none","multiline":false,"scrolling":false},"softWrap":false,"text":"Operation","justify":"left","preferredSize":[0,0],"alignment":null,"helpTip":null}},"item-4":{"id":4,"type":"Button","parentId":5,"style":{"enabled":true,"varName":"startButton","text":"Run","justify":"center","preferredSize":[0,0],"alignment":null,"helpTip":null}},"item-5":{"id":5,"type":"Group","parentId":0,"style":{"enabled":true,"varName":"buttonsGroup","preferredSize":[0,0],"margins":0,"orientation":"row","spacing":10,"alignChildren":["center","center"],"alignment":null}},"item-6":{"id":6,"type":"Button","parentId":5,"style":{"enabled":true,"varName":"closeButton","text":"Close","justify":"center","preferredSize":[0,0],"alignment":null,"helpTip":null}},"item-7":{"id":7,"type":"StaticText","parentId":0,"style":{"enabled":true,"varName":"currentStage","creationProps":{"truncate":"none","multiline":false,"scrolling":false},"softWrap":false,"text":"Stage","justify":"left","preferredSize":[0,0],"alignment":"right","helpTip":null}}},"order":[0,3,1,7,5,4,6],"settings":{"importJSON":true,"indentSize":false,"cepExport":false,"includeCSSJS":true,"showDialog":false,"functionWrapper":false,"afterEffectsDockable":false,"itemReferenceList":"none"}}
@@ -163,8 +164,16 @@ ExportManager = (function() {
         startButton.onClick = function() {
             startButton.enabled = false;
             closeButton.enabled = false;
+            var doc = app.activeDocument;
 
-            runExport(progress);
+            // FIXME: Use dialog to select artboards
+            var artBoardNames = [];
+            for (var i = 0; i < doc.artboards.length; i++) {
+                var artBoard = doc.artboards[i];
+                artBoardNames.push(artBoard.name);
+            }
+
+            runExport(progress, artBoardNames);
 
             // startButton.enabled = true;
             closeButton.enabled = true;
