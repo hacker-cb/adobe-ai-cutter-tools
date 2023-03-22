@@ -7,3 +7,7 @@ var PRINT_GROUP_NAME = 'Print';
 
 var TEMP_FOLDER_NAME_SUFFIX = '/CutterTools';
 
+var EXPORT_ALL_PREFIX = '[ALL] ';
+var EXPORT_CUT_PREFIX = '[CUT] ';
+var EXPORT_PRINT_PREFIX = '[PRINT] ';
+
