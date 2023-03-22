@@ -75,9 +75,15 @@
     currentOperation.text = IDLE_TEXT;
 
     //////////////////////////////////////////////////////////////
-    // Local functions
+    // Local variables
     //////////////////////////////////////////////////////////////
     var doc = app.activeDocument;
+
+    var defaultExportPath = doc.path + '/' + /*basename*/doc.name.replace(/\.[^\.]+$/, '');
+
+    //////////////////////////////////////////////////////////////
+    // Local functions
+    //////////////////////////////////////////////////////////////
 
     var fillArtBoardsList = function() {
         var doc = app.activeDocument;
@@ -136,7 +142,11 @@
                 artboardIndexes.push(abIndex);
             }
 
+            // FIXME: Fill from dialog elements if custom was set
+            var exportFolderPath = defaultExportPath;
+
             var options = {
+                path: exportFolderPath,
                 exportTypes: {
                     ALL: true,
                     CUT: true,

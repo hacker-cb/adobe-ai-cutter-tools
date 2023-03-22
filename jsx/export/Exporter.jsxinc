@@ -99,22 +99,23 @@ Exporter = (function() {
         if (!progress) {
             progress = new Progress();
         }
-
         if (options.exportTypes.ALL && !options.exportTypes.CUT && !options.exportTypes.PRINT) {
             throw "No export types selected";
+        }
+        if (!options.path){
+            throw "No export path specified";
         }
 
         // Make progress wrapper
         progress = progress.subProgress("Export", 100);
 
-        var docBaseName = origDoc.name.replace(/\.[^\.]+$/, '');
-
         // FIXME: Select dialog or pass?
-        var exportFolder = new Folder(origDoc.path + '/' + docBaseName);
+        var exportFolder = new Folder(options.path);
 
         // If folder does not exist, create it
         if (!exportFolder.exists) {
             exportFolder.create();
+            $.writeln("Created folder: " + exportFolder.fsName);
         }
 
         $.writeln("Exporting to folder: " + exportFolder.fsName);
