@@ -1,6 +1,7 @@
+//@include "../const.jsxinc"
+
 function RegMarks(doc) {
     this.doc = doc;
-    this.layerName = 'plotter_marks';
 }
 
 RegMarks.PATHSTYLE = {
@@ -52,7 +53,7 @@ RegMarks.PROFILES = {
 
 RegMarks.prototype._getLayer = function() {
     try {
-        return this.doc.layers.getByName(this.layerName);
+        return this.doc.layers.getByName(REGMARKS_LAYER_NAME);
     } catch (e){
         return null;
     }
@@ -60,11 +61,11 @@ RegMarks.prototype._getLayer = function() {
 
 RegMarks.prototype._createLayer = function() {
     if (this._getLayer()){
-        throw 'Layer "' + this.layerName + '" already exist';
+        throw 'Layer "' + REGMARKS_LAYER_NAME + '" already exist';
     }
 
     var l = this.doc.layers.add();
-    l.name = this.layerName;
+    l.name = REGMARKS_LAYER_NAME;
 
     // Move layer to the end of list
     l.locked = false;
@@ -78,7 +79,7 @@ RegMarks.prototype._clearLayer = function() {
     var l = this._getLayer();
 
     if (!l) {
-        $.writeln('Layer "' + this.layerName + '" not exist, nothing to clear')
+        $.writeln('Layer "' + REGMARKS_LAYER_NAME + '" not exist, nothing to clear')
         return;
     }
 
@@ -98,7 +99,7 @@ RegMarks.prototype.deleteLayer = function() {
     var l = this._getLayer();
 
     if (!l) {
-        $.writeln('Layer "' + this.layerName + '" not exist, nothing to delete')
+        $.writeln('Layer "' + REGMARKS_LAYER_NAME + '" not exist, nothing to delete')
         return false;
     }
 

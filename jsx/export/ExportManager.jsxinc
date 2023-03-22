@@ -1,14 +1,9 @@
+//@include "../const.jsxinc"
 //@include "../lib/DocUtils.jsxinc"
 //@include "../lib/Progress.jsxinc"
 
 ExportManager = (function() {
     var em = {};
-
-    var CUT_LAYER_NAME = 'Cut';
-    var PRINT_LAYER_NAME = 'Print';
-
-    var CUT_GROUP_NAME = 'Cut';
-    var PRINT_GROUP_NAME = 'Print';
 
     var splitObjectsToLayers = function(doc) {
 

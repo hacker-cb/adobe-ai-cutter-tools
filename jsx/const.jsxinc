@@ -1,0 +1,6 @@
+var REGMARKS_LAYER_NAME = 'Regmarks';
+var CUT_LAYER_NAME = 'Cut';
+var PRINT_LAYER_NAME = 'Print';
+
+var CUT_GROUP_NAME = 'Cut';
+var PRINT_GROUP_NAME = 'Print';
