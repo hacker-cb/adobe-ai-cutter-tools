@@ -1,3 +1,4 @@
+//@include "../const.jsxinc"
 //@include "../../lib/underscore-umd.js"
 //@include "./Progress.jsxinc"
 
@@ -7,107 +8,43 @@ DocUtils = {};
  * Make copy of document
  *
  * @param doc Source document
- * @param progress Progress instance
  * @returns
  */
-DocUtils.duplicate = function(doc, progress) {
+DocUtils.duplicate = function(doc) {
+    var tmpFolder = new Folder(Folder.temp + TEMP_FOLDER_NAME_SUFFIX + '/ExportStaging');
 
-    // Set empty progress if not set
-    if (!progress) progress = new Progress();
+    var prefix = '_TMP_';
+    var docBaseName = doc.name.replace(/\.[^\.]+$/, '');
+    var exportedFile = new File(tmpFolder.path + '/PDF/' + prefix + docBaseName + '.pdf');
 
-    // See https://community.adobe.com/t5/illustrator-discussions/copy-artboard-and-art-to-another-document/m-p/3907417/page/2#M10827
-
-    // Save source docuemtn data
-    var srcDocData = {
-        documentColorSpace: doc.documentColorSpace,
-        units: doc.rulerUnits,
-        width: doc.width,
-        height: doc.height,
-        rulerOrigin: doc.rulerOrigin,
-    };
-
-    // Save source artboard data
-    var srcAbData = [];
-    for (var i = 0; i < doc.artboards.length; i++) {
-        var srcAb = doc.artboards[i];
-        srcAbData.push({
-            name: srcAb.name,
-            artboardRect: srcAb.artboardRect,
-            rulerOrigin: srcAb.rulerOrigin,
-        })
+    if (exportedFile.exists) {
+        exportedFile.remove();
     }
 
-    // This actually does not needed.
-    //var docPreset = new DocumentPreset();
-    //docPreset.units = srcDocData.units;
-    //var dstDoc = app.documents.addDocument(srcDocData.documentColorSpace, docPreset);
+    var whatToExport = new ExportForScreensItemToExport();
+    whatToExport.artboards = '';
+    whatToExport.document = true;
 
-    // Create new document
-    var dstDoc = app.documents.add(srcDocData.documentColorSpace);
-    dstDoc.rulerOrigin = srcDocData.rulerOrigin;
+    var pdfOptions = new ExportForScreensPDFOptions();
+    pdfOptions.pdfPreset = AppUtils.getDefaultPDFPresetName();
 
-    // Create ArtBoards
-    var abp = progress.subProgress('Creating artboards', 10);
-    var defaultArtboard = dstDoc.artboards[0];
-    for (var i = 0; i < srcAbData.length; i++) {
-        var ab = dstDoc.artboards.add(srcAbData[i].artboardRect);
-        ab.name = srcAbData[i].name;
-        ab.rulerOrigin = srcAbData[i].rulerOrigin;
+    doc.exportForScreens(
+        tmpFolder,
+        ExportForScreensType.SE_PDF,
+        pdfOptions,
+        whatToExport,
+        prefix
+    );
 
-        abp.setPercent(i / srcAbData.length * 100);
+    if (!exportedFile.exists) {
+        throw "ERROR: file " + exportedFile.fsName + " not found";
+    } else {
+        $.writeln('Exported document to ' + exportedFile.fsName);
     }
-    defaultArtboard.remove(); // Remove default artboard
-    abp.setPercent(100);
 
+    var newDoc = app.open(exportedFile);
 
-    // Duplicate layers structure
-    var dlp = progress.subProgress('Duplicate layers structure', 20);
-    var lockedLayers = [];
-    var defaultLayer = dstDoc.layers[0];
-    for (var i = 0; i < doc.layers.length; i++) {
-        var srcLayer = doc.layers[i];
-        var dstLayer = dstDoc.layers.add();
-
-        dstLayer.move(dstDoc, ElementPlacement.PLACEATEND);
-
-        dstLayer.name = srcLayer.name;
-        dstLayer.visible = srcLayer.visible;
-
-        //dstLayer.locked = srcLayer.locked; // We lock later
-        if (srcLayer.locked) {
-            lockedLayers.push(dstLayer);
-        }
-
-        dlp.setPercent(i / doc.layers.length * 100);
-    }
-    defaultLayer.remove(); // Remove default layer
-    dlp.setPercent(100);
-
-
-    // Copy page items
-    var cpip = progress.subProgress('Copy page items', 95);
-    for (var i = 0; i < doc.pageItems.length; i++) {
-        var srcItem = doc.pageItems[i];
-        if (srcItem.parent instanceof Layer) {
-            var dstItem = srcItem.duplicate(dstDoc.layers[srcItem.layer.name], ElementPlacement.PLACEATEND);
-            dstItem.left = srcItem.left;
-            dstItem.top = srcItem.top;
-        }
-        cpip.setPercent(i / doc.pageItems.length * 100);
-    }
-    cpip.setPercent(100);
-
-    // Lock locked layers back
-    var lockLockedLayersProgress = progress.subProgress('Lock locked layers', 100);
-    for (var i = 0; i < lockedLayers.length; i++) {
-        lockedLayers[i].locked = true;
-        lockLockedLayersProgress.setPercent(i / lockedLayers.length * 100);
-    }
-    lockLockedLayersProgress.setPercent(100);
-
-    progress.setPercent(100);
-
-    return dstDoc;
+    return newDoc;
 };
 
 /**

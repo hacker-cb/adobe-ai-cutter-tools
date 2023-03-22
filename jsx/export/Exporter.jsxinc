@@ -2,6 +2,7 @@
 //@include "../lib/AppUtils.jsxinc"
 //@include "../lib/DocUtils.jsxinc"
 //@include "../lib/Progress.jsxinc"
+//@include "../../lib/json2.js"
 
 Exporter = (function() {
     var em = {};
@@ -34,7 +35,7 @@ Exporter = (function() {
             return _.indexOf(pluginLayers, l.name) == -1;
         });
 
-        var imp = progress.subProgress("Prepare", 50);
+        var imp = progress.subProgress("prepare", 50);
         var itemsToMove = [];
         for (var i = 0; i < doc.groupItems.length; i++) {
             var group = doc.groupItems[i];
@@ -56,7 +57,7 @@ Exporter = (function() {
         }
         imp.setPercent(100);
 
-        var mp = progress.subProgress("Move", 100);
+        var mp = progress.subProgress("move", 100);
         for (var i = 0; i < itemsToMove.length; i++) {
             var item = itemsToMove[i];
             try {
@@ -69,101 +70,169 @@ Exporter = (function() {
         mp.setPercent(100);
     };
 
-    var reopenExportedCopy = function(doc, abIndex, progress) {
-        var ab = doc.artboards[abIndex];
+    var exportArtBoards = function(doc, artboardIndexes, exportFolder, opts) {
 
-        var tmpFolder = new Folder(Folder.temp + TEMP_FOLDER_NAME_SUFFIX + '/ExportStaging');
+        $.writeln("Exporting artboards [" + artboardIndexes.join(',') + "] with options: " + JSON.stringify(opts));
+
+        if (!AppUtils.hasPDFPreset(opts.pdfPreset)) {
+            throw "PDF preset '" + opts.pdfPreset + "' not found";
+        }
+
+        var whatToExport = new ExportForScreensItemToExport();
+        // Artboard indexes are 0-based, but exportForScreens expects 1-based
+        whatToExport.artboards = _.map(artboardIndexes, function(idx){ return idx + 1; }).join(',');
 
         var pdfOptions = new ExportForScreensPDFOptions();
-        var whatToExport = new ExportForScreensItemToExport();
+        pdfOptions.pdfPreset = opts.pdfPreset;
 
-        pdfOptions.pdfPreset = AppUtils.getDefaultPDFPresetName();
-
-        var expectedFileName = tmpFolder.path + '/PDF/' + ab.name + '.pdf';
-        var exportedFile = new File(expectedFileName);
-
-        if (exportedFile.exists) {
-            exportedFile.remove();
-        }
-
-        whatToExport.artboards = abIndex + 1;
-
-        var result = doc.exportForScreens(
-            tmpFolder,
+        doc.exportForScreens(
+            exportFolder,
             ExportForScreensType.SE_PDF,
             pdfOptions,
-            whatToExport
+            whatToExport,
+            opts.prefix
         );
-
-        if (!exportedFile.exists) {
-            throw "ERROR: file " + expectedFileName + " not found";
-        } else {
-            $.writeln('Exported artbord [' + abIndex + '] "' +  ab.name + '" to ' + expectedFileName);
-        }
-
-        var newDoc = app.open(exportedFile);
-
-        // FIXME: Delete temprary folder
-
-        progress.setPercent(100);
-
-        return newDoc;
     };
 
-    em.run = function(doc, artboardIndexes, progress){
+
+    em.run = function(origDoc, artboardIndexes, progress){
         if (!progress) {
             progress = new Progress();
         }
 
-        for (var i = 0; i < artboardIndexes.length; i++) {
-            var abIndex = artboardIndexes[i];
-            var ab = doc.artboards[abIndex];
+        // Make progress wrapper
+        progress = progress.subProgress("Export", 100);
 
-            var abP = progress.subProgress(ab.name, 0);
+        var docBaseName = origDoc.name.replace(/\.[^\.]+$/, '');
 
-            var docCopy = null;
+        // FIXME: Select dialog or pass?
+        var exportFolder = new Folder(origDoc.path + '/' + docBaseName);
 
-            // Cleanup function to close the document copy
-            var cleanup = function(){
-                if (docCopy) {
-                    docCopy.close(SaveOptions.DONOTSAVECHANGES);
-                }
-            };
+        // If folder does not exist, create it
+        if (!exportFolder.exists) {
+            exportFolder.create();
+        }
 
-            try
-            {
-                docCopy = reopenExportedCopy(doc, abIndex,
-                    abP.subProgress('duplicate', 50)
-                );
+        $.writeln("Exporting to folder: " + exportFolder.fsName);
 
-                cleanup();
+        var abCount = artboardIndexes.length;
 
-                abP.setPercent(100);
-            } catch (e) {
-                cleanup();
-                throw e;
-            }
+        // Collect artboards to export
+        var artBoardNames = [];
+        for (var i = 0; i < abCount; i++) {
+            var ab = origDoc.artboards[artboardIndexes[i]];
+            artBoardNames.push(ab.name);
         }
 
 
-        // var doc = app.activeDocument;
+        var docCopy = null;
 
-        // var newDoc = DocUtils.duplicate(doc,
-        //     progress.subProgress("Duplicate", 40)
-        //     );
+        // Cleanup function to close the document copy
+        var cleanup = function(){
+            if (docCopy) {
+                docCopy.close(SaveOptions.DONOTSAVECHANGES);
+            }
+        };
 
-        // DocUtils.convertSymbolsToShapes(newDoc,
-        //     progress.subProgress("Symbols to shapes", 60)
-        //     );
+        try
+        {
+            docCopy = DocUtils.duplicate(origDoc);
 
-        // splitObjectsToLayers(newDoc,
-        //     progress.subProgress("Split to layers", 70)
-        //     );
+            // Unlock all layers
+            var allLayers = DocUtils.getAllLayers(docCopy);
+            for (var i = 0; i < allLayers.length; i++) {
+                allLayers[i].locked = false;
+            }
 
-        // DocUtils.removeUnusedLayers(newDoc,
-        //     progress.subProgress("Remove unused layers", 80)
-        //     );
-        // progress.setPercent(100);
+            progress.setPercent(10);
+
+            // Delete unused artboards and its content
+            var abLength = docCopy.artboards.length;
+            //for (var i = 0; i < docCopy.artboards.length; i++) {
+            for (var i = abLength - 1; i >= 0; i--) {
+                var ab = docCopy.artboards[i];
+
+                docCopy.artboards.setActiveArtboardIndex(i);
+
+                if (_.indexOf(artBoardNames, ab.name) == -1) {
+                    docCopy.selectObjectsOnActiveArtboard();
+                    app.cut();
+                    docCopy.selection = null;
+                    ab.remove();
+                }
+            }
+
+            app.redraw();
+            progress.setPercent(20);
+
+
+            // New Artboard indexes after deleting unused
+            var docCopyArtBoardIndexes = [];
+            for (var i = 0; i < artBoardNames.length; i++) {
+                var ab = docCopy.artboards.getByName(artBoardNames[i]);
+                docCopyArtBoardIndexes.push(_.indexOf(docCopy.artboards, ab));
+            }
+
+            // Symbols to shapes
+            DocUtils.convertSymbolsToShapes(docCopy,
+                progress.subProgress("Symbols to shapes", 40)
+            );
+
+            // Split objects to layers
+            splitObjectsToLayers(docCopy,
+                progress.subProgress("Split to layers", 65)
+            );
+
+            // Remove unused layers
+            DocUtils.removeUnusedLayers(docCopy,
+                progress.subProgress("Remove unused layers", 90)
+            );
+
+            // Export results
+            $.writeln('Exporting to ' + exportFolder.fsName);
+
+            var cutLayer = docCopy.layers.getByName(CUT_LAYER_NAME);
+            var printLayer = docCopy.layers.getByName(PRINT_LAYER_NAME);
+
+            // Export ALL
+            cutLayer.visible = true;
+            printLayer.visible = true;
+            exportArtBoards(docCopy, docCopyArtBoardIndexes, exportFolder, {
+                'prefix': '[ALL] ', // FIXME: Move to const
+                'pdfPreset': '[PDF/X-4:2008]' // FIXME: Move to options/prefs
+            });
+
+            progress.setPercent(93);
+
+            // Export CUT
+            cutLayer.visible = true;
+            printLayer.visible = false;
+            exportArtBoards(docCopy, docCopyArtBoardIndexes, exportFolder, {
+                'prefix': '[CUT] ', // FIXME: Move to const
+                'pdfPreset': '[PDF/X-3:2002]' // FIXME: Move to options/prefs
+            });
+
+            progress.setPercent(96);
+
+            // Export PRINT
+            cutLayer.visible = false;
+            printLayer.visible = true;
+            exportArtBoards(docCopy, docCopyArtBoardIndexes, exportFolder, {
+                'prefix': '[PRINT] ', // FIXME: Move to const
+                'pdfPreset': '[PDF/X-3:2002]' // FIXME: Move to options/prefs
+            });
+
+            progress.setPercent(99);
+
+            cleanup();
+
+            progress.setPercent(100);
+
+        } catch (e) {
+            $.writeln('ERROR: ' + e);
+            cleanup();
+            throw e;
+        }
 
     };
 
