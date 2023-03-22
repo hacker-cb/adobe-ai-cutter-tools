@@ -240,3 +240,25 @@ DocUtils.getAllLayers = function(doc, cbfilter){
 
     return layers;
 }
+
+
+/**
+ * Remove unused layers
+ *
+ * @param doc Document
+ * @param progress
+ */
+DocUtils.removeUnusedLayers = function(doc, progress){
+    // Set empty progress if not set
+    if (!progress) progress = new Progress();
+
+    var unusedLayers = DocUtils.getAllLayers(doc, function(layer){
+        return layer.pageItems.length == 0;
+    });
+
+    for (var i = 0; i < unusedLayers.length; i++) {
+        unusedLayers[i].remove();
+        progress.setPercent(i / unusedLayers.length * 100);
+    }
+    progress.setPercent(100);
+}

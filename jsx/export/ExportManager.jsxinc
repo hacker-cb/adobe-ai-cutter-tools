@@ -5,7 +5,7 @@
 ExportManager = (function() {
     var em = {};
 
-    var splitObjectsToLayers = function(doc) {
+    var splitObjectsToLayers = function(doc, progress) {
 
         var cutLayer = DocUtils.getOrCreateLayerByName(doc, CUT_LAYER_NAME);
         var printLayer = DocUtils.getOrCreateLayerByName(doc, PRINT_LAYER_NAME);
@@ -16,16 +16,55 @@ ExportManager = (function() {
         cutLayer.move(doc, ElementPlacement.PLACEATBEGINNING);
         printLayer.move(cutLayer, ElementPlacement.PLACEAFTER);
 
-        // Move all groups to the correct layer
-        for (var i = 0; i < doc.groupItems.length; i++) {
-            var group = doc.groupItems[i];
-            if (group.name == CUT_GROUP_NAME) {
-                group.move(cutLayer, ElementPlacement.PLACEATEND);
+        function getAllLayers(layers){
+            var result = [];
+            for (var i = 0; i < layers.length; i++) {
+                var layer = layers[i];
+                result.push(layer);
+                result = result.concat(getAllLayers(layer.layers));
             }
-            else if (group.name == PRINT_GROUP_NAME) {
-                group.move(printLayer, ElementPlacement.PLACEATEND);
-            }
+            return result;
         }
+
+        // Save other layers
+        var otherLayers = DocUtils.getAllLayers(doc, function(l){
+            // FIXME: Add regmarks layers
+            return l.name != CUT_LAYER_NAME && l.name != PRINT_LAYER_NAME;
+        });
+
+        // Move all groups to the correct layer
+        // for (var i = 0; i < otherLayers.length; i++) {
+        //     var layer = otherLayers[i];
+        //     while(true){
+        //         var item = layer.groupItems.getByName(CUT_GROUP_NAME);
+        //         if (item){
+        //             try {
+        //                 item.move(cutLayer, ElementPlacement.PLACEATEND);
+        //                 $.writeln("Moved group " + item.name + " to layer " + cutLayer.name);
+        //             } catch (e) {
+        //                 $.writeln("Error moving from layer " + layer.name + " to layer " + cutLayer.name);
+        //             }
+        //         } else {
+        //             break;
+        //         }
+        //     }
+        //     while(true){
+        //         var item = layer.groupItems.getByName(PRINT_GROUP_NAME);
+        //         if (item){
+        //             try {
+        //                 item.move(printLayer, ElementPlacement.PLACEATEND);
+        //             } catch (e) {
+        //                 $.writeln("Error moving from layer " + layer.name + " to layer " + printLayer.name);
+        //             }
+        //             $.writeln("Moved group " + item.name + " to layer " + printLayer.name);
+        //         } else {
+        //             break;
+        //         }
+        //     }
+        //     // FIXME: update percent
+        // }
+
+        progress.setPercent(100);
     };
 
 
@@ -34,14 +73,16 @@ ExportManager = (function() {
         var srcDoc = app.activeDocument;
 
         var doc = DocUtils.duplicate(srcDoc,
-            progress.subProgress("Duplicate", 50)
+            progress.subProgress("Duplicate", 60)
             );
 
         DocUtils.convertSymbolsToShapes(doc,
-            progress.subProgress("Symbols to shapes", 70)
+            progress.subProgress("Symbols to shapes", 80)
             );
 
-        //splitObjectsToLayers(doc);
+        splitObjectsToLayers(doc,
+            progress.subProgress("Split to layers", 95)
+            );
 
         progress.setPercent(100);
 
