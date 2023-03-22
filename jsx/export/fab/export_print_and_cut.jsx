@@ -120,9 +120,8 @@
             return;
         }
 
-        // Run
-        // try {
-
+        //Run
+        try {
             var progress = new Progress(function(stage, totalProgress){
                 progressBar.value = totalProgress;
                 currentOperation.text = stage;
@@ -141,10 +140,10 @@
 
             $.writeln('Export done!');
             currentOperation.text = DONE_TEXT;
-        // } catch (e) {
-        //     $.writeln('Export error: ' + e);
-        //     alert(e);
-        // }
+        } catch (e) {
+            $.writeln('Export error: ' + e);
+            alert(e);
+        }
 
         startButton.enabled = true;
         closeButton.enabled = true;
