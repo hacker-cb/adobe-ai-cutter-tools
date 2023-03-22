@@ -2,6 +2,8 @@
 
 var RegMarks = (function(){
 
+    var RegMarks = {};
+
     RegMarks.PATHSTYLE = {
         items: {
             'Black circles': {
