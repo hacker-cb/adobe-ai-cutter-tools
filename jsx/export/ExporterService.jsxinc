@@ -72,6 +72,7 @@ ExporterService = (function() {
     };
 
     ExporterService.run = function(origDoc, artBoardNames, options, progress){
+        $.writeln("ExporterService.run, artboards: [" + artBoardNames.join(", ")  + "], options: " + JSON.stringify(options));
         if (!progress) {
             progress = new Progress();
         }
@@ -178,34 +179,36 @@ ExporterService = (function() {
                 Exporter.exportForScreens(docCopy, artBoardNames, exportFolder, {
                     'type': 'PDF',
                     'prefix': EXPORT_ALL_PREFIX,
-                    'pdfPreset': options.exportPresets.ALL
-                });
-                progress = progress.finish();
-            }
-
-
-            // Export CUT
-            if (options.exportTypes.CUT){
-                progress = progress.subProgress("Export CUT", 96);
-                cutLayer.visible = true;
-                printLayer.visible = false;
-                Exporter.exportForScreens(docCopy, artBoardNames, exportFolder, {
-                    'type': 'PDF',
-                    'prefix': EXPORT_CUT_PREFIX,
-                    'pdfPreset': options.exportPresets.CUT
+                    'pdfPreset': options.exportPresets.ALL,
+                    'overwrite': options.overwrite,
                 });
                 progress = progress.finish();
             }
 
             // Export PRINT
             if (options.exportTypes.PRINT){
-                progress = progress.subProgress("Export PRINT", 99);
+                progress = progress.subProgress("Export PRINT", 96);
                 cutLayer.visible = false;
                 printLayer.visible = true;
                 Exporter.exportForScreens(docCopy, artBoardNames, exportFolder, {
                     'type': 'PDF',
                     'prefix': EXPORT_PRINT_PREFIX,
-                    'pdfPreset': options.exportPresets.PRINT
+                    'pdfPreset': options.exportPresets.PRINT,
+                    'overwrite': options.overwrite,
+                });
+                progress = progress.finish();
+            }
+
+            // Export CUT
+            if (options.exportTypes.CUT){
+                progress = progress.subProgress("Export CUT", 99);
+                cutLayer.visible = true;
+                printLayer.visible = false;
+                Exporter.exportForScreens(docCopy, artBoardNames, exportFolder, {
+                    'type': 'PDF',
+                    'prefix': EXPORT_CUT_PREFIX,
+                    'pdfPreset': options.exportPresets.CUT,
+                    'overwrite': options.overwrite,
                 });
                 progress = progress.finish();
             }

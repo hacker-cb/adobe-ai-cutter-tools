@@ -48,13 +48,21 @@ var Exporter = (function() {
         }).join(',');
 
         var expectedFilenames = Exporter.getExpectedFileNames(doc, artBoardNames, exportFolder, opts);
+        var resultFileNames = [];
 
         // Clear file is exists
         for (var i = 0; i < expectedFilenames.length; i++) {
             var f = expectedFilenames[i];
             if (f.exists) {
-                $.writeln("Removing existing file: " + f.fsName);
-                f.remove();
+                if (!opts.overwrite){
+                    // Display dialog if file exists
+                    throw "File " + f.fsName + " already exists, please enable overwrite option";
+                } else {
+                    $.writeln("Removing existing file: " + f.fsName);
+                    f.remove();
+                }
+            } else {
+                resultFileNames.push(f);
             }
         }
 
@@ -83,7 +91,7 @@ var Exporter = (function() {
             }
         }
 
-        return expectedFilenames;
+        return resultFileNames;
     };
 
     return Exporter;
