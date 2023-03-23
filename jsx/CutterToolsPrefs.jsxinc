@@ -36,7 +36,7 @@ var CutterToolsPrefs = (function () {
             load();
         }
         if (data.hasOwnProperty(key)) {
-            $.writeln('Loaded preference: ' + key + ' = ' + data[key]);
+            $.writeln('Loaded preference: ' + key + ' = ' + JSON.stringify(data[key]));
             return data[key];
         } else {
             return typeof defaultValue !== 'undefined' ? defaultValue : undefined;
@@ -47,13 +47,9 @@ var CutterToolsPrefs = (function () {
         if (!loaded) {
             load();
         }
-        if (key in data && data[key] === value) {
-            $.writeln('Preference ' + key + ' already set to ' + value);
-            return;
-        }
 
         data[key] = value;
-        $.writeln('Saved preference: ' + key + ' = ' + value);
+        $.writeln('Saved preference: ' + key + ' = ' + JSON.stringify(value));
         save();
     };
 
@@ -61,7 +57,7 @@ var CutterToolsPrefs = (function () {
         if (!loaded) {
             load();
         }
-        if (key in data) {
+        if (data.hasOwnProperty(key)) {
             delete data[key];
             $.writeln('Deleted preference: ' + key);
             save();
