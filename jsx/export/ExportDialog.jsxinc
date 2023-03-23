@@ -200,6 +200,9 @@ var ExportDialog = (function(){
         fillField(pdfCutPreset);
     };
 
+    //////////////////////////////////////////////////////////////
+    // State functions
+    //////////////////////////////////////////////////////////////
     var restoreState = function() {
 
         var restorePdfPreset = function(field, presetName, defaultValue) {
