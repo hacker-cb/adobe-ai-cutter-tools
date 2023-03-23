@@ -189,8 +189,6 @@ DocUtils.removeUnusedLayers = function(doc, progress){
     // Set empty progress if not set
     if (!progress) progress = new Progress();
 
-    progress = progress.subProgress('Remove unused layers', 100);
-
     var unusedLayers = DocUtils.getAllLayers(doc, function(layer){
         return layer.pageItems.length == 0;
     });
@@ -199,5 +197,4 @@ DocUtils.removeUnusedLayers = function(doc, progress){
         unusedLayers[i].remove();
         progress.setPercent(i / unusedLayers.length * 100);
     }
-    progress = progress.finish();
 }
