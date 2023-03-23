@@ -68,6 +68,11 @@ var CutterToolsPrefs = (function () {
         }
     };
 
+    CutterToolsPrefs.clearAll = function () {
+        data = {};
+        save();
+    };
+
 
     return CutterToolsPrefs;
 }());

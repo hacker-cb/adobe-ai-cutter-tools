@@ -8,6 +8,11 @@ document.querySelector("#export-print-and-cut-button").addEventListener("click",
   jsx.file("./jsx/export/fab/export_print_and_cut.jsx");
 });
 
+// clear-prefs-button
+document.querySelector("#clear-prefs-button").addEventListener("click", function(){
+  jsx.file("./jsx/fab/clear_prefs.jsx");
+});
+
 // restart-ext-button
 if (document.querySelector("#restart-ext-button")){
   document.querySelector("#restart-ext-button").addEventListener("click", function(){
