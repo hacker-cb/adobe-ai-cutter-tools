@@ -57,6 +57,17 @@ var CutterToolsPrefs = (function () {
         save();
     };
 
+    CutterToolsPrefs.unset = function (key) {
+        if (!loaded) {
+            load();
+        }
+        if (key in data) {
+            delete data[key];
+            $.writeln('Deleted preference: ' + key);
+            save();
+        }
+    };
+
 
     return CutterToolsPrefs;
 }());
