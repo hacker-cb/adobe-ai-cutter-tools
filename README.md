@@ -32,18 +32,20 @@ Plugin designed to replace [Signcut] plugin for Adobe Illustrator to make work w
 
 ## Usage
 
-NOTE: see [samples](samples/) directory with AI samples.
+*NOTE: *see [samples](samples/) directory with AI samples.
 
 1. Open *Window -> Extensions -> Cutter Tools* panel.
 
-2. At any layer of document or Symbols create **groups** with names: *Print* and *Cut*.
+2. Create Registration marks.
+
+3. At any layer of document or Symbols create **groups** with names: *Print* and *Cut*.
 This layers will be used in the resulting PDFs.
 
-3. Export PDFs:
+4. Export PDFs:
 
 * *PRINT* - Version for printing. Default profile is *PDF/X-3:2002*.
 * *CUT* - Version for cutting. Default profile is *PDF/X-3:2002* which is acceptable to import to [SignCut].
-* *ALL* - Version for preview. Has Layers *Cut* and *Print*. Default profile is default AI pofile.
+* *ALL* - Version for preview. Has Layers *Cut* and *Print*. Default profile is default AI multi-layer profile.
 
 NOTE: You can choose any other user-defined profile in the Export dialog.
 
