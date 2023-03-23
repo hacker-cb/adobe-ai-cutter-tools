@@ -1,6 +1,10 @@
 var Exporter = (function() {
     var Exporter = {};
 
+    Exporter.getExpectedFileNames = function(doc, artBoardNames, exportFolder, opts) {
+
+    };
+
     Exporter.exportForScreens = function(doc, artBoardNames, exportFolder, opts) {
 
         $.writeln("Exporting artboards [" + artBoardNames.join(', ') + "] with options: " + JSON.stringify(opts));
