@@ -1,46 +1,38 @@
 # Cutter Tools plugin for Adobe Illustrator
 
-Plugin designed to replace [Signcut] plugin for Adobe Illustrator to make work woth Cutters more easy.
+Plugin designed to replace [Signcut] plugin for Adobe Illustrator to make work with Cutters more easy.
 
 ## Features
 
 * Create registration marks for all Artboards
 * Support Symbols
-* Export 3 PDF: *PRINT*, *CUT* and *ALL* version.
+* Export 3 PDF versions: *PRINT*, *CUT* and *ALL* version.
 
 ## Installation
 
 1. [Download] repo, unzip and move folder into the extensions folder
 
-**Win:** `C:\Program Files (x86)\Common Files\Adobe\CEP\extensions`
-**Mac:** `/Library/Application Support/Adobe/CEP/extensions`
+    **Win:** `C:\Program Files (x86)\Common Files\Adobe\CEP\extensions`
+    **Mac:** `/Library/Application Support/Adobe/CEP/extensions`
 
-or
+    or
 
-**Win:** `C:\<username>\AppData\Roaming\Adobe\CEP\extensions`
-**Mac:** `~/Library/Application Support/Adobe/CEP/extensions`
+    **Win:** `C:\<username>\AppData\Roaming\Adobe\CEP\extensions`
+    **Mac:** `~/Library/Application Support/Adobe/CEP/extensions`
 
-2. Set `PlayerDebugMode` to 1.
+2. Set `PlayerDebugMode` to 1 (enable run of the unsigned plugins).
 
-This need becuase plugin is unsigned.
+    **CEP Version below (CEP 11) is suitable with AI 2023!**
+    You have to replace it with correct one for your application!
+    See compatibility tables [CEP9] and [CEP11].
 
-**CEP Version below is suitable with AI 2023!**
+    **Win:** `regedit > HKEY_CURRENT_USER/Software/Adobe/CSXS.11`,
+    then add a new entry `PlayerDebugMode` of type `string` with the value of `1`.
 
-You have to replace it with correct one for your application!
-See compatibility tables [CEP9](https://github.com/Adobe-CEP/CEP-Resources/blob/master/CEP_9.x/Documentation/CEP%209.0%20HTML%20Extension%20Cookbook.md#applications-integrated-with-cep)
-and [CEP11](https://github.com/Adobe-CEP/CEP-Resources/blob/master/CEP_11.x/Documentation/CEP%2011.1%20HTML%20Extension%20Cookbook.md#applications-integrated-with-cep)
+    **Mac:** In the terminal, type: `defaults write com.adobe.CSXS.11 PlayerDebugMode 1`
+    (The plist is also located at `~/Library/Preferences/com.adobe.CSXS.11.plist`
 
-### How to set `PlayerDebugMode`:
-
-**Win:** `regedit > HKEY_CURRENT_USER/Software/Adobe/CSXS.11`,
-then add a new entry PlayerDebugMode of type "string" with the value of "1".
-
-**Mac:** In the terminal, type: `defaults write com.adobe.CSXS.11 PlayerDebugMode 1`
-(The plist is also located at `~/Library/Preferences/com.adobe.CSXS.11.plist`
-
-**May require restart or log-out/in**
-
-More info here: [Adobe CEP Cookbok Resources]
+    **May require restart or log-out/in**
 
 ## Usage
 
@@ -61,4 +53,5 @@ NOTE: You can choose any other user-defined profile in the Export dialog.
 
 [Download]: https://github.com/majman/ai-scripts-panel/archive/master.zip
 [SignCut]: http://signcutpro.com
-[Adobe CEP Cookbok Resources]: https://github.com/Adobe-CEP/CEP-Resources/blob/master/CEP_8.x/Documentation/CEP%208.0%20HTML%20Extension%20Cookbook.md
+[CEP9]: https://github.com/Adobe-CEP/CEP-Resources/blob/master/CEP_9.x/Documentation/CEP%209.0%20HTML%20Extension%20Cookbook.md#applications-integrated-with-cep
+[CEP11]: https://github.com/Adobe-CEP/CEP-Resources/blob/master/CEP_11.x/Documentation/CEP%2011.1%20HTML%20Extension%20Cookbook.md#applications-integrated-with-cep
