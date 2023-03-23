@@ -5,50 +5,38 @@ var RegMarks = (function(){
 
     var RegMarks = {};
 
-    RegMarks.PATHSTYLE = {
-        items: {
-            'Black circles': {
-                'type': 'circles',
-                'stroke': false,
-                'fill': {
-                    'color': {
-                        'black': 100,
-                        'cyan': 0,
-                        'magenta': 0,
-                        'yellow': 0,
-                    }
+    var BUNDLED_PATHSTYLES = {
+        'Black circles': {
+            'bundled': true,
+            'type': 'circles',
+            'stroke': false,
+            'fill': {
+                'color': {
+                    'black': 100,
+                    'cyan': 0,
+                    'magenta': 0,
+                    'yellow': 0,
                 }
-            },
+            }
         },
-
-        get: function(name){
-            return name in this.items ? this.items[name] : null;
-        }
     };
 
 
-    RegMarks.PROFILES = {
-        items : {
-            'Vulcan DC-500VC (10mm border)': {
-                'bundled': true,
-                'units': 'mm',
-                'markDistance': 10.0,
-                'markDiameter': 5.0,
-                'pathStyle': 'Black circles',
-            },
-            'Vulcan DC-500VC (7mm border)': {
-                'bundled': true,
-                'units': 'mm',
-                'markDistance': 7.0,
-                'markDiameter': 5.0,
-                'pathStyle': 'Black circles',
-            },
+    var BUNDLED_PROFILES = {
+        'Vulcan DC-500VC (10mm border)': {
+            'bundled': true,
+            'units': 'mm',
+            'markDistance': 10.0,
+            'markDiameter': 5.0,
+            'pathStyle': 'Black circles',
         },
-
-
-        get: function(name){
-            return name in this.items ? this.items[name] : null;
-        }
+        'Vulcan DC-500VC (7mm border)': {
+            'bundled': true,
+            'units': 'mm',
+            'markDistance': 7.0,
+            'markDiameter': 5.0,
+            'pathStyle': 'Black circles',
+        },
     };
 
     var getLayer = function(doc) {
@@ -94,6 +82,63 @@ var RegMarks = (function(){
         l.locked = true; // Lock layer
     };
 
+    /**
+     * Get all profiles
+     *
+     * @returns {Object} - key: profile name, value: profile data
+     */
+    RegMarks.getAllProfiles = function(){
+        var profiles = BUNDLED_PROFILES;
+
+        // FIXME: load profiles from preferences.
+
+        return profiles;
+    };
+
+    /**
+     * Get profile by name
+     *
+     * @param {String} profileName - profile name
+     * @returns {Object|null} - profile data or null if profile not found
+     */
+    RegMarks.getProfile = function(profileName){
+        var profiles = RegMarks.getAllProfiles();
+        for (var name in profiles){
+            if (name == profileName){
+                return profiles[name];
+            }
+        }
+        return null;
+    };
+
+    /**
+     * Get all path styles
+     *
+     * @returns {Object} - key: path style name, value: path style data
+     */
+    RegMarks.getAllPathStyles = function(){
+        var pathStyles = BUNDLED_PATHSTYLES;
+
+        // FIXME: load path styles from preferences.
+        return pathStyles;
+    };
+
+    /**
+     * Get path style by name
+     *
+     * @param {String} pathStyleName - path style name
+     * @returns {Object|null} - path style data or null if path style not found
+     */
+    RegMarks.getPathStyle = function(pathStyleName){
+        var pathStyles = RegMarks.getAllPathStyles();
+        for (var name in pathStyles){
+            if (name == pathStyleName){
+                return pathStyles[name];
+            }
+        }
+        return null;
+    };
+
     RegMarks.deleteLayer = function(doc) {
         var l = getLayer(doc);
 
@@ -111,7 +156,7 @@ var RegMarks = (function(){
     RegMarks.generateMarks = function(doc, presetData){
         $.writeln('Generating regmarks, data: ' + JSON.stringify(presetData));
 
-        var pathStyle = RegMarks.PATHSTYLE.get(presetData.pathStyle);
+        var pathStyle = RegMarks.getPathStyle(presetData.pathStyle);
 
         if (!pathStyle) {
             throw 'Unknown pathStyle "' + presetData.pathStyle;
