@@ -1,3 +1,7 @@
-//@include "../RegMarksController.jsxinc"
+//@include "../RegMarksDialog.jsxinc"
 
-RegMarksController.run();
+try {
+    RegMarksDialog.run();
+} catch (e) {
+    alert('Error: ' + e);
+}

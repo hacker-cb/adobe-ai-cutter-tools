@@ -3,8 +3,8 @@
 //@include "regmarks_panel.jsxinc"
 //@include "RegMarks.jsxinc"
 
-var RegMarksController = (function () {
-    var regmarks = {};
+var RegMarksDialog = (function () {
+    var RegMarksDialog = {};
 
     // FIXME: Eval regmarks_panel.jsxinc in this context
 
@@ -117,7 +117,7 @@ var RegMarksController = (function () {
         }
     };
 
-    regmarks.run = function(){
+    RegMarksDialog.run = function(){
         setupHandlers();
 
         fillStyles();
@@ -133,7 +133,7 @@ var RegMarksController = (function () {
         panel.show();
     };
 
-    return regmarks;
+    return RegMarksDialog;
 }());
 
 

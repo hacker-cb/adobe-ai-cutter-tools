@@ -5,7 +5,9 @@ document.querySelector("#open-regmarks-button").addEventListener("click", functi
 
 // export-print-and-cut-button
 document.querySelector("#export-print-and-cut-button").addEventListener("click", function(){
+  alert('test1');
   jsx.file("./jsx/export/fab/export_print_and_cut.jsx");
+  alert('test2');
 });
 
 // clear-prefs-button
