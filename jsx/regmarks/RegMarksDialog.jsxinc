@@ -178,19 +178,27 @@ var RegMarksDialog = (function () {
             }
         };
 
-        restoreSelection(styleDropDown, 'regmarks.settings.style', 'circle');
-        restoreSelection(unitsDropDown, 'regmarks.settings.units', 'mm');
-
-        var s;
-
-        s = CutterToolsPrefs.get('regmarks.settings.distance');
-        if (typeof(s) != 'undefined') distanceField.text = s;
-
-        s = CutterToolsPrefs.get('regmarks.settings.redius');
-        if (typeof(s) != 'undefined') radiusField.text = s;
+        var restoreTextField = function(field, prefName){
+            var value = CutterToolsPrefs.get(prefName);
+            if (typeof value != 'undefined'){
+                field.text = value;
+            }
+        };
 
         // Restore preset at the end
-        restoreSelection(presetDropDown, 'regmarks.last_preset');
+        restoreSelection(presetDropDown, 'regmarks.preset');
+
+        if (!presetDropDown.selection){
+
+            // No selection - try to restore manuall settings
+
+            restoreSelection(styleDropDown, 'regmarks.settings.style', 'circle');
+            restoreSelection(unitsDropDown, 'regmarks.settings.units', 'mm');
+
+            restoreTextField(distanceField, 'regmarks.settings.distance');
+            restoreTextField(radiusField, 'regmarks.settings.radius');
+        }
+
     };
 
     var saveState = function() {
@@ -202,11 +210,26 @@ var RegMarksDialog = (function () {
             }
         };
 
-        saveSelection(presetDropDown, 'regmarks.last_preset');
-        saveSelection(styleDropDown, 'regmarks.settings.style');
-        saveSelection(unitsDropDown, 'regmarks.settings.units');
-        CutterToolsPrefs.set('regmarks.settings.distance', distanceField.text);
-        CutterToolsPrefs.set('regmarks.settings.redius', radiusField.text);
+        if (presetDropDown.selection){
+            // Has preset - save only it.
+            saveSelection(presetDropDown, 'regmarks.preset');
+
+            // Clear others
+            CutterToolsPrefs.unset('regmarks.settings.style');
+            CutterToolsPrefs.unset('regmarks.settings.units');
+            CutterToolsPrefs.unset('regmarks.settings.distance');
+            CutterToolsPrefs.unset('regmarks.settings.redius');
+
+        } else {
+            // No preset
+            CutterToolsPrefs.unset('regmarks.preset');
+
+            //- save manual settings
+            saveSelection(styleDropDown, 'regmarks.settings.style');
+            saveSelection(unitsDropDown, 'regmarks.settings.units');
+            CutterToolsPrefs.set('regmarks.settings.distance', distanceField.text);
+            CutterToolsPrefs.set('regmarks.settings.redius', radiusField.text);
+        }
     };
 
     var onManualChanges = function(){
@@ -280,7 +303,7 @@ var RegMarksDialog = (function () {
         onManualChanges();
     };
 
-    unitsDropDown.onChaonChangenging = function(){
+    unitsDropDown.onChange = function(){
         onManualChanges();
     };
 
