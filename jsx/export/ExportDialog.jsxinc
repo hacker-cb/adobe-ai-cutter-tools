@@ -1,0 +1,354 @@
+//@include "../../lib/underscore-umd.js"
+//@include "../CutterToolsPrefs.jsxinc"
+//@include "../const.jsxinc"
+//@include "./ExporterService.jsxinc"
+
+var ExportDialog = (function(){
+    /*
+    Code for Import https://scriptui.joonas.me — (Triple click to select):
+    {"activeId":21,"items":{"item-0":{"id":0,"type":"Dialog","parentId":false,"style":{"enabled":true,"varName":"exportDialog","windowType":"Dialog","creationProps":{"su1PanelCoordinates":false,"maximizeButton":false,"minimizeButton":false,"independent":false,"closeButton":false,"borderless":false,"resizeable":false},"text":"PlotterTools export","preferredSize":[0,0],"margins":16,"orientation":"column","spacing":10,"alignChildren":["fill","top"]}},"item-1":{"id":1,"type":"Progressbar","parentId":8,"style":{"enabled":true,"varName":"progressBar","preferredSize":[400,16],"alignment":null,"helpTip":null}},"item-3":{"id":3,"type":"StaticText","parentId":8,"style":{"enabled":true,"varName":"currentOperation","creationProps":{"truncate":"none","multiline":false,"scrolling":false},"softWrap":false,"text":"Idle","justify":"left","preferredSize":[0,0],"alignment":"fill","helpTip":null}},"item-4":{"id":4,"type":"Button","parentId":5,"style":{"enabled":false,"varName":"startButton","text":"Run","justify":"center","preferredSize":[0,0],"alignment":null,"helpTip":null}},"item-5":{"id":5,"type":"Group","parentId":0,"style":{"enabled":true,"varName":"buttonsGroup","preferredSize":[0,0],"margins":0,"orientation":"row","spacing":10,"alignChildren":["center","center"],"alignment":null}},"item-6":{"id":6,"type":"Button","parentId":5,"style":{"enabled":true,"varName":"closeButton","text":"Close","justify":"center","preferredSize":[0,0],"alignment":null,"helpTip":null}},"item-8":{"id":8,"type":"Panel","parentId":0,"style":{"enabled":true,"varName":"progressPanel","creationProps":{"borderStyle":"etched","su1PanelCoordinates":false},"text":"Export progress","preferredSize":[0,0],"margins":10,"orientation":"column","spacing":10,"alignChildren":["left","top"],"alignment":null}},"item-9":{"id":9,"type":"Panel","parentId":0,"style":{"enabled":true,"varName":"artboardsPanel","creationProps":{"borderStyle":"etched","su1PanelCoordinates":false},"text":"Artboards","preferredSize":[0,0],"margins":10,"orientation":"column","spacing":10,"alignChildren":["fill","top"],"alignment":null}},"item-10":{"id":10,"type":"ListBox","parentId":9,"style":{"enabled":true,"varName":"artboardsList","creationProps":{"multiselect":true,"numberOfColumns":"1","columnWidths":"[]","columnTitles":"[]","showHeaders":false},"listItems":"","preferredSize":[0,200],"alignment":null,"helpTip":null,"selection":[0]}},"item-11":{"id":11,"type":"Panel","parentId":0,"style":{"enabled":true,"varName":"outputsPanel","creationProps":{"borderStyle":"etched","su1PanelCoordinates":false},"text":"Output types and presets","preferredSize":[0,0],"margins":10,"orientation":"column","spacing":10,"alignChildren":["fill","top"],"alignment":null}},"item-12":{"id":12,"type":"Group","parentId":11,"style":{"enabled":true,"varName":"pdfAllGroup","preferredSize":[0,0],"margins":0,"orientation":"row","spacing":10,"alignChildren":["left","center"],"alignment":null}},"item-14":{"id":14,"type":"Checkbox","parentId":12,"style":{"enabled":true,"varName":"pdfAllEnable","text":"PDF: All layers","preferredSize":[110,0],"alignment":null,"helpTip":null,"checked":false}},"item-15":{"id":15,"type":"DropDownList","parentId":12,"style":{"enabled":true,"varName":"pdfAllPreset","text":"DropDownList","listItems":"","preferredSize":[280,0],"alignment":null,"selection":0,"helpTip":null}},"item-16":{"id":16,"type":"Group","parentId":11,"style":{"enabled":true,"varName":"pdfPrintGroup","preferredSize":[0,0],"margins":0,"orientation":"row","spacing":10,"alignChildren":["left","center"],"alignment":"fill"}},"item-17":{"id":17,"type":"Group","parentId":11,"style":{"enabled":true,"varName":"pdfCutGroup","preferredSize":[0,0],"margins":0,"orientation":"row","spacing":10,"alignChildren":["left","center"],"alignment":"fill"}},"item-18":{"id":18,"type":"Checkbox","parentId":16,"style":{"enabled":true,"varName":"pdfPrintEnable","text":"PDF: Print","preferredSize":[110,0],"alignment":null,"helpTip":null}},"item-19":{"id":19,"type":"Checkbox","parentId":17,"style":{"enabled":true,"varName":"pdfCutEnable","text":"PDF: Cut","preferredSize":[110,0],"alignment":null,"helpTip":null}},"item-20":{"id":20,"type":"DropDownList","parentId":16,"style":{"enabled":true,"varName":"pdfPrintPreset","text":"DropDownList","listItems":"","preferredSize":[280,0],"alignment":null,"selection":0,"helpTip":null}},"item-21":{"id":21,"type":"DropDownList","parentId":17,"style":{"enabled":true,"varName":"pdfCutPreset","text":"DropDownList","listItems":"","preferredSize":[280,0],"alignment":null,"selection":0,"helpTip":null}},"item-22":{"id":22,"type":"Panel","parentId":0,"style":{"enabled":true,"varName":"optionsPanel","creationProps":{"borderStyle":"etched","su1PanelCoordinates":false},"text":"Options","preferredSize":[0,0],"margins":10,"orientation":"row","spacing":10,"alignChildren":["left","top"],"alignment":null}},"item-23":{"id":23,"type":"Checkbox","parentId":22,"style":{"enabled":true,"varName":"optOverwrite","text":"Overwrite existing files","preferredSize":[0,0],"alignment":null,"helpTip":"Overwrite existing files without confirmaion"}},"item-24":{"id":24,"type":"Checkbox","parentId":22,"style":{"enabled":true,"varName":"optOpenResultFolder","text":"Open folder on complete","preferredSize":[0,0],"alignment":null,"helpTip":null}}},"order":[0,9,10,11,12,14,15,16,18,20,17,19,21,22,23,24,8,3,1,5,4,6],"settings":{"importJSON":true,"indentSize":false,"cepExport":false,"includeCSSJS":true,"showDialog":false,"functionWrapper":false,"afterEffectsDockable":false,"itemReferenceList":"none"}}
+    */
+
+    // EXPORTDIALOG
+    // ============
+    var exportDialog = new Window("dialog", undefined, undefined, {closeButton: false});
+        exportDialog.text = "PlotterTools export";
+        exportDialog.orientation = "column";
+        exportDialog.alignChildren = ["fill","top"];
+        exportDialog.spacing = 10;
+        exportDialog.margins = 16;
+
+    // ARTBOARDSPANEL
+    // ==============
+    var artboardsPanel = exportDialog.add("panel", undefined, undefined, {name: "artboardsPanel"});
+        artboardsPanel.text = "Artboards";
+        artboardsPanel.orientation = "column";
+        artboardsPanel.alignChildren = ["fill","top"];
+        artboardsPanel.spacing = 10;
+        artboardsPanel.margins = 10;
+
+    var artboardsList = artboardsPanel.add("listbox", undefined, undefined, {name: "artboardsList", multiselect: true});
+        artboardsList.selection = 0;
+        artboardsList.preferredSize.height = 200;
+
+    // OUTPUTSPANEL
+    // ============
+    var outputsPanel = exportDialog.add("panel", undefined, undefined, {name: "outputsPanel"});
+        outputsPanel.text = "Output types and presets";
+        outputsPanel.orientation = "column";
+        outputsPanel.alignChildren = ["fill","top"];
+        outputsPanel.spacing = 10;
+        outputsPanel.margins = 10;
+
+    // PDFALLGROUP
+    // ===========
+    var pdfAllGroup = outputsPanel.add("group", undefined, {name: "pdfAllGroup"});
+        pdfAllGroup.orientation = "row";
+        pdfAllGroup.alignChildren = ["left","center"];
+        pdfAllGroup.spacing = 10;
+        pdfAllGroup.margins = 0;
+
+    var pdfAllEnable = pdfAllGroup.add("checkbox", undefined, undefined, {name: "pdfAllEnable"});
+        pdfAllEnable.text = "PDF: All layers";
+        pdfAllEnable.preferredSize.width = 110;
+
+    var pdfAllPreset = pdfAllGroup.add("dropdownlist", undefined, undefined, {name: "pdfAllPreset"});
+        pdfAllPreset.selection = 0;
+        pdfAllPreset.preferredSize.width = 280;
+
+    // PDFPRINTGROUP
+    // =============
+    var pdfPrintGroup = outputsPanel.add("group", undefined, {name: "pdfPrintGroup"});
+        pdfPrintGroup.orientation = "row";
+        pdfPrintGroup.alignChildren = ["left","center"];
+        pdfPrintGroup.spacing = 10;
+        pdfPrintGroup.margins = 0;
+        pdfPrintGroup.alignment = ["fill","top"];
+
+    var pdfPrintEnable = pdfPrintGroup.add("checkbox", undefined, undefined, {name: "pdfPrintEnable"});
+        pdfPrintEnable.text = "PDF: Print";
+        pdfPrintEnable.preferredSize.width = 110;
+
+    var pdfPrintPreset = pdfPrintGroup.add("dropdownlist", undefined, undefined, {name: "pdfPrintPreset"});
+        pdfPrintPreset.selection = 0;
+        pdfPrintPreset.preferredSize.width = 280;
+
+    // PDFCUTGROUP
+    // ===========
+    var pdfCutGroup = outputsPanel.add("group", undefined, {name: "pdfCutGroup"});
+        pdfCutGroup.orientation = "row";
+        pdfCutGroup.alignChildren = ["left","center"];
+        pdfCutGroup.spacing = 10;
+        pdfCutGroup.margins = 0;
+        pdfCutGroup.alignment = ["fill","top"];
+
+    var pdfCutEnable = pdfCutGroup.add("checkbox", undefined, undefined, {name: "pdfCutEnable"});
+        pdfCutEnable.text = "PDF: Cut";
+        pdfCutEnable.preferredSize.width = 110;
+
+    var pdfCutPreset = pdfCutGroup.add("dropdownlist", undefined, undefined, {name: "pdfCutPreset"});
+        pdfCutPreset.selection = 0;
+        pdfCutPreset.preferredSize.width = 280;
+
+    // OPTIONSPANEL
+    // ============
+    var optionsPanel = exportDialog.add("panel", undefined, undefined, {name: "optionsPanel"});
+        optionsPanel.text = "Options";
+        optionsPanel.orientation = "row";
+        optionsPanel.alignChildren = ["left","top"];
+        optionsPanel.spacing = 10;
+        optionsPanel.margins = 10;
+
+    var optOverwrite = optionsPanel.add("checkbox", undefined, undefined, {name: "optOverwrite"});
+        optOverwrite.helpTip = "Overwrite existing files without confirmaion";
+        optOverwrite.text = "Overwrite existing files";
+
+    var optOpenResultFolder = optionsPanel.add("checkbox", undefined, undefined, {name: "optOpenResultFolder"});
+        optOpenResultFolder.text = "Open folder on complete";
+
+    // PROGRESSPANEL
+    // =============
+    var progressPanel = exportDialog.add("panel", undefined, undefined, {name: "progressPanel"});
+        progressPanel.text = "Export progress";
+        progressPanel.orientation = "column";
+        progressPanel.alignChildren = ["left","top"];
+        progressPanel.spacing = 10;
+        progressPanel.margins = 10;
+
+    var currentOperation = progressPanel.add("statictext", undefined, undefined, {name: "currentOperation"});
+        currentOperation.text = "Idle";
+        currentOperation.alignment = ["fill","top"];
+
+    var progressBar = progressPanel.add("progressbar", undefined, undefined, {name: "progressBar"});
+        progressBar.maxvalue = 100;
+        progressBar.value = 50;
+        progressBar.preferredSize.width = 400;
+        progressBar.preferredSize.height = 16;
+
+    // BUTTONSGROUP
+    // ============
+    var buttonsGroup = exportDialog.add("group", undefined, {name: "buttonsGroup"});
+        buttonsGroup.orientation = "row";
+        buttonsGroup.alignChildren = ["center","center"];
+        buttonsGroup.spacing = 10;
+        buttonsGroup.margins = 0;
+
+    var startButton = buttonsGroup.add("button", undefined, undefined, {name: "startButton"});
+        startButton.enabled = false;
+        startButton.text = "Run";
+
+    var closeButton = buttonsGroup.add("button", undefined, undefined, {name: "closeButton"});
+        closeButton.text = "Close";
+
+
+
+
+
+
+    //////////////////////////////////////////////////////////////
+    // Initial fixes
+    //////////////////////////////////////////////////////////////
+    var IDLE_TEXT = "Idle";
+    var DONE_TEXT = "Done!";
+
+    progressBar.value = 0;
+    currentOperation.text = IDLE_TEXT;
+
+    //////////////////////////////////////////////////////////////
+    // Local variables
+    //////////////////////////////////////////////////////////////
+    var doc = app.activeDocument;
+
+    var defaultExportPath = doc.path + '/' + /*basename*/doc.name.replace(/\.[^\.]+$/, '');
+
+    //////////////////////////////////////////////////////////////
+    // Local functions
+    //////////////////////////////////////////////////////////////
+
+    var fillArtBoardsList = function() {
+        var doc = app.activeDocument;
+
+        var abNames = [];
+        for (var i = 0; i < doc.artboards.length; i++) {
+            abNames.push(doc.artboards[i].name);
+        }
+
+        // Sort artboards by name
+        abNames.sort();
+
+        // Remove all items from the list
+        // artboardsList.items.removeAll();
+
+        // Add items to the list
+        for (var i = 0; i < abNames.length; i++) {
+            artboardsList.add("item", abNames[i]);
+        }
+    };
+
+    var fillPdfPresets = function() {
+        var fillField = function(field) {
+            for (var i = 0; i < app.PDFPresetsList.length; i++) {
+                var presetName = app.PDFPresetsList[i];
+                field.add("item", presetName);
+            }
+            // Select first item
+            field.selection = field.items[0];
+        };
+
+        fillField(pdfAllPreset);
+        fillField(pdfPrintPreset);
+        fillField(pdfCutPreset);
+    };
+
+    //////////////////////////////////////////////////////////////
+    // State functions
+    //////////////////////////////////////////////////////////////
+    var restoreState = function() {
+
+        var restorePdfPreset = function(field, prefName, defaultValue) {
+            var preset = CutterToolsPrefs.get(prefName);
+            if (typeof preset == 'undefined') {
+                preset = defaultValue;
+            }
+            if (preset == PREFS_DEFAULT_PDF_PRESET) {
+                field.selection = field.items[0];
+            } else {
+                var sel = field.find(preset);
+                if (sel != null) {
+                    field.selection = sel;
+                } else {
+                    $.writeln('ERROR: Preset "' + preset + '" not found');
+                    CutterToolsPrefs.unset(prefName);
+                }
+            }
+        };
+
+        pdfAllEnable.value = CutterToolsPrefs.get('export.pdf.all.enable', true);
+        restorePdfPreset(pdfAllPreset, 'export.pdf.all.preset', EXPORT_ALL_DEFAULT_PRESET);
+
+        pdfPrintEnable.value = CutterToolsPrefs.get('export.pdf.print.enable', true);
+        restorePdfPreset(pdfPrintPreset, 'export.pdf.print.preset', EXPORT_PRINT_DEFAULT_PRESET);
+
+        pdfCutEnable.value = CutterToolsPrefs.get('export.pdf.cut.enable', true);
+        restorePdfPreset(pdfCutPreset, 'export.pdf.cut.preset', EXPORT_CUT_DEFAULT_PRESET);
+
+        optOverwrite.value = CutterToolsPrefs.get('export.overwrite', false);
+        optOpenResultFolder.value = CutterToolsPrefs.get('export.open_result_folder', true);
+    };
+
+    var saveState = function() {
+        var savePdfPreset = function(field, prefName) {
+            if (field.selection) {
+                if (field.selection.index == 0){
+                    CutterToolsPrefs.set(prefName, PREFS_DEFAULT_PDF_PRESET);
+                } else {
+                    CutterToolsPrefs.set(prefName, field.selection.text);
+                }
+            }
+        };
+        CutterToolsPrefs.set('export.pdf.all.enable', pdfAllEnable.value);
+        savePdfPreset(pdfAllPreset, 'export.pdf.all.preset');
+
+        CutterToolsPrefs.set('export.pdf.print.enable', pdfPrintEnable.value);
+        savePdfPreset(pdfPrintPreset, 'export.pdf.print.preset');
+
+        CutterToolsPrefs.set('export.pdf.cut.enable', pdfCutEnable.value);
+        savePdfPreset(pdfCutPreset, 'export.pdf.cut.preset');
+
+        CutterToolsPrefs.set('export.overwrite', optOverwrite.value);
+        CutterToolsPrefs.set('export.open_result_folder', optOpenResultFolder.value);
+    };
+
+    //////////////////////////////////////////////////////////////
+    // Setup handlers
+    //////////////////////////////////////////////////////////////
+    artboardsList.onChange = function() {
+        if (this.selection){
+            startButton.enabled = true;
+        } else {
+            startButton.enabled = false;
+        }
+    };
+
+    startButton.onClick = function() {
+        progressBar.value = 0;
+        startButton.enabled = false;
+        closeButton.enabled = false;
+
+        if (!artboardsList.selection){
+            alert("Please select at least one artboard");
+            return;
+        }
+
+        //Run
+        try {
+            var progress = new Progress(function(stage, totalProgress){
+                progressBar.value = totalProgress;
+                currentOperation.text = stage;
+                exportDialog.update();
+                // $.writeln("Progress: " + stage + " " + totalProgress);
+            });
+
+            // FIXME: Fill from dialog elements if custom was set
+            var exportFolderPath = defaultExportPath;
+
+            var options = {
+                overwrite: optOverwrite.value,
+                path: exportFolderPath,
+                exportTypes: {
+                    'ALL': pdfAllEnable.value,
+                    'CUT': pdfPrintEnable.value,
+                    'PRINT': pdfCutEnable.value
+                },
+                exportPresets: {
+                    // FIXME: Fill from dialog elements
+                    'ALL': pdfAllPreset.selection.text,
+                    'PRINT': pdfPrintPreset.selection.text,
+                    'CUT': pdfCutPreset.selection.text,
+                }
+            };
+
+            var abNames = _.map(artboardsList.selection, function(item){ return item.text; });
+            ExporterService.run(doc, abNames, options, progress);
+
+            $.writeln('Export done!');
+            currentOperation.text = DONE_TEXT;
+
+            if (optOpenResultFolder.value){
+                var folder = new Folder(exportFolderPath);
+                folder.execute();
+            }
+        } catch (e) {
+            $.writeln('Export error: ' + e);
+            alert(e);
+        }
+
+        startButton.enabled = true;
+        closeButton.enabled = true;
+    };
+
+    closeButton.onClick = function() {
+        exportDialog.close();
+        saveState();
+    };
+
+
+    //////////////////////////////////////////////////////////////
+    // Run
+    //////////////////////////////////////////////////////////////
+
+
+    var ExportDialog = {};
+
+    ExportDialog.run = function() {
+
+        fillArtBoardsList();
+        fillPdfPresets();
+
+        restoreState();
+
+        exportDialog.show();
+    };
+
+    return ExportDialog;
+})();

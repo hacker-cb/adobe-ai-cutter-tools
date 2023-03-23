@@ -1,0 +1,200 @@
+//@include "../const.jsxinc"
+//@include "../../lib/underscore-umd.js"
+//@include "./Progress.jsxinc"
+
+DocUtils = {};
+
+/**
+ * Make copy of document
+ *
+ * @param doc Source document
+ * @returns
+ */
+DocUtils.duplicate = function(doc) {
+    var tmpFolder = new Folder(Folder.temp + TEMP_FOLDER_NAME_SUFFIX + '/ExportStaging');
+
+    var prefix = '_TMP_';
+    var docBaseName = doc.name.replace(/\.[^\.]+$/, '');
+    var exportedFile = new File(tmpFolder.path + '/PDF/' + prefix + docBaseName + '.pdf');
+
+    if (exportedFile.exists) {
+        exportedFile.remove();
+    }
+
+    var whatToExport = new ExportForScreensItemToExport();
+    whatToExport.artboards = '';
+    whatToExport.document = true;
+
+    var pdfOptions = new ExportForScreensPDFOptions();
+    pdfOptions.pdfPreset = AppUtils.getDefaultPDFPresetName();
+
+    doc.exportForScreens(
+        tmpFolder,
+        ExportForScreensType.SE_PDF,
+        pdfOptions,
+        whatToExport,
+        prefix
+    );
+
+    if (!exportedFile.exists) {
+        throw "ERROR: file " + exportedFile.fsName + " not found";
+    } else {
+        $.writeln('Exported document to ' + exportedFile.fsName);
+    }
+
+    var newDoc = app.open(exportedFile);
+
+    return newDoc;
+};
+
+/**
+ * Convert all symbols to shapes
+ *
+ * @param doc Source document
+ * @param progress Progress instance
+ */
+DocUtils.convertSymbolsToShapes = function(doc, progress){
+    // Set empty progress if not set
+    if (!progress) progress = new Progress();
+
+    var pass = 0;
+
+    var totalItemsToProcess = doc.symbolItems.length;
+    var totalItemsProcessed = 0;
+
+    progress = progress.subProgress('Disassamble', 95);
+
+    while (doc.symbolItems.length != 0){
+
+        var lenBefore = doc.symbolItems.length;
+
+        var symbolItem = doc.symbolItems[0];
+        symbolItem.breakLink();
+
+        var diff = doc.symbolItems.length - lenBefore;
+
+        totalItemsToProcess += diff + 1;
+
+        totalItemsProcessed++;
+
+        progress.setPercent(totalItemsProcessed / totalItemsToProcess * 100);
+    }
+
+    progress = progress.finish();
+
+    progress = progress.subProgress('Remove symbols', 100);
+
+    doc.symbols.removeAll();
+
+    progress = progress.finish();
+};
+
+/**
+ * Set visibility of groups
+ *
+ * @param doc Document
+ * @param names Array or string of group names
+ * @param visible Visibility
+ */
+DocUtils.setGroupsVisibility = function(doc, names, visible){
+    if (!_.isArray(names)){
+        names = [names];
+    }
+    for (var i = 0; i < doc.groupItems.length; i++) {
+        var group = doc.groupItems[i];
+
+        if (_.indexOf(names, group.name) != -1) {
+            $.writeln("Set group " + group.name + " visible: " + visible);
+            var locked = group.locked;
+            if (locked){
+                group.locked = false;
+            }
+            group.hidden = !visible;
+            if (locked){
+                group.locked = true;
+            }
+        } else {
+            // $.writeln("Skip group " + group.name);
+        }
+    }
+}
+
+/**
+ * Unlock all layers
+ *
+ * @param doc Document
+ * @returns Array of layers which were locked
+ */
+DocUtils.unlockAllLayers = function(doc){
+    var lockedLayers = [];
+    for (var i = 0; i < doc.layers.length; i++) {
+        var layer = doc.layers[i];
+        layer.locked = false;
+        lockedLayers.push(layer);
+    }
+    return lockedLayers;
+}
+
+/**
+ * Get or create layer by name
+ *
+ * @param doc Document
+ * @param name Layer name
+ * @returns Layer
+ */
+DocUtils.getOrCreateLayerByName = function(doc, name){
+    try {
+        var layer = doc.layers.getByName(name);
+        return layer;
+    } catch (e) {
+        var layer = doc.layers.add();
+        layer.name = name;
+        return layer;
+    }
+}
+
+/**
+ * Get all layers, included inherited
+ *
+ * @param doc Document
+ * @param cbfilter Callback filter
+ * @returns Array of layers
+ */
+DocUtils.getAllLayers = function(doc, cbfilter){
+    function getAllLayers(layers){
+        var result = [];
+        for (var i = 0; i < layers.length; i++) {
+            var layer = layers[i];
+            if (!cbfilter || cbfilter(layer)){
+                result.push(layer);
+            }
+            result = result.concat(getAllLayers(layer.layers));
+        }
+        return result;
+    };
+
+    var layers = getAllLayers(doc.layers);
+
+    return layers;
+}
+
+
+/**
+ * Remove unused layers
+ *
+ * @param doc Document
+ * @param progress
+ */
+DocUtils.removeUnusedLayers = function(doc, progress){
+    // Set empty progress if not set
+    if (!progress) progress = new Progress();
+
+    var unusedLayers = DocUtils.getAllLayers(doc, function(layer){
+        return layer.pageItems.length == 0;
+    });
+
+    for (var i = 0; i < unusedLayers.length; i++) {
+        unusedLayers[i].remove();
+        progress.setPercent(i / unusedLayers.length * 100);
+    }
+}

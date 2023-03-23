@@ -1,0 +1,98 @@
+var Exporter = (function() {
+    var Exporter = {};
+
+    /**
+     * Get expected file names
+     *
+     * @param doc Document
+     * @param artBoardNames
+     * @param exportFolder
+     * @param opts
+     * @return {Array(File)} Array of expected file names
+     */
+    Exporter.getExpectedFileNames = function(doc, artBoardNames, exportFolder, opts) {
+        var prefixFolder;
+        var suffix;
+
+        if (opts.type == 'PDF'){
+            prefixFolder = '/PDF';
+            suffix = '.pdf';
+        } else {
+            throw "Unknown export type: " + opts.type;
+        }
+
+        var expectedFilenames = [];
+
+        for (var i = 0; i < artBoardNames.length; i++) {
+            var artBoardName = artBoardNames[i];
+            var filename = opts.prefix + artBoardName + suffix;
+            var file = new File(exportFolder.fullName + prefixFolder + '/' + filename);
+            expectedFilenames.push(file);
+        }
+        return expectedFilenames;
+    };
+
+    Exporter.exportForScreens = function(doc, artBoardNames, exportFolder, opts) {
+
+        $.writeln("Exporting artboards [" + artBoardNames.join(', ') + "] with options: " + JSON.stringify(opts));
+
+        if (!AppUtils.hasPDFPreset(opts.pdfPreset)) {
+            throw "PDF preset '" + opts.pdfPreset + "' not found";
+        }
+
+        var whatToExport = new ExportForScreensItemToExport();
+        // Artboard indexes are 0-based, but exportForScreens expects 1-based
+        whatToExport.artboards = _.map(artBoardNames, function(abName){
+            var idx = _.indexOf(doc.artboards, doc.artboards.getByName(abName));
+            return idx + 1;
+        }).join(',');
+
+        var expectedFilenames = Exporter.getExpectedFileNames(doc, artBoardNames, exportFolder, opts);
+        var resultFileNames = [];
+
+        // Clear file is exists
+        for (var i = 0; i < expectedFilenames.length; i++) {
+            var f = expectedFilenames[i];
+            if (f.exists) {
+                if (!opts.overwrite){
+                    // Display dialog if file exists
+                    throw "File " + f.fsName + " already exists, please enable overwrite option";
+                } else {
+                    $.writeln("Removing existing file: " + f.fsName);
+                    f.remove();
+                }
+            } else {
+                resultFileNames.push(f);
+            }
+        }
+
+        var exportOptions = null;
+
+        if (opts.type == 'PDF'){
+            exportOptions = new ExportForScreensPDFOptions();
+            exportOptions.pdfPreset = opts.pdfPreset;
+        } else {
+            throw "Unknown export type: " + opts.type;
+        }
+
+        doc.exportForScreens(
+            exportFolder,
+            ExportForScreensType.SE_PDF,
+            exportOptions,
+            whatToExport,
+            opts.prefix
+        );
+
+        // Check if files were exported
+        for (var i = 0; i < expectedFilenames.length; i++) {
+            var f = expectedFilenames[i];
+            if (!f.exists) {
+                throw "ERROR: file " + f.fsName + " not found";
+            }
+        }
+
+        return resultFileNames;
+    };
+
+    return Exporter;
+})();

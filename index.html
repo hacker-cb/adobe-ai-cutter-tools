@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html class="spectrum spectrum--medium spectrum--dark">
+<head>
+    <meta charset="utf-8">
+    <title>Plotter tools</title>
+
+    <!--
+        Adobe Spectrum CSS:
+            * https://opensource.adobe.com/spectrum-css/get-started.html
+            * https://github.com/adobe/spectrum-css/blob/main/README.md
+     -->
+
+    <!-- Include global variables first -->
+    <link rel="stylesheet" href="node_modules/@spectrum-css/vars/dist/spectrum-global.css">
+
+    <!-- Include only the scales your application needs -->
+    <link rel="stylesheet" href="node_modules/@spectrum-css/vars/dist/spectrum-medium.css">
+    <link rel="stylesheet" href="node_modules/@spectrum-css/vars/dist/spectrum-large.css">
+
+    <!-- Include only the colorstops your application needs -->
+    <!-- <link rel="stylesheet" href="node_modules/@spectrum-css/vars/dist/spectrum-light.css"> -->
+    <link rel="stylesheet" href="node_modules/@spectrum-css/vars/dist/spectrum-dark.css">
+    <!-- <link rel="stylesheet" href="node_modules/@spectrum-css/vars/dist/spectrum-darkest.css"> -->
+
+    <!-- Include tokens -->
+    <link rel="stylesheet" href="node_modules/@spectrum-css/tokens/dist/index.css">
+
+    <!-- Include index-vars.css for all components you need -->
+    <link rel="stylesheet" href="node_modules/@spectrum-css/page/dist/index-vars.css">
+    <link rel="stylesheet" href="node_modules/@spectrum-css/button/dist/index-vars.css">
+    <link rel="stylesheet" href="node_modules/@spectrum-css/typography/dist/index-vars.css">
+    <link rel="stylesheet" href="node_modules/@spectrum-css/divider/dist/index-vars.css">
+    <link rel="stylesheet" href="node_modules/@spectrum-css/actionbutton/dist/index-vars.css">
+    <!-- <link rel="stylesheet" href="node_modules/@spectrum-css/icon/dist/index-vars.css"> -->
+</head>
+<body>
+    <div class="spectrum-Accordion" role="region">
+        <!-- Registration marks -->
+        <h2 class="spectrum-Heading spectrum-Heading--sizeXS">Registration marks</h2>
+        <hr class="spectrum-Divider spectrum-Divider--sizeXS">
+        <div>
+            <button id="open-regmarks-button" class="spectrum-Button spectrum-Button--sizeS spectrum-Button--outline spectrum-Button--secondary">
+                <span class="spectrum-ActionButton-label">Open registration marks dialog</span>
+            </button>
+        </div>
+        <br/>
+
+        <!-- Export -->
+        <h2 class="spectrum-Heading spectrum-Heading--sizeXS">Export</h2>
+        <hr class="spectrum-Divider spectrum-Divider--sizeXS">
+        <div>
+            <p class="spectrum-Body spectrum-Body--sizeXS">
+                Create any number of <strong>groups</strong> at <i>any level</i> with names <strong>Cut</strong> and <strong>Print</strong> and run export.
+            </p>
+            <br/>
+            <p class="spectrum-Body spectrum-Body--sizeXS">
+                NOTE: You can also create groups with such names inside Symbols.
+            </p>
+            <br/>
+            <button id="export-print-and-cut-button" class="spectrum-Button spectrum-Button--sizeS spectrum-Button--outline spectrum-Button--secondary">
+                <span class="spectrum-ActionButton-label">Export Print and Cut files</span>
+            </button>
+        </div>
+        <br/>
+
+
+        <!-- Extra -->
+        <hr class="spectrum-Divider spectrum-Divider--sizeXS">
+        <!-- Align content: right -->
+        <div width="100%" style="float: right;">
+            <button id="clear-prefs-button" class="spectrum-Button spectrum-Button--sizeS spectrum-Button--secondary">
+                <span class="spectrum-Button-label">Clear preferences</span>
+            </button>
+            <button id="restart-ext-button" class="spectrum-Button spectrum-Button--sizeS spectrum-Button--secondary">
+                <span class="spectrum-Button-label">Restart Extension</span>
+            </button>
+        </div>
+
+
+    </div>
+
+    <!-- <script type="text/javascript" src="../js/CSInterface.js"></script> -->
+    <script type="text/javascript" src="lib/JSX.js"></script>
+    <script type="text/javascript" src="js/main.js"></script>
+</body>
+</html>

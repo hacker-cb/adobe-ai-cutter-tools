@@ -1,0 +1,74 @@
+//@include "../lib/json2.js"
+
+var PREFS_FILENAME = Folder.userData + "/com.hackercb.cuttertools.json";
+
+
+// Store prefernces as JSON object
+var CutterToolsPrefs = (function () {
+    var CutterToolsPrefs = {};
+
+    var loaded = false;
+    var data = {};
+
+    var load = function () {
+        var file = new File(PREFS_FILENAME);
+        if (file.exists) {
+            file.open('r');
+            var content = file.read();
+            file.close();
+            data = JSON.parse(content);
+            $.writeln('Loaded preferences from ' + PREFS_FILENAME);
+        }
+        loaded = true;
+    };
+
+    var save = function () {
+        var file = new File(PREFS_FILENAME);
+        var content = JSON.stringify(data);
+        file.open('w');
+        file.write(content);
+        file.close();
+        $.writeln('Saved preferences to ' + PREFS_FILENAME);
+    };
+
+    CutterToolsPrefs.get = function (key, defaultValue) {
+        if (!loaded) {
+            load();
+        }
+        if (data.hasOwnProperty(key)) {
+            $.writeln('Loaded preference: ' + key + ' = ' + JSON.stringify(data[key]));
+            return data[key];
+        } else {
+            return typeof defaultValue !== 'undefined' ? defaultValue : undefined;
+        }
+    };
+
+    CutterToolsPrefs.set = function (key, value) {
+        if (!loaded) {
+            load();
+        }
+
+        data[key] = value;
+        $.writeln('Saved preference: ' + key + ' = ' + JSON.stringify(value));
+        save();
+    };
+
+    CutterToolsPrefs.unset = function (key) {
+        if (!loaded) {
+            load();
+        }
+        if (data.hasOwnProperty(key)) {
+            delete data[key];
+            $.writeln('Deleted preference: ' + key);
+            save();
+        }
+    };
+
+    CutterToolsPrefs.clearAll = function () {
+        data = {};
+        save();
+    };
+
+
+    return CutterToolsPrefs;
+}());

@@ -1,0 +1,424 @@
+//@include "../../lib/underscore-umd.js"
+//@include "../CutterToolsPrefs.jsxinc"
+//@include "RegMarks.jsxinc"
+
+var RegMarksDialog = (function () {
+
+    /*
+    Code for Import https://scriptui.joonas.me — (Triple click to select):
+    {"activeId":26,"items":{"item-0":{"id":0,"type":"Dialog","parentId":false,"style":{"enabled":true,"varName":"regMarksdialog","windowType":"Dialog","creationProps":{"su1PanelCoordinates":false,"maximizeButton":false,"minimizeButton":false,"independent":false,"closeButton":false,"borderless":false,"resizeable":false},"text":"Registration marks","preferredSize":[0,0],"margins":16,"orientation":"column","spacing":10,"alignChildren":["fill","top"]}},"item-2":{"id":2,"type":"DropDownList","parentId":5,"style":{"enabled":true,"varName":"presetDropDown","text":"DropDownList","listItems":"","preferredSize":[0,0],"alignment":null,"selection":0,"helpTip":null}},"item-5":{"id":5,"type":"Panel","parentId":0,"style":{"enabled":true,"varName":"presetPanel","creationProps":{"borderStyle":"etched","su1PanelCoordinates":false},"text":"Preset","preferredSize":[0,0],"margins":10,"orientation":"column","spacing":10,"alignChildren":["fill","top"],"alignment":null}},"item-6":{"id":6,"type":"Button","parentId":8,"style":{"enabled":false,"varName":"savePresetButton","text":"Save","justify":"center","preferredSize":[0,0],"alignment":null,"helpTip":null}},"item-7":{"id":7,"type":"Button","parentId":8,"style":{"enabled":false,"varName":"deletePresetButton","text":"Delete","justify":"center","preferredSize":[0,0],"alignment":null,"helpTip":null}},"item-8":{"id":8,"type":"Group","parentId":5,"style":{"enabled":true,"varName":"presetButtonsGroup","preferredSize":[0,0],"margins":0,"orientation":"row","spacing":10,"alignChildren":["left","center"],"alignment":null}},"item-9":{"id":9,"type":"Panel","parentId":0,"style":{"enabled":true,"varName":"settingsPanel","creationProps":{"borderStyle":"etched","su1PanelCoordinates":false},"text":"Settings","preferredSize":[0,0],"margins":10,"orientation":"column","spacing":10,"alignChildren":["fill","top"],"alignment":null}},"item-10":{"id":10,"type":"Group","parentId":9,"style":{"enabled":true,"varName":"unitsGroup","preferredSize":[0,0],"margins":0,"orientation":"row","spacing":10,"alignChildren":["left","top"],"alignment":null}},"item-11":{"id":11,"type":"StaticText","parentId":10,"style":{"enabled":true,"varName":"unitsLabel","creationProps":{"truncate":"none","multiline":false,"scrolling":false},"softWrap":false,"text":"Units:","justify":"left","preferredSize":[0,0],"alignment":null,"helpTip":null}},"item-12":{"id":12,"type":"DropDownList","parentId":10,"style":{"enabled":true,"varName":"unitsDropDown","text":"DropDownList","listItems":"mm,pt","preferredSize":[0,0],"alignment":null,"selection":0,"helpTip":null}},"item-13":{"id":13,"type":"Group","parentId":9,"style":{"enabled":true,"varName":"circlesParametersGroup","preferredSize":[0,0],"margins":0,"orientation":"row","spacing":10,"alignChildren":["left","center"],"alignment":null}},"item-15":{"id":15,"type":"StaticText","parentId":13,"style":{"enabled":true,"varName":"distananceLabel","creationProps":{"truncate":"none","multiline":false,"scrolling":false},"softWrap":false,"text":"Distance: ","justify":"left","preferredSize":[0,0],"alignment":null,"helpTip":null}},"item-16":{"id":16,"type":"EditText","parentId":13,"style":{"enabled":true,"varName":"distanceField","creationProps":{"noecho":false,"readonly":false,"multiline":false,"scrollable":false,"borderless":false,"enterKeySignalsOnChange":false},"softWrap":false,"text":"","justify":"left","preferredSize":[80,0],"alignment":null,"helpTip":null}},"item-17":{"id":17,"type":"StaticText","parentId":13,"style":{"enabled":true,"varName":"radiusLabel","creationProps":{"truncate":"none","multiline":false,"scrolling":false},"softWrap":false,"text":"Radius:","justify":"left","preferredSize":[0,0],"alignment":null,"helpTip":null}},"item-18":{"id":18,"type":"EditText","parentId":13,"style":{"enabled":true,"varName":"radiusField","creationProps":{"noecho":false,"readonly":false,"multiline":false,"scrollable":false,"borderless":false,"enterKeySignalsOnChange":false},"softWrap":false,"text":"","justify":"left","preferredSize":[80,0],"alignment":null,"helpTip":null}},"item-19":{"id":19,"type":"Button","parentId":20,"style":{"enabled":true,"varName":"createRegmarksButton","text":"Create","justify":"center","preferredSize":[0,0],"alignment":null,"helpTip":null}},"item-20":{"id":20,"type":"Group","parentId":0,"style":{"enabled":true,"varName":"mainButtonsGroup","preferredSize":[0,0],"margins":0,"orientation":"row","spacing":10,"alignChildren":["center","center"],"alignment":null}},"item-21":{"id":21,"type":"Button","parentId":20,"style":{"enabled":true,"varName":"clearRegmarksButton","text":"Clear","justify":"center","preferredSize":[0,0],"alignment":null,"helpTip":null}},"item-22":{"id":22,"type":"DropDownList","parentId":25,"style":{"enabled":true,"varName":"styleDropDown","text":"DropDownList","listItems":"","preferredSize":[250,0],"alignment":null,"selection":0,"helpTip":null}},"item-24":{"id":24,"type":"StaticText","parentId":25,"style":{"enabled":true,"varName":"styleLabel","creationProps":{"truncate":"none","multiline":false,"scrolling":false},"softWrap":false,"text":"Style:","justify":"left","preferredSize":[0,0],"alignment":null,"helpTip":null}},"item-25":{"id":25,"type":"Group","parentId":9,"style":{"enabled":true,"varName":"styleGroup","preferredSize":[0,0],"margins":0,"orientation":"row","spacing":10,"alignChildren":["left","center"],"alignment":null}},"item-26":{"id":26,"type":"Button","parentId":20,"style":{"enabled":true,"varName":"closeButton","text":"Close","justify":"center","preferredSize":[0,0],"alignment":null,"helpTip":null}}},"order":[0,5,2,8,6,7,9,25,24,22,10,11,12,13,15,16,17,18,20,19,21,26],"settings":{"importJSON":true,"indentSize":false,"cepExport":false,"includeCSSJS":true,"showDialog":false,"functionWrapper":false,"afterEffectsDockable":false,"itemReferenceList":"none"}}
+    */
+
+    // REGMARKSDIALOG
+    // ==============
+    var regMarksdialog = new Window("dialog", undefined, undefined, {closeButton: false});
+        regMarksdialog.text = "Registration marks";
+        regMarksdialog.orientation = "column";
+        regMarksdialog.alignChildren = ["fill","top"];
+        regMarksdialog.spacing = 10;
+        regMarksdialog.margins = 16;
+
+    // PRESETPANEL
+    // ===========
+    var presetPanel = regMarksdialog.add("panel", undefined, undefined, {name: "presetPanel"});
+        presetPanel.text = "Preset";
+        presetPanel.orientation = "column";
+        presetPanel.alignChildren = ["fill","top"];
+        presetPanel.spacing = 10;
+        presetPanel.margins = 10;
+
+    var presetDropDown = presetPanel.add("dropdownlist", undefined, undefined, {name: "presetDropDown"});
+        presetDropDown.selection = 0;
+
+    // PRESETBUTTONSGROUP
+    // ==================
+    var presetButtonsGroup = presetPanel.add("group", undefined, {name: "presetButtonsGroup"});
+        presetButtonsGroup.orientation = "row";
+        presetButtonsGroup.alignChildren = ["left","center"];
+        presetButtonsGroup.spacing = 10;
+        presetButtonsGroup.margins = 0;
+
+    var savePresetButton = presetButtonsGroup.add("button", undefined, undefined, {name: "savePresetButton"});
+        savePresetButton.enabled = false;
+        savePresetButton.text = "Save";
+
+    var deletePresetButton = presetButtonsGroup.add("button", undefined, undefined, {name: "deletePresetButton"});
+        deletePresetButton.enabled = false;
+        deletePresetButton.text = "Delete";
+
+    // SETTINGSPANEL
+    // =============
+    var settingsPanel = regMarksdialog.add("panel", undefined, undefined, {name: "settingsPanel"});
+        settingsPanel.text = "Settings";
+        settingsPanel.orientation = "column";
+        settingsPanel.alignChildren = ["fill","top"];
+        settingsPanel.spacing = 10;
+        settingsPanel.margins = 10;
+
+    // STYLEGROUP
+    // ==========
+    var styleGroup = settingsPanel.add("group", undefined, {name: "styleGroup"});
+        styleGroup.orientation = "row";
+        styleGroup.alignChildren = ["left","center"];
+        styleGroup.spacing = 10;
+        styleGroup.margins = 0;
+
+    var styleLabel = styleGroup.add("statictext", undefined, undefined, {name: "styleLabel"});
+        styleLabel.text = "Style:";
+
+    var styleDropDown = styleGroup.add("dropdownlist", undefined, undefined, {name: "styleDropDown"});
+        styleDropDown.selection = 0;
+        styleDropDown.preferredSize.width = 250;
+
+    // UNITSGROUP
+    // ==========
+    var unitsGroup = settingsPanel.add("group", undefined, {name: "unitsGroup"});
+        unitsGroup.orientation = "row";
+        unitsGroup.alignChildren = ["left","top"];
+        unitsGroup.spacing = 10;
+        unitsGroup.margins = 0;
+
+    var unitsLabel = unitsGroup.add("statictext", undefined, undefined, {name: "unitsLabel"});
+        unitsLabel.text = "Units:";
+
+    var unitsDropDown_array = ["mm","pt"];
+    var unitsDropDown = unitsGroup.add("dropdownlist", undefined, undefined, {name: "unitsDropDown", items: unitsDropDown_array});
+        unitsDropDown.selection = 0;
+
+    // CIRCLESPARAMETERSGROUP
+    // ======================
+    var circlesParametersGroup = settingsPanel.add("group", undefined, {name: "circlesParametersGroup"});
+        circlesParametersGroup.orientation = "row";
+        circlesParametersGroup.alignChildren = ["left","center"];
+        circlesParametersGroup.spacing = 10;
+        circlesParametersGroup.margins = 0;
+
+    var distananceLabel = circlesParametersGroup.add("statictext", undefined, undefined, {name: "distananceLabel"});
+        distananceLabel.text = "Distance: ";
+
+    var distanceField = circlesParametersGroup.add('edittext {properties: {name: "distanceField"}}');
+        distanceField.preferredSize.width = 80;
+
+    var radiusLabel = circlesParametersGroup.add("statictext", undefined, undefined, {name: "radiusLabel"});
+        radiusLabel.text = "Radius:";
+
+    var radiusField = circlesParametersGroup.add('edittext {properties: {name: "radiusField"}}');
+        radiusField.preferredSize.width = 80;
+
+    // MAINBUTTONSGROUP
+    // ================
+    var mainButtonsGroup = regMarksdialog.add("group", undefined, {name: "mainButtonsGroup"});
+        mainButtonsGroup.orientation = "row";
+        mainButtonsGroup.alignChildren = ["center","center"];
+        mainButtonsGroup.spacing = 10;
+        mainButtonsGroup.margins = 0;
+
+    var createRegmarksButton = mainButtonsGroup.add("button", undefined, undefined, {name: "createRegmarksButton"});
+        createRegmarksButton.text = "Create";
+
+    var clearRegmarksButton = mainButtonsGroup.add("button", undefined, undefined, {name: "clearRegmarksButton"});
+        clearRegmarksButton.text = "Clear";
+
+    var closeButton = mainButtonsGroup.add("button", undefined, undefined, {name: "closeButton"});
+        closeButton.text = "Close";
+
+
+
+    //////////////////////////////////////////////////////////////
+    // Initial fixes
+    //////////////////////////////////////////////////////////////
+
+
+
+    //////////////////////////////////////////////////////////////
+    // Local variables
+    //////////////////////////////////////////////////////////////
+    var doc = app.activeDocument;
+    var ignoreManualChanges = false;
+    var lastSelectedPresetName = null;
+
+    //////////////////////////////////////////////////////////////
+    // Local functions
+    //////////////////////////////////////////////////////////////
+
+    var fillPresets = function(){
+        presetDropDown.removeAll();
+
+        for (presetName in RegMarks.getAllPresets()){
+            $.writeln('DEBUG: fillPresets: preset: ' + presetName + '')
+            presetDropDown.add('item', presetName);
+        }
+
+    };
+
+
+    var fillStyles = function(){
+        styleDropDown.removeAll();
+
+        for (profile in RegMarks.getAllPathStyles()){
+            styleDropDown.add('item', profile);
+        }
+
+    };
+
+    //////////////////////////////////////////////////////////////
+    // State functions
+    //////////////////////////////////////////////////////////////
+    var restoreState = function() {
+        var restoreSelection = function(field, prefName){
+            var value = CutterToolsPrefs.get(prefName);
+
+            if (typeof value == 'undefined'){
+                return;
+            }
+
+            var sel = field.find(value);
+            if (sel){
+                field.selection = sel;
+            } else {
+                $.writeln('ERROR: restoreSelection: selection not found: ' + value + ' for field: ' + field.name );
+            }
+        };
+
+        var restoreTextField = function(field, prefName){
+            var value = CutterToolsPrefs.get(prefName);
+            if (typeof value != 'undefined'){
+                field.text = value;
+            }
+        };
+
+        // Restore preset at the end
+        restoreSelection(presetDropDown, 'regmarks.preset');
+
+        if (!presetDropDown.selection){
+
+            // No selection - try to restore manuall settings
+
+            restoreSelection(styleDropDown, 'regmarks.settings.style', 'circle');
+            restoreSelection(unitsDropDown, 'regmarks.settings.units', 'mm');
+
+            restoreTextField(distanceField, 'regmarks.settings.distance');
+            restoreTextField(radiusField, 'regmarks.settings.radius');
+        }
+
+    };
+
+    var saveState = function() {
+        var saveSelection = function(field, prefName){
+            if (field.selection){
+                CutterToolsPrefs.set(prefName, field.selection.text);
+            } else {
+                CutterToolsPrefs.unset(prefName);
+            }
+        };
+
+        if (presetDropDown.selection){
+            // Has preset - save only it.
+            saveSelection(presetDropDown, 'regmarks.preset');
+
+            // Clear others
+            CutterToolsPrefs.unset('regmarks.settings.style');
+            CutterToolsPrefs.unset('regmarks.settings.units');
+            CutterToolsPrefs.unset('regmarks.settings.distance');
+            CutterToolsPrefs.unset('regmarks.settings.redius');
+
+        } else {
+            // No preset
+            CutterToolsPrefs.unset('regmarks.preset');
+
+            //- save manual settings
+            saveSelection(styleDropDown, 'regmarks.settings.style');
+            saveSelection(unitsDropDown, 'regmarks.settings.units');
+            CutterToolsPrefs.set('regmarks.settings.distance', distanceField.text);
+            CutterToolsPrefs.set('regmarks.settings.redius', radiusField.text);
+        }
+    };
+
+    var onManualChanges = function(){
+        if (ignoreManualChanges) return;
+
+        $.writeln('Preset changed to manual');
+        presetDropDown.selection = null;
+        savePresetButton.enabled = true;
+    };
+
+    var getPresetData = function(){
+        var isNumber = function(value){
+            return !isNaN(parseFloat(value)) && isFinite(value);
+        };
+
+        if (styleDropDown.selection == null){
+            alert('Please select style');
+            return false;
+        }
+
+        if (!isNumber(distanceField.text)){
+            alert('Distance must be a number');
+            return false;
+        }
+        if (!isNumber(radiusField.text)){
+            alert('Radius must be a number');
+            return false;
+        }
+
+        return {
+            'units': unitsDropDown.selection.text,
+            'markDistance': distanceField.text,
+            'markDiameter': radiusField.text,
+            'pathStyle': styleDropDown.selection.text,
+        };
+    };
+
+
+    //////////////////////////////////////////////////////////////
+    // Setup handlers
+    //////////////////////////////////////////////////////////////
+
+    presetDropDown.onChange = function(){
+        if (!presetDropDown.selection){
+            $.writeln('WARN: presetDropDown.onChange: no selection');
+            return;
+        }
+
+        var presetData = RegMarks.getPreset(presetDropDown.selection.text);
+
+        if (!presetData){
+            $.writeln('ERROR: presetDropDown.onChange: preset not found: ' + presetDropDown.selection.text);
+            return;
+        } else {
+            $.writeln('Preset was changed to: ' + presetDropDown.selection.text);
+
+            // Fill fields - do not handle as manual changes
+            ignoreManualChanges = true;
+
+            styleDropDown.selection = styleDropDown.find(presetData.pathStyle);
+            unitsDropDown.selection = unitsDropDown.find(presetData.units);
+
+            distanceField.text = presetData.markDistance;
+            radiusField.text = presetData.markDiameter;
+
+            // Enable manual changes handling
+            ignoreManualChanges = false;
+
+            lastSelectedPresetName = presetData.bundled ? null : presetDropDown.selection.text;
+
+            deletePresetButton.enabled = presetData.bundled ? false : true;
+            savePresetButton.enabled = false;
+        }
+    }
+
+    styleDropDown.onChange = function(){
+        onManualChanges();
+    };
+
+    unitsDropDown.onChange = function(){
+        onManualChanges();
+    };
+
+    distanceField.onChange = function(){
+        onManualChanges();
+    };
+
+    radiusField.onChange = function(){
+        onManualChanges();
+    };
+
+
+    closeButton.onClick = function(){
+        saveState();
+        regMarksdialog.close();
+    };
+
+    savePresetButton.onClick = function(){
+        var presetData = getPresetData();
+
+        if (!presetData){
+            return;
+        }
+
+        // Ask for preset name
+        var presetName = prompt('Please enter preset name',
+            lastSelectedPresetName ? lastSelectedPresetName : 'New preset'
+        );
+
+        if (!presetName){
+            return;
+        }
+
+        try {
+            RegMarks.saveUserPreset(presetName, presetData);
+
+            fillPresets();
+
+            // Select it
+            presetDropDown.selection = presetDropDown.find(presetName);
+        } catch (e){
+            alert('Cannot save preset: ' + e);
+        }
+    };
+
+    deletePresetButton.onClick = function(){
+        if (!presetDropDown.selection){
+            alert('Please select preset to delete');
+            return;
+        }
+
+        var selectedPresetName = presetDropDown.selection.text;
+        var presetData = RegMarks.getPreset(selectedPresetName);
+
+        if (presetData.bundled){
+            alert('You can not delete bundled presets');
+            return;
+        }
+
+        try {
+            RegMarks.deleteUserPreset(selectedPresetName);
+
+            fillPresets();
+        } catch (e){
+            alert('Cannot delete preset: ' + e);
+        }
+    }
+
+    createRegmarksButton.onClick = function(){
+
+        var presetData = getPresetData();
+        if (!presetData){
+            return;
+        }
+
+        RegMarks.generateMarks(doc, presetData);
+
+        // Refresh document
+        doc.activeLayer.visible = false;
+        doc.activeLayer.visible = true;
+
+        app.redraw();
+    }
+
+    clearRegmarksButton.onClick = function(){
+        RegMarks.deleteLayer(doc);
+
+        app.redraw();
+    }
+
+
+
+    //////////////////////////////////////////////////////////////
+    // Run
+    //////////////////////////////////////////////////////////////
+
+    var RegMarksDialog = {};
+
+    RegMarksDialog.run = function(){
+
+        fillStyles();
+        fillPresets();
+
+        restoreState();
+
+        regMarksdialog.show();
+    };
+
+    return RegMarksDialog;
+}());

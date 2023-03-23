@@ -1,0 +1,229 @@
+//@include "./Exporter.jsxinc"
+//@include "../const.jsxinc"
+//@include "../lib/AppUtils.jsxinc"
+//@include "../lib/DocUtils.jsxinc"
+//@include "../lib/Progress.jsxinc"
+//@include "../../lib/json2.js"
+
+ExporterService = (function() {
+    var ExporterService = {};
+
+    var splitObjectsToLayers = function(doc, progress) {
+
+        var cutLayer = DocUtils.getOrCreateLayerByName(doc, CUT_LAYER_NAME);
+        var printLayer = DocUtils.getOrCreateLayerByName(doc, PRINT_LAYER_NAME);
+
+        DocUtils.unlockAllLayers(doc);
+
+        // Move CUT layer to the top, print layer after it
+        cutLayer.move(doc, ElementPlacement.PLACEATBEGINNING);
+        printLayer.move(cutLayer, ElementPlacement.PLACEAFTER);
+
+        function getAllLayers(layers){
+            var result = [];
+            for (var i = 0; i < layers.length; i++) {
+                var layer = layers[i];
+                result.push(layer);
+                result = result.concat(getAllLayers(layer.layers));
+            }
+            return result;
+        }
+
+        var pluginLayers = [CUT_LAYER_NAME, PRINT_LAYER_NAME, REGMARKS_LAYER_NAME];
+
+        // Save other layers
+        var otherLayers = DocUtils.getAllLayers(doc, function(l){
+            return _.indexOf(pluginLayers, l.name) == -1;
+        });
+
+        progress = progress.subProgress("prepare", 50);
+        var itemsToMove = [];
+        for (var i = 0; i < doc.groupItems.length; i++) {
+            var group = doc.groupItems[i];
+
+            var targetLayer = null;
+            if (group.name == CUT_GROUP_NAME){
+                targetLayer = cutLayer;
+            }
+            if (group.name == PRINT_GROUP_NAME){
+                targetLayer = printLayer;
+            }
+            if (targetLayer){
+                itemsToMove.push({
+                    item: group,
+                    targetLayer: targetLayer
+                });
+            }
+            progress.setPercent(100 * i / doc.groupItems.length);
+        }
+        progress = progress.finish();
+
+        progress = progress.subProgress("move", 100);
+        for (var i = 0; i < itemsToMove.length; i++) {
+            var item = itemsToMove[i];
+            try {
+                item.item.move(item.targetLayer, ElementPlacement.PLACEATEND);
+            } catch (e) {
+                throw "ERROR: moving group " + item.item.name + " from layer " + item.item.layer.name + " to layer " + item.targetLayer.name;
+            }
+            progress.setPercent(100 * i / itemsToMove.length);
+        };
+        progress = progress.finish();
+    };
+
+    ExporterService.run = function(origDoc, artBoardNames, options, progress){
+        $.writeln("ExporterService.run, artboards: [" + artBoardNames.join(", ")  + "], options: " + JSON.stringify(options));
+        if (!progress) {
+            progress = new Progress();
+        }
+        if (options.exportTypes.ALL && !options.exportTypes.CUT && !options.exportTypes.PRINT) {
+            throw "No export types selected";
+        }
+        if (!options.path){
+            throw "No export path specified";
+        }
+        if (typeof(artBoardNames) != "object" || artBoardNames.length == 0) {
+            throw "No artboards passed";
+        }
+
+        // Make progress wrapper
+        progress = progress.subProgress("Export", 100);
+
+        // FIXME: Select dialog or pass?
+        var exportFolder = new Folder(options.path);
+
+        // If folder does not exist, create it
+        if (!exportFolder.exists) {
+            exportFolder.create();
+            $.writeln("Created folder: " + exportFolder.fsName);
+        }
+
+        $.writeln("Start export, folder: " + exportFolder.fsName);
+
+        var docCopy = null;
+
+        // Cleanup function to close the document copy
+        var cleanup = function(){
+            if (docCopy) {
+                docCopy.close(SaveOptions.DONOTSAVECHANGES);
+            }
+        };
+
+        try
+        {
+            $.writeln("Export: duplicating document");
+
+            docCopy = DocUtils.duplicate(origDoc);
+
+            $.writeln("Unlocking all layers");
+            // Unlock all layers
+            var allLayers = DocUtils.getAllLayers(docCopy);
+            for (var i = 0; i < allLayers.length; i++) {
+                allLayers[i].locked = false;
+            }
+
+            progress.setPercent(10);
+
+            $.writeln("Deleting unused artboards");
+            // Delete unused artboards and its content
+            var abLength = docCopy.artboards.length;
+            //for (var i = 0; i < docCopy.artboards.length; i++) {
+            for (var i = abLength - 1; i >= 0; i--) {
+                var ab = docCopy.artboards[i];
+
+                docCopy.artboards.setActiveArtboardIndex(i);
+
+                if (_.indexOf(artBoardNames, ab.name) == -1) {
+                    $.writeln("Deleting artboard [" + i + "]: " + ab.name);
+                    docCopy.selectObjectsOnActiveArtboard();
+                    app.cut();
+                    docCopy.selection = null;
+                    ab.remove();
+                } else {
+                    $.writeln("Keeping artboard [" + i + "]: " + ab.name);
+                }
+            }
+
+            app.redraw();
+            progress.setPercent(20);
+
+            // Symbols to shapes
+            $.writeln("Converting symbols to shapes");
+            DocUtils.convertSymbolsToShapes(docCopy,
+                progress.subProgress("Symbols to shapes", 40)
+            );
+
+            // Split objects to layers
+            $.writeln("Splitting objects to layers");
+            splitObjectsToLayers(docCopy,
+                progress.subProgress("Split to layers", 65)
+            );
+
+            // Remove unused layers
+            $.writeln("Removing unused layers");
+            DocUtils.removeUnusedLayers(docCopy,
+                progress.subProgress("Remove unused layers", 90)
+            );
+
+            // Export results
+            $.writeln('Exporting to ' + exportFolder.fsName);
+
+            var cutLayer = docCopy.layers.getByName(CUT_LAYER_NAME);
+            var printLayer = docCopy.layers.getByName(PRINT_LAYER_NAME);
+
+            // Export ALL
+            if (options.exportTypes.ALL){
+                progress = progress.subProgress("Export ALL", 93);
+                cutLayer.visible = true;
+                printLayer.visible = true;
+                Exporter.exportForScreens(docCopy, artBoardNames, exportFolder, {
+                    'type': 'PDF',
+                    'prefix': EXPORT_ALL_PREFIX,
+                    'pdfPreset': options.exportPresets.ALL,
+                    'overwrite': options.overwrite,
+                });
+                progress = progress.finish();
+            }
+
+            // Export PRINT
+            if (options.exportTypes.PRINT){
+                progress = progress.subProgress("Export PRINT", 96);
+                cutLayer.visible = false;
+                printLayer.visible = true;
+                Exporter.exportForScreens(docCopy, artBoardNames, exportFolder, {
+                    'type': 'PDF',
+                    'prefix': EXPORT_PRINT_PREFIX,
+                    'pdfPreset': options.exportPresets.PRINT,
+                    'overwrite': options.overwrite,
+                });
+                progress = progress.finish();
+            }
+
+            // Export CUT
+            if (options.exportTypes.CUT){
+                progress = progress.subProgress("Export CUT", 99);
+                cutLayer.visible = true;
+                printLayer.visible = false;
+                Exporter.exportForScreens(docCopy, artBoardNames, exportFolder, {
+                    'type': 'PDF',
+                    'prefix': EXPORT_CUT_PREFIX,
+                    'pdfPreset': options.exportPresets.CUT,
+                    'overwrite': options.overwrite,
+                });
+                progress = progress.finish();
+            }
+
+            cleanup();
+
+            progress = progress.finish();
+
+        } catch (e) {
+            $.writeln('ERROR: ' + e);
+            cleanup();
+            throw e;
+        }
+
+    };
+
+    return ExporterService;
+})();
