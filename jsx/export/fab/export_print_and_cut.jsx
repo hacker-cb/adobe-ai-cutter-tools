@@ -1,5 +1,5 @@
 //@include "../../../lib/underscore-umd.js"
-//@include "../Exporter.jsxinc"
+//@include "../ExporterService.jsxinc"
 
 (function(){
     /*
@@ -154,7 +154,7 @@
             };
 
             var abNames = _.map(artboardsList.selection, function(item){ return item.text; });
-            Exporter.run(doc, abNames, options, progress);
+            ExporterService.run(doc, abNames, options, progress);
 
             $.writeln('Export done!');
             currentOperation.text = DONE_TEXT;

@@ -4,8 +4,8 @@
 //@include "../lib/Progress.jsxinc"
 //@include "../../lib/json2.js"
 
-Exporter = (function() {
-    var Exporter = {};
+ExporterService = (function() {
+    var ExporterService = {};
 
     var splitObjectsToLayers = function(doc, progress) {
 
@@ -98,7 +98,7 @@ Exporter = (function() {
     };
 
 
-    Exporter.run = function(origDoc, artBoardNames, options, progress){
+    ExporterService.run = function(origDoc, artBoardNames, options, progress){
         if (!progress) {
             progress = new Progress();
         }
@@ -245,5 +245,5 @@ Exporter = (function() {
 
     };
 
-    return Exporter;
+    return ExporterService;
 })();
