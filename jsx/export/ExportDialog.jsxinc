@@ -205,8 +205,8 @@ var ExportDialog = (function(){
     //////////////////////////////////////////////////////////////
     var restoreState = function() {
 
-        var restorePdfPreset = function(field, presetName, defaultValue) {
-            var preset = CutterToolsPrefs.get(presetName);
+        var restorePdfPreset = function(field, prefName, defaultValue) {
+            var preset = CutterToolsPrefs.get(prefName);
             if (typeof preset == 'undefined') {
                 preset = defaultValue;
             }
@@ -218,7 +218,7 @@ var ExportDialog = (function(){
                     field.selection = sel;
                 } else {
                     $.writeln('ERROR: Preset "' + preset + '" not found');
-                    CutterToolsPrefs.unset(presetName);
+                    CutterToolsPrefs.unset(prefName);
                 }
             }
         };
@@ -237,12 +237,12 @@ var ExportDialog = (function(){
     };
 
     var saveState = function() {
-        var savePdfPreset = function(field, presetName) {
+        var savePdfPreset = function(field, prefName) {
             if (field.selection) {
                 if (field.selection.index == 0){
-                    CutterToolsPrefs.set(presetName, PREFS_DEFAULT_PDF_PRESET);
+                    CutterToolsPrefs.set(prefName, PREFS_DEFAULT_PDF_PRESET);
                 } else {
-                    CutterToolsPrefs.set(presetName, field.selection.text);
+                    CutterToolsPrefs.set(prefName, field.selection.text);
                 }
             }
         };
