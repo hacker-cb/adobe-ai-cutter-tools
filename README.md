@@ -12,12 +12,8 @@ Plugin designed to replace [Signcut] plugin for Adobe Illustrator to make work w
 
 1. [Download] repo, unzip and move folder into the extensions folder
 
-    **Win:** `C:\Program Files (x86)\Common Files\Adobe\CEP\extensions`
-    **Mac:** `/Library/Application Support/Adobe/CEP/extensions`
-
-    or
-
     **Win:** `C:\<username>\AppData\Roaming\Adobe\CEP\extensions`
+
     **Mac:** `~/Library/Application Support/Adobe/CEP/extensions`
 
 2. Set `PlayerDebugMode` to 1 (enable run of the unsigned plugins).
