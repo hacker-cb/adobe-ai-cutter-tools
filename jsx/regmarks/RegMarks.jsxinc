@@ -1,4 +1,5 @@
 //@include "../const.jsxinc"
+//@include "../../lib/json2.js"
 
 var RegMarks = (function(){
 
@@ -78,8 +79,7 @@ var RegMarks = (function(){
         var l = getLayer(doc);
 
         if (!l) {
-            $.writeln('Layer "' + REGMARKS_LAYER_NAME + '" not exist, nothing to clear')
-            return;
+            throw 'Layer "' + REGMARKS_LAYER_NAME + '" not exist';
         }
 
         l.locked = false; // Unlock layer
@@ -108,29 +108,23 @@ var RegMarks = (function(){
         return true;
     };
 
-    RegMarks.generateMarks = function(doc, preset){
+    RegMarks.generateMarks = function(doc, presetData){
+        $.writeln('Generating regmarks, data: ' + JSON.stringify(presetData));
 
-        // If preset is onject, use it as is
-        var p = typeof preset === 'object' ? preset : RegMarks.PROFILES.get(preset);
-
-        if (!p) {
-            throw 'Unknown profile "' + preset;
-        }
-
-        var pathStyle = RegMarks.PATHSTYLE.get(p.pathStyle);
+        var pathStyle = RegMarks.PATHSTYLE.get(presetData.pathStyle);
 
         if (!pathStyle) {
-            throw 'Unknown pathStyle "' + p.pathStyle;
+            throw 'Unknown pathStyle "' + presetData.pathStyle;
         }
 
-        var layer = getLayer();
+        var layer = getLayer(doc);
         if (!layer) {
             layer = createLayer(doc);
+        } else {
+            clearLayer(doc);
         }
 
         doc.activeLayer = layer;
-
-        clearLayer(doc);
 
         layer.locked = false; // Unlock layer
 
@@ -150,8 +144,8 @@ var RegMarks = (function(){
 
             $.writeln('Creating regmarks for artboard: "' + ab.name + '", size: [' + abRect + '] (' + width + '*' + height + ')');
 
-            var dist = new UnitValue(p.markDistance, p.units).as('pt');
-            var diam = new UnitValue(p.markDiameter, p.units).as('pt');
+            var dist = new UnitValue(presetData.markDistance, presetData.units).as('pt');
+            var diam = new UnitValue(presetData.markDiameter, presetData.units).as('pt');
 
             var group = layer.groupItems.add();
             group.name = ab.name;

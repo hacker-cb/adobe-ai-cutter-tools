@@ -6,7 +6,7 @@ var RegMarksDialog = (function () {
 
     /*
     Code for Import https://scriptui.joonas.me — (Triple click to select):
-    {"activeId":26,"items":{"item-0":{"id":0,"type":"Dialog","parentId":false,"style":{"enabled":true,"varName":"regMarksdialog","windowType":"Dialog","creationProps":{"su1PanelCoordinates":false,"maximizeButton":false,"minimizeButton":false,"independent":false,"closeButton":false,"borderless":false,"resizeable":false},"text":"Registration marks","preferredSize":[0,0],"margins":16,"orientation":"column","spacing":10,"alignChildren":["fill","top"]}},"item-2":{"id":2,"type":"DropDownList","parentId":5,"style":{"enabled":true,"varName":"presetDropDown","text":"DropDownList","listItems":"","preferredSize":[0,0],"alignment":null,"selection":0,"helpTip":null}},"item-5":{"id":5,"type":"Panel","parentId":0,"style":{"enabled":true,"varName":"presetPanel","creationProps":{"borderStyle":"etched","su1PanelCoordinates":false},"text":"Preset","preferredSize":[0,0],"margins":10,"orientation":"column","spacing":10,"alignChildren":["fill","top"],"alignment":null}},"item-6":{"id":6,"type":"Button","parentId":8,"style":{"enabled":false,"varName":"savePresetButton","text":"Save","justify":"center","preferredSize":[0,0],"alignment":null,"helpTip":null}},"item-7":{"id":7,"type":"Button","parentId":8,"style":{"enabled":false,"varName":"deletePresetButton","text":"Delete","justify":"center","preferredSize":[0,0],"alignment":null,"helpTip":null}},"item-8":{"id":8,"type":"Group","parentId":5,"style":{"enabled":true,"varName":"presetButtonsGroup","preferredSize":[0,0],"margins":0,"orientation":"row","spacing":10,"alignChildren":["left","center"],"alignment":null}},"item-9":{"id":9,"type":"Panel","parentId":0,"style":{"enabled":true,"varName":"settingsPanel","creationProps":{"borderStyle":"etched","su1PanelCoordinates":false},"text":"Settings","preferredSize":[0,0],"margins":10,"orientation":"column","spacing":10,"alignChildren":["fill","top"],"alignment":null}},"item-10":{"id":10,"type":"Group","parentId":9,"style":{"enabled":true,"varName":"unitsGroup","preferredSize":[0,0],"margins":0,"orientation":"row","spacing":10,"alignChildren":["left","top"],"alignment":null}},"item-11":{"id":11,"type":"StaticText","parentId":10,"style":{"enabled":true,"varName":"unitsLabel","creationProps":{"truncate":"none","multiline":false,"scrolling":false},"softWrap":false,"text":"Units:","justify":"left","preferredSize":[0,0],"alignment":null,"helpTip":null}},"item-12":{"id":12,"type":"DropDownList","parentId":10,"style":{"enabled":true,"varName":"unitsDropDown","text":"DropDownList","listItems":"mm,pt","preferredSize":[0,0],"alignment":null,"selection":0,"helpTip":null}},"item-13":{"id":13,"type":"Group","parentId":9,"style":{"enabled":true,"varName":"circlesParametersGroup","preferredSize":[0,0],"margins":0,"orientation":"row","spacing":10,"alignChildren":["left","center"],"alignment":null}},"item-15":{"id":15,"type":"StaticText","parentId":13,"style":{"enabled":true,"varName":"distananceLabel","creationProps":{"truncate":"none","multiline":false,"scrolling":false},"softWrap":false,"text":"Distance: ","justify":"left","preferredSize":[0,0],"alignment":null,"helpTip":null}},"item-16":{"id":16,"type":"EditText","parentId":13,"style":{"enabled":true,"varName":"distanceField","creationProps":{"noecho":false,"readonly":false,"multiline":false,"scrollable":false,"borderless":false,"enterKeySignalsOnChange":false},"softWrap":false,"text":"","justify":"left","preferredSize":[80,0],"alignment":null,"helpTip":null}},"item-17":{"id":17,"type":"StaticText","parentId":13,"style":{"enabled":true,"varName":"radiusLabel","creationProps":{"truncate":"none","multiline":false,"scrolling":false},"softWrap":false,"text":"Radius:","justify":"left","preferredSize":[0,0],"alignment":null,"helpTip":null}},"item-18":{"id":18,"type":"EditText","parentId":13,"style":{"enabled":true,"varName":"radiusField","creationProps":{"noecho":false,"readonly":false,"multiline":false,"scrollable":false,"borderless":false,"enterKeySignalsOnChange":false},"softWrap":false,"text":"","justify":"left","preferredSize":[80,0],"alignment":null,"helpTip":null}},"item-19":{"id":19,"type":"Button","parentId":20,"style":{"enabled":true,"varName":"createRegmarksButton","text":"Create","justify":"center","preferredSize":[0,0],"alignment":null,"helpTip":null}},"item-20":{"id":20,"type":"Group","parentId":0,"style":{"enabled":true,"varName":"mainButtonsGroup","preferredSize":[0,0],"margins":0,"orientation":"row","spacing":10,"alignChildren":["center","center"],"alignment":null}},"item-21":{"id":21,"type":"Button","parentId":20,"style":{"enabled":true,"varName":"clearRegmarksButton","text":"Clear","justify":"center","preferredSize":[0,0],"alignment":null,"helpTip":null}},"item-22":{"id":22,"type":"DropDownList","parentId":25,"style":{"enabled":true,"varName":"styleDrowDown","text":"DropDownList","listItems":"","preferredSize":[250,0],"alignment":null,"selection":0,"helpTip":null}},"item-24":{"id":24,"type":"StaticText","parentId":25,"style":{"enabled":true,"varName":"styleLabel","creationProps":{"truncate":"none","multiline":false,"scrolling":false},"softWrap":false,"text":"Style:","justify":"left","preferredSize":[0,0],"alignment":null,"helpTip":null}},"item-25":{"id":25,"type":"Group","parentId":9,"style":{"enabled":true,"varName":"styleGroup","preferredSize":[0,0],"margins":0,"orientation":"row","spacing":10,"alignChildren":["left","center"],"alignment":null}},"item-26":{"id":26,"type":"Button","parentId":20,"style":{"enabled":true,"varName":"closeButton","text":"Close","justify":"center","preferredSize":[0,0],"alignment":null,"helpTip":null}}},"order":[0,5,2,8,6,7,9,25,24,22,10,11,12,13,15,16,17,18,20,19,21,26],"settings":{"importJSON":true,"indentSize":false,"cepExport":false,"includeCSSJS":true,"showDialog":false,"functionWrapper":false,"afterEffectsDockable":false,"itemReferenceList":"none"}}
+    {"activeId":26,"items":{"item-0":{"id":0,"type":"Dialog","parentId":false,"style":{"enabled":true,"varName":"regMarksdialog","windowType":"Dialog","creationProps":{"su1PanelCoordinates":false,"maximizeButton":false,"minimizeButton":false,"independent":false,"closeButton":false,"borderless":false,"resizeable":false},"text":"Registration marks","preferredSize":[0,0],"margins":16,"orientation":"column","spacing":10,"alignChildren":["fill","top"]}},"item-2":{"id":2,"type":"DropDownList","parentId":5,"style":{"enabled":true,"varName":"presetDropDown","text":"DropDownList","listItems":"","preferredSize":[0,0],"alignment":null,"selection":0,"helpTip":null}},"item-5":{"id":5,"type":"Panel","parentId":0,"style":{"enabled":true,"varName":"presetPanel","creationProps":{"borderStyle":"etched","su1PanelCoordinates":false},"text":"Preset","preferredSize":[0,0],"margins":10,"orientation":"column","spacing":10,"alignChildren":["fill","top"],"alignment":null}},"item-6":{"id":6,"type":"Button","parentId":8,"style":{"enabled":false,"varName":"savePresetButton","text":"Save","justify":"center","preferredSize":[0,0],"alignment":null,"helpTip":null}},"item-7":{"id":7,"type":"Button","parentId":8,"style":{"enabled":false,"varName":"deletePresetButton","text":"Delete","justify":"center","preferredSize":[0,0],"alignment":null,"helpTip":null}},"item-8":{"id":8,"type":"Group","parentId":5,"style":{"enabled":true,"varName":"presetButtonsGroup","preferredSize":[0,0],"margins":0,"orientation":"row","spacing":10,"alignChildren":["left","center"],"alignment":null}},"item-9":{"id":9,"type":"Panel","parentId":0,"style":{"enabled":true,"varName":"settingsPanel","creationProps":{"borderStyle":"etched","su1PanelCoordinates":false},"text":"Settings","preferredSize":[0,0],"margins":10,"orientation":"column","spacing":10,"alignChildren":["fill","top"],"alignment":null}},"item-10":{"id":10,"type":"Group","parentId":9,"style":{"enabled":true,"varName":"unitsGroup","preferredSize":[0,0],"margins":0,"orientation":"row","spacing":10,"alignChildren":["left","top"],"alignment":null}},"item-11":{"id":11,"type":"StaticText","parentId":10,"style":{"enabled":true,"varName":"unitsLabel","creationProps":{"truncate":"none","multiline":false,"scrolling":false},"softWrap":false,"text":"Units:","justify":"left","preferredSize":[0,0],"alignment":null,"helpTip":null}},"item-12":{"id":12,"type":"DropDownList","parentId":10,"style":{"enabled":true,"varName":"unitsDropDown","text":"DropDownList","listItems":"mm,pt","preferredSize":[0,0],"alignment":null,"selection":0,"helpTip":null}},"item-13":{"id":13,"type":"Group","parentId":9,"style":{"enabled":true,"varName":"circlesParametersGroup","preferredSize":[0,0],"margins":0,"orientation":"row","spacing":10,"alignChildren":["left","center"],"alignment":null}},"item-15":{"id":15,"type":"StaticText","parentId":13,"style":{"enabled":true,"varName":"distananceLabel","creationProps":{"truncate":"none","multiline":false,"scrolling":false},"softWrap":false,"text":"Distance: ","justify":"left","preferredSize":[0,0],"alignment":null,"helpTip":null}},"item-16":{"id":16,"type":"EditText","parentId":13,"style":{"enabled":true,"varName":"distanceField","creationProps":{"noecho":false,"readonly":false,"multiline":false,"scrollable":false,"borderless":false,"enterKeySignalsOnChange":false},"softWrap":false,"text":"","justify":"left","preferredSize":[80,0],"alignment":null,"helpTip":null}},"item-17":{"id":17,"type":"StaticText","parentId":13,"style":{"enabled":true,"varName":"radiusLabel","creationProps":{"truncate":"none","multiline":false,"scrolling":false},"softWrap":false,"text":"Radius:","justify":"left","preferredSize":[0,0],"alignment":null,"helpTip":null}},"item-18":{"id":18,"type":"EditText","parentId":13,"style":{"enabled":true,"varName":"radiusField","creationProps":{"noecho":false,"readonly":false,"multiline":false,"scrollable":false,"borderless":false,"enterKeySignalsOnChange":false},"softWrap":false,"text":"","justify":"left","preferredSize":[80,0],"alignment":null,"helpTip":null}},"item-19":{"id":19,"type":"Button","parentId":20,"style":{"enabled":true,"varName":"createRegmarksButton","text":"Create","justify":"center","preferredSize":[0,0],"alignment":null,"helpTip":null}},"item-20":{"id":20,"type":"Group","parentId":0,"style":{"enabled":true,"varName":"mainButtonsGroup","preferredSize":[0,0],"margins":0,"orientation":"row","spacing":10,"alignChildren":["center","center"],"alignment":null}},"item-21":{"id":21,"type":"Button","parentId":20,"style":{"enabled":true,"varName":"clearRegmarksButton","text":"Clear","justify":"center","preferredSize":[0,0],"alignment":null,"helpTip":null}},"item-22":{"id":22,"type":"DropDownList","parentId":25,"style":{"enabled":true,"varName":"styleDropDown","text":"DropDownList","listItems":"","preferredSize":[250,0],"alignment":null,"selection":0,"helpTip":null}},"item-24":{"id":24,"type":"StaticText","parentId":25,"style":{"enabled":true,"varName":"styleLabel","creationProps":{"truncate":"none","multiline":false,"scrolling":false},"softWrap":false,"text":"Style:","justify":"left","preferredSize":[0,0],"alignment":null,"helpTip":null}},"item-25":{"id":25,"type":"Group","parentId":9,"style":{"enabled":true,"varName":"styleGroup","preferredSize":[0,0],"margins":0,"orientation":"row","spacing":10,"alignChildren":["left","center"],"alignment":null}},"item-26":{"id":26,"type":"Button","parentId":20,"style":{"enabled":true,"varName":"closeButton","text":"Close","justify":"center","preferredSize":[0,0],"alignment":null,"helpTip":null}}},"order":[0,5,2,8,6,7,9,25,24,22,10,11,12,13,15,16,17,18,20,19,21,26],"settings":{"importJSON":true,"indentSize":false,"cepExport":false,"includeCSSJS":true,"showDialog":false,"functionWrapper":false,"afterEffectsDockable":false,"itemReferenceList":"none"}}
     */
 
     // REGMARKSDIALOG
@@ -66,9 +66,9 @@ var RegMarksDialog = (function () {
     var styleLabel = styleGroup.add("statictext", undefined, undefined, {name: "styleLabel"});
         styleLabel.text = "Style:";
 
-    var styleDrowDown = styleGroup.add("dropdownlist", undefined, undefined, {name: "styleDrowDown"});
-        styleDrowDown.selection = 0;
-        styleDrowDown.preferredSize.width = 250;
+    var styleDropDown = styleGroup.add("dropdownlist", undefined, undefined, {name: "styleDropDown"});
+        styleDropDown.selection = 0;
+        styleDropDown.preferredSize.width = 250;
 
     // UNITSGROUP
     // ==========
@@ -134,7 +134,7 @@ var RegMarksDialog = (function () {
     // Local variables
     //////////////////////////////////////////////////////////////
     var doc = app.activeDocument;
-
+    var ignoreManualChanges = false;
 
     //////////////////////////////////////////////////////////////
     // Local functions
@@ -149,87 +149,163 @@ var RegMarksDialog = (function () {
 
     };
 
-    var selectPreset = function(presetName){
-        var found = presetDropDown.find(presetName);
-        if (found != null){
-            presetDropDown.selection = found;
-        } else {
-            $.writeln('Preset not found: ' + presetName);
-            presetDropDown.selection = presetDropDown.items[0];
-        }
-    };
-
 
     var fillStyles = function(){
-        styleDrowDown.removeAll();
+        styleDropDown.removeAll();
 
         for (profile in RegMarks.PATHSTYLE.items){
-            styleDrowDown.add('item', profile);
+            styleDropDown.add('item', profile);
         }
 
     };
 
-    var selectStyle = function(styleName){
-        var found = styleDrowDown.find(styleName);
-        if (found != null){
-            styleDrowDown.selection = found;
-        } else {
-            $.writeln('Style not found: ' + styleName);
-            styleDrowDown.selection = styleDrowDown.items[0];
-        }
+    //////////////////////////////////////////////////////////////
+    // State functions
+    //////////////////////////////////////////////////////////////
+    var restoreState = function() {
+        var restoreSelection = function(field, prefName){
+            var value = CutterToolsPrefs.get(prefName);
+
+            if (typeof value == 'undefined'){
+                return;
+            }
+
+            var sel = field.find(value);
+            if (sel){
+                field.selection = sel;
+            } else {
+                $.writeln('ERROR: restoreSelection: selection not found: ' + value + ' for field: ' + field.name );
+            }
+        };
+
+        restoreSelection(styleDropDown, 'regmarks.settings.style', 'circle');
+        restoreSelection(unitsDropDown, 'regmarks.settings.units', 'mm');
+
+        var s;
+
+        s = CutterToolsPrefs.get('regmarks.settings.distance');
+        if (typeof(s) != 'undefined') distanceField.text = s;
+
+        s = CutterToolsPrefs.get('regmarks.settings.redius');
+        if (typeof(s) != 'undefined') radiusField.text = s;
+
+        // Restore preset at the end
+        restoreSelection(presetDropDown, 'regmarks.last_preset');
     };
 
-    var selectUnits = function(unitName){
-        var found = unitsDropDown.find(unitName);
-        if (found != null){
-            unitsDropDown.selection = found;
-        } else {
-            $.writeln('Unit not found: ' + unitName);
-            unitsDropDown.selection = unitsDropDown.items[0];
+    var saveState = function() {
+        var saveSelection = function(field, prefName){
+            if (field.selection){
+                CutterToolsPrefs.set(prefName, field.selection.text);
+            } else {
+                CutterToolsPrefs.unset(prefName);
+            }
+        };
+
+        saveSelection(presetDropDown, 'regmarks.last_preset');
+        saveSelection(styleDropDown, 'regmarks.settings.style');
+        saveSelection(unitsDropDown, 'regmarks.settings.units');
+        CutterToolsPrefs.set('regmarks.settings.distance', distanceField.text);
+        CutterToolsPrefs.set('regmarks.settings.redius', radiusField.text);
+    };
+
+    var onManualChanges = function(){
+        if (ignoreManualChanges) return;
+
+        $.writeln('Preset changed to manual');
+        presetDropDown.selection = null;
+    };
+
+    var getPresetData = function(){
+        var isNumber = function(value){
+            return !isNaN(parseFloat(value)) && isFinite(value);
+        };
+
+        if (styleDropDown.selection == null){
+            alert('Please select style');
+            return false;
         }
-    }
+
+        if (!isNumber(distanceField.text)){
+            alert('Distance must be a number');
+            return false;
+        }
+        if (!isNumber(radiusField.text)){
+            alert('Radius must be a number');
+            return false;
+        }
+
+        return {
+            'units': unitsDropDown.selection.text,
+            'markDistance': distanceField.text,
+            'markDiameter': radiusField.text,
+            'pathStyle': styleDropDown.selection.text,
+        };
+    };
+
 
     //////////////////////////////////////////////////////////////
     // Setup handlers
     //////////////////////////////////////////////////////////////
 
     presetDropDown.onChange = function(){
-        var curSelection = this.selection ? this.selection.text : null;
+        if (!presetDropDown.selection){
+            $.writeln('WARN: presetDropDown.onChange: no selection');
+            return;
+        }
 
-        $.writeln('selection: curSelection' + curSelection);
+        var presetData = RegMarks.PROFILES.get(presetDropDown.selection.text);
 
-        var profile = RegMarks.PROFILES.get(curSelection);
+        if (!presetData){
+            $.writeln('ERROR: presetDropDown.onChange: preset not found: ' + presetDropDown.selection.text);
+            return;
+        } else {
+            $.writeln('Preset was changed to: ' + presetDropDown.selection.text);
 
-        selectStyle(profile.pathStyle);
-        selectUnits(profile.units);
+            // Fill fields - do not handle as manual changes
+            ignoreManualChanges = true;
 
-        distanceField.text = profile.markDistance;
-        radiusField.text = profile.markDiameter;
+            styleDropDown.selection = styleDropDown.find(presetData.pathStyle);
+            unitsDropDown.selection = unitsDropDown.find(presetData.units);
 
-        // Save preset
-        CutterToolsPrefs.set('regmarks.last_preset', curSelection);
+            distanceField.text = presetData.markDistance;
+            radiusField.text = presetData.markDiameter;
+
+            // Enable manual changes handling
+            ignoreManualChanges = false;
+        }
     }
 
+    styleDropDown.onChange = function(){
+        onManualChanges();
+    };
+
+    unitsDropDown.onChaonChangenging = function(){
+        onManualChanges();
+    };
+
+    distanceField.onChange = function(){
+        onManualChanges();
+    };
+
+    radiusField.onChange = function(){
+        onManualChanges();
+    };
+
+
     closeButton.onClick = function(){
+        saveState();
         regMarksdialog.close();
     };
 
     createRegmarksButton.onClick = function(){
-        $.writeln('create_regmarks_button');
 
-        var profileName = presetDropDown.selection.text;
-        var preset = {
-            'units': unitsDropDown.selection.text,
-            'markDistance': distanceField.text,
-            'markDiameter': radiusField.text,
-            'pathStyle': styleDrowDown.selection.text,
+        var presetData = getPresetData();
+        if (!presetData){
+            return;
         }
 
-        if (!preset) {
-            throw 'Unknown preset "' + profileName;
-        }
-
-        RegMarks.generateMarks(doc, preset);
+        RegMarks.generateMarks(doc, presetData);
 
         // Refresh document
         doc.activeLayer.visible = false;
@@ -239,9 +315,7 @@ var RegMarksDialog = (function () {
     }
 
     clearRegmarksButton.onClick = function(){
-        $.writeln('clear_regmarks_button');
-
-        RegMarks.deleteLayer(app.activeDocument);
+        RegMarks.deleteLayer(doc);
 
         app.redraw();
     }
@@ -259,29 +333,10 @@ var RegMarksDialog = (function () {
         fillStyles();
         fillPresets();
 
-        var last_preset_text = CutterToolsPrefs.get('regmarks.last_preset');
-        if (!last_preset_text){
-            last_preset_text = _.keys(RegMarks.PROFILES.items)[0];
-        }
+        restoreState();
 
-
-        selectPreset(last_preset_text)
         regMarksdialog.show();
     };
 
     return RegMarksDialog;
 }());
-
-
-// $.writeln('regmarks.jsx -init');
-
-// function createRegMarks(){
-//     $.writeln("createRegMarks");
-//     alert("createRegMarks js");
-
-// }
-
-// function clearRegMarks(){
-//     $.writeln("clearRegMarks");
-//     alert("clearRegMarks js");
-// }
