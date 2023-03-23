@@ -1,8 +1,12 @@
 <?xml version='1.0' encoding='UTF-8'?>
 
-<ExtensionManifest ExtensionBundleId="com.hackercb.cuttertools" ExtensionBundleVersion="1.0.0" Version="7.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+<ExtensionManifest
+  ExtensionBundleId="com.hackercb.cuttertools" ExtensionBundleVersion="1.0.0" Version="7.0"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xmlns:noNamespaceSchemaLocation="https://raw.githubusercontent.com/Adobe-CEP/CEP-Resources/master/CEP_8.x/ExtensionManifest_v_7_0.xsd"
+  >
   <ExtensionList>
-    <Extension Id="com.hackercb.cuttertools" Version="1.0.0" />
+    <Extension Id="com.hackercb.cuttertools" Version="1.0.1" />
   </ExtensionList>
   <ExecutionEnvironment>
     <HostList>
@@ -40,8 +44,13 @@
               <Width>350</Width>
             </Size>
           </Geometry>
-          <Icons />
         </UI>
+        <Icons>
+            <Icon Type="Normal">./images/CutterTools_Icon_N.png</Icon>
+            <Icon Type="RollOver">./images/CutterTools_Icon_R.png</Icon>
+            <Icon Type="DarkNormal">./images/CutterTools_Icon_DN.png</Icon>
+            <Icon Type="DarkRollOver">./images/CutterTools_Icon_DR.png</Icon>
+        </Icons>
       </DispatchInfo>
     </Extension>
   </DispatchInfoList>
