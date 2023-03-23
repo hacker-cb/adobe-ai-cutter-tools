@@ -135,13 +135,6 @@
                 // $.writeln("Progress: " + stage + " " + totalProgress);
             });
 
-            var artboardIndexes = [];
-            for (var i = 0; i < artboardsList.selection.length; i++) {
-                var sel = artboardsList.selection[i];
-                var abIndex = _.indexOf(doc.artboards, doc.artboards.getByName(sel.text));
-                artboardIndexes.push(abIndex);
-            }
-
             // FIXME: Fill from dialog elements if custom was set
             var exportFolderPath = defaultExportPath;
 
@@ -160,7 +153,8 @@
                 }
             };
 
-            Exporter.run(doc, artboardIndexes, options, progress);
+            var abNames = _.map(artboardsList.selection, function(item){ return item.text; });
+            Exporter.run(doc, abNames, options, progress);
 
             $.writeln('Export done!');
             currentOperation.text = DONE_TEXT;
