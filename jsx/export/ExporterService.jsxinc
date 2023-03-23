@@ -1,3 +1,4 @@
+//@include "./Exporter.jsxinc"
 //@include "../const.jsxinc"
 //@include "../lib/AppUtils.jsxinc"
 //@include "../lib/DocUtils.jsxinc"
@@ -69,34 +70,6 @@ ExporterService = (function() {
         };
         progress = progress.finish();
     };
-
-    var exportArtBoards = function(doc, artBoardNames, exportFolder, opts) {
-
-        $.writeln("Exporting artboards [" + artBoardNames.join(', ') + "] with options: " + JSON.stringify(opts));
-
-        if (!AppUtils.hasPDFPreset(opts.pdfPreset)) {
-            throw "PDF preset '" + opts.pdfPreset + "' not found";
-        }
-
-        var whatToExport = new ExportForScreensItemToExport();
-        // Artboard indexes are 0-based, but exportForScreens expects 1-based
-        whatToExport.artboards = _.map(artBoardNames, function(abName){
-            var idx = _.indexOf(doc.artboards, doc.artboards.getByName(abName));
-            return idx + 1;
-        }).join(',');
-
-        var pdfOptions = new ExportForScreensPDFOptions();
-        pdfOptions.pdfPreset = opts.pdfPreset;
-
-        doc.exportForScreens(
-            exportFolder,
-            ExportForScreensType.SE_PDF,
-            pdfOptions,
-            whatToExport,
-            opts.prefix
-        );
-    };
-
 
     ExporterService.run = function(origDoc, artBoardNames, options, progress){
         if (!progress) {
@@ -201,7 +174,7 @@ ExporterService = (function() {
             if (options.exportTypes.ALL){
                 cutLayer.visible = true;
                 printLayer.visible = true;
-                exportArtBoards(docCopy, artBoardNames, exportFolder, {
+                Exporter.exportForScreens(docCopy, artBoardNames, exportFolder, {
                     'prefix': EXPORT_ALL_PREFIX,
                     'pdfPreset': options.exportPresets.ALL
                 });
@@ -213,7 +186,7 @@ ExporterService = (function() {
             if (options.exportTypes.CUT){
                 cutLayer.visible = true;
                 printLayer.visible = false;
-                exportArtBoards(docCopy, artBoardNames, exportFolder, {
+                Exporter.exportForScreens(docCopy, artBoardNames, exportFolder, {
                     'prefix': EXPORT_CUT_PREFIX,
                     'pdfPreset': options.exportPresets.CUT
                 });
@@ -225,7 +198,7 @@ ExporterService = (function() {
             if (options.exportTypes.PRINT){
                 cutLayer.visible = false;
                 printLayer.visible = true;
-                exportArtBoards(docCopy, artBoardNames, exportFolder, {
+                Exporter.exportForScreens(docCopy, artBoardNames, exportFolder, {
                     'prefix': EXPORT_PRINT_PREFIX,
                     'pdfPreset': options.exportPresets.PRINT
                 });

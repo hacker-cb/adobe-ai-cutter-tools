@@ -1,0 +1,33 @@
+var Exporter = (function() {
+    var Exporter = {};
+
+    Exporter.exportForScreens = function(doc, artBoardNames, exportFolder, opts) {
+
+        $.writeln("Exporting artboards [" + artBoardNames.join(', ') + "] with options: " + JSON.stringify(opts));
+
+        if (!AppUtils.hasPDFPreset(opts.pdfPreset)) {
+            throw "PDF preset '" + opts.pdfPreset + "' not found";
+        }
+
+        var whatToExport = new ExportForScreensItemToExport();
+        // Artboard indexes are 0-based, but exportForScreens expects 1-based
+        whatToExport.artboards = _.map(artBoardNames, function(abName){
+            var idx = _.indexOf(doc.artboards, doc.artboards.getByName(abName));
+            return idx + 1;
+        }).join(',');
+
+        var pdfOptions = new ExportForScreensPDFOptions();
+        pdfOptions.pdfPreset = opts.pdfPreset;
+
+        doc.exportForScreens(
+            exportFolder,
+            ExportForScreensType.SE_PDF,
+            pdfOptions,
+            whatToExport,
+            opts.prefix
+        );
+
+    };
+
+    return Exporter;
+})();
