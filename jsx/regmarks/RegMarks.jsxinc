@@ -1,4 +1,5 @@
 //@include "../const.jsxinc"
+//@include "../CutterToolsPrefs.jsxinc"
 //@include "../../lib/json2.js"
 
 var RegMarks = (function(){
@@ -22,7 +23,7 @@ var RegMarks = (function(){
     };
 
 
-    var BUNDLED_PROFILES = {
+    var BUNDLED_PRESETS = {
         'Vulcan DC-500VC (10mm border)': {
             'bundled': true,
             'units': 'mm',
@@ -83,33 +84,78 @@ var RegMarks = (function(){
     };
 
     /**
-     * Get all profiles
+     * Get all presets
      *
-     * @returns {Object} - key: profile name, value: profile data
+     * @returns {Object} - key: preset name, value: preset data
      */
-    RegMarks.getAllProfiles = function(){
-        var profiles = BUNDLED_PROFILES;
+    RegMarks.getAllPresets = function(){
+        // Workaround to make copy of object
+        var presets = JSON.parse(JSON.stringify(BUNDLED_PRESETS));
 
-        // FIXME: load profiles from preferences.
+        var user_presets = CutterToolsPrefs.get('regmarks.user_presets');
+        if (user_presets) {
+            for (var name in user_presets){
+                presets[name] = user_presets[name];
+            }
+        }
 
-        return profiles;
+        return presets;
     };
 
     /**
-     * Get profile by name
+     * Get preset by name
      *
-     * @param {String} profileName - profile name
-     * @returns {Object|null} - profile data or null if profile not found
+     * @param {String} presetName - preset name
+     * @returns {Object|null} - preset data or null if preset not found
      */
-    RegMarks.getProfile = function(profileName){
-        var profiles = RegMarks.getAllProfiles();
-        for (var name in profiles){
-            if (name == profileName){
-                return profiles[name];
+    RegMarks.getPreset = function(presetName){
+        var presets = RegMarks.getAllPresets();
+        for (var name in presets){
+            if (name == presetName){
+                return presets[name];
             }
         }
         return null;
     };
+
+    /**
+     * Save user preset
+     *
+     * @param presetName Preset name
+     * @param presetData Preset data
+     *
+     * @throws
+     */
+    RegMarks.saveUserPreset = function(presetName, presetData){
+        var user_presets = CutterToolsPrefs.get('regmarks.user_presets',{});
+
+        user_presets[presetName] = presetData;
+
+        CutterToolsPrefs.set('regmarks.user_presets', user_presets);
+
+        $.writeln('Preset "' + presetName + '" saved');
+    };
+
+    /**
+     * Delete user preset
+     *
+     * @param presetName
+     * @throws {Error} - if preset not found
+     */
+    RegMarks.deleteUserPreset = function(presetName){
+        var user_presets = CutterToolsPrefs.get('regmarks.user_presets');
+        if (!user_presets) {
+            throw 'No user presets found';
+        }
+        if (!user_presets[presetName]) {
+            throw 'Preset "' + presetName + '" not found';
+        }
+        delete user_presets[presetName];
+
+        CutterToolsPrefs.set('regmarks.user_presets', user_presets);
+
+        $.writeln('Preset "' + presetName + '" deleted');
+    }
 
     /**
      * Get all path styles
@@ -117,7 +163,8 @@ var RegMarks = (function(){
      * @returns {Object} - key: path style name, value: path style data
      */
     RegMarks.getAllPathStyles = function(){
-        var pathStyles = BUNDLED_PATHSTYLES;
+        // Workaround to make copy of object
+        var pathStyles = JSON.parse(JSON.stringify(BUNDLED_PATHSTYLES));
 
         // FIXME: load path styles from preferences.
         return pathStyles;

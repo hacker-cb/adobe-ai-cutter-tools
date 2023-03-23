@@ -135,6 +135,7 @@ var RegMarksDialog = (function () {
     //////////////////////////////////////////////////////////////
     var doc = app.activeDocument;
     var ignoreManualChanges = false;
+    var lastSelectedPresetName = null;
 
     //////////////////////////////////////////////////////////////
     // Local functions
@@ -143,8 +144,9 @@ var RegMarksDialog = (function () {
     var fillPresets = function(){
         presetDropDown.removeAll();
 
-        for (profile in RegMarks.getAllProfiles()){
-            presetDropDown.add('item', profile);
+        for (presetName in RegMarks.getAllPresets()){
+            $.writeln('DEBUG: fillPresets: preset: ' + presetName + '')
+            presetDropDown.add('item', presetName);
         }
 
     };
@@ -237,6 +239,7 @@ var RegMarksDialog = (function () {
 
         $.writeln('Preset changed to manual');
         presetDropDown.selection = null;
+        savePresetButton.enabled = true;
     };
 
     var getPresetData = function(){
@@ -277,7 +280,7 @@ var RegMarksDialog = (function () {
             return;
         }
 
-        var presetData = RegMarks.getProfile(presetDropDown.selection.text);
+        var presetData = RegMarks.getPreset(presetDropDown.selection.text);
 
         if (!presetData){
             $.writeln('ERROR: presetDropDown.onChange: preset not found: ' + presetDropDown.selection.text);
@@ -296,6 +299,11 @@ var RegMarksDialog = (function () {
 
             // Enable manual changes handling
             ignoreManualChanges = false;
+
+            lastSelectedPresetName = presetData.bundled ? null : presetDropDown.selection.text;
+
+            deletePresetButton.enabled = presetData.bundled ? false : true;
+            savePresetButton.enabled = false;
         }
     }
 
@@ -320,6 +328,57 @@ var RegMarksDialog = (function () {
         saveState();
         regMarksdialog.close();
     };
+
+    savePresetButton.onClick = function(){
+        var presetData = getPresetData();
+
+        if (!presetData){
+            return;
+        }
+
+        // Ask for preset name
+        var presetName = prompt('Please enter preset name',
+            lastSelectedPresetName ? lastSelectedPresetName : 'New preset'
+        );
+
+        if (!presetName){
+            return;
+        }
+
+        try {
+            RegMarks.saveUserPreset(presetName, presetData);
+
+            fillPresets();
+
+            // Select it
+            presetDropDown.selection = presetDropDown.find(presetName);
+        } catch (e){
+            alert('Cannot save preset: ' + e);
+        }
+    };
+
+    deletePresetButton.onClick = function(){
+        if (!presetDropDown.selection){
+            alert('Please select preset to delete');
+            return;
+        }
+
+        var selectedPresetName = presetDropDown.selection.text;
+        var presetData = RegMarks.getPreset(selectedPresetName);
+
+        if (presetData.bundled){
+            alert('You can not delete bundled presets');
+            return;
+        }
+
+        try {
+            RegMarks.deleteUserPreset(selectedPresetName);
+
+            fillPresets();
+        } catch (e){
+            alert('Cannot delete preset: ' + e);
+        }
+    }
 
     createRegmarksButton.onClick = function(){
 
