@@ -172,39 +172,43 @@ ExporterService = (function() {
 
             // Export ALL
             if (options.exportTypes.ALL){
+                progress = progress.subProgress("Export ALL", 93);
                 cutLayer.visible = true;
                 printLayer.visible = true;
                 Exporter.exportForScreens(docCopy, artBoardNames, exportFolder, {
+                    'type': 'PDF',
                     'prefix': EXPORT_ALL_PREFIX,
                     'pdfPreset': options.exportPresets.ALL
                 });
+                progress = progress.finish();
             }
 
-            progress.setPercent(93);
 
             // Export CUT
             if (options.exportTypes.CUT){
+                progress = progress.subProgress("Export CUT", 96);
                 cutLayer.visible = true;
                 printLayer.visible = false;
                 Exporter.exportForScreens(docCopy, artBoardNames, exportFolder, {
+                    'type': 'PDF',
                     'prefix': EXPORT_CUT_PREFIX,
                     'pdfPreset': options.exportPresets.CUT
                 });
+                progress = progress.finish();
             }
-
-            progress.setPercent(96);
 
             // Export PRINT
             if (options.exportTypes.PRINT){
+                progress = progress.subProgress("Export PRINT", 99);
                 cutLayer.visible = false;
                 printLayer.visible = true;
                 Exporter.exportForScreens(docCopy, artBoardNames, exportFolder, {
+                    'type': 'PDF',
                     'prefix': EXPORT_PRINT_PREFIX,
                     'pdfPreset': options.exportPresets.PRINT
                 });
+                progress = progress.finish();
             }
-
-            progress.setPercent(99);
 
             cleanup();
 
