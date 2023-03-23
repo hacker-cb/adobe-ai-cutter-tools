@@ -2,7 +2,7 @@
 
 try {
     CutterToolsPrefs.clearAll();
-    alert('Prefernces were cleared.');
+    alert('Preferences were cleared.');
 } catch (e) {
     alert('Error: ' + e);
 }
