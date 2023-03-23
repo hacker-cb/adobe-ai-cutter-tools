@@ -35,6 +35,15 @@ Progress.prototype.subProgress = function(name, maxParentProgress){
     return subProgress;
 };
 
+Progress.prototype.finish = function(){
+    if (!this.parent){
+        throw 'Cannot finish root progress';
+    }
+    this.setPercent(100);
+    return this.parent;
+};
+
+
 Progress.prototype.getFullName = function(){
     if (this.parent && this.parent.getFullName()){
         return this.parent.getFullName() + ', ' + this.name;

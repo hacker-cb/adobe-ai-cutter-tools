@@ -35,7 +35,7 @@ Exporter = (function() {
             return _.indexOf(pluginLayers, l.name) == -1;
         });
 
-        var imp = progress.subProgress("prepare", 50);
+        progress = progress.subProgress("prepare", 50);
         var itemsToMove = [];
         for (var i = 0; i < doc.groupItems.length; i++) {
             var group = doc.groupItems[i];
@@ -53,11 +53,11 @@ Exporter = (function() {
                     targetLayer: targetLayer
                 });
             }
-            imp.setPercent(100 * i / doc.groupItems.length);
+            progress.setPercent(100 * i / doc.groupItems.length);
         }
-        imp.setPercent(100);
+        progress = progress.finish();
 
-        var mp = progress.subProgress("move", 100);
+        progress = progress.subProgress("move", 100);
         for (var i = 0; i < itemsToMove.length; i++) {
             var item = itemsToMove[i];
             try {
@@ -65,9 +65,9 @@ Exporter = (function() {
             } catch (e) {
                 throw "ERROR: moving group " + item.item.name + " from layer " + item.item.layer.name + " to layer " + item.targetLayer.name;
             }
-            mp.setPercent(100 * i / itemsToMove.length);
+            progress.setPercent(100 * i / itemsToMove.length);
         };
-        mp.setPercent(100);
+        progress = progress.finish();
     };
 
     var exportArtBoards = function(doc, artboardIndexes, exportFolder, opts) {
@@ -237,7 +237,7 @@ Exporter = (function() {
 
             cleanup();
 
-            progress.setPercent(100);
+            progress = progress.finish();
 
         } catch (e) {
             $.writeln('ERROR: ' + e);
