@@ -20,6 +20,14 @@ Plugin designed to replace [Signcut] plugin for Adobe Illustrator to make work w
 
 2. Set `PlayerDebugMode` to 1 (enable run of the unsigned plugins).
 
+    ### With script (recommended)
+
+    **Win:** Run [install/windows_debug_mode.cmd](install/windows_debug_mode.cmd)
+
+    **Mac:** Open [install/windows_debug_mode.cmd](install/windows_debug_mode.cmd) script and click *Run* in script editor.
+
+    ### Manual
+
     **CEP Version below (CEP 11) is suitable with AI 2023!**
     You have to replace it with correct one for your application!
     See compatibility tables [CEP9] and [CEP11].
