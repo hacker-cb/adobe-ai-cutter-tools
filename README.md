@@ -12,6 +12,8 @@ Plugin designed to replace [Signcut] plugin for Adobe Illustrator to make work w
 
 1. [Download] repo, unzip and move folder into the extensions folder
 
+    NOTE: You need to create folder if it does not exist.
+
     **Win:** `%APPDATA%\AppData\Roaming\Adobe\CEP\extensions`
 
     **Mac:** `~/Library/Application Support/Adobe/CEP/extensions`
