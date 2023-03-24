@@ -49,7 +49,7 @@ This layers will be used in the resulting PDFs.
 
 NOTE: You can choose any other user-defined profile in the Export dialog.
 
-[Download]: https://github.com/majman/ai-scripts-panel/archive/master.zip
+[Download]: https://github.com/hacker-cb/adobe-ai-cutter-tools/archive/master.zip
 [SignCut]: http://signcutpro.com
 [CEP9]: https://github.com/Adobe-CEP/CEP-Resources/blob/master/CEP_9.x/Documentation/CEP%209.0%20HTML%20Extension%20Cookbook.md#applications-integrated-with-cep
 [CEP11]: https://github.com/Adobe-CEP/CEP-Resources/blob/master/CEP_11.x/Documentation/CEP%2011.1%20HTML%20Extension%20Cookbook.md#applications-integrated-with-cep
