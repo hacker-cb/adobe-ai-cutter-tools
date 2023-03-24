@@ -12,7 +12,7 @@ Plugin designed to replace [Signcut] plugin for Adobe Illustrator to make work w
 
 1. [Download] repo, unzip and move folder into the extensions folder
 
-    **Win:** `C:\<username>\AppData\Roaming\Adobe\CEP\extensions`
+    **Win:** `%APPDATA%\AppData\Roaming\Adobe\CEP\extensions`
 
     **Mac:** `~/Library/Application Support/Adobe/CEP/extensions`
 
@@ -22,7 +22,7 @@ Plugin designed to replace [Signcut] plugin for Adobe Illustrator to make work w
     You have to replace it with correct one for your application!
     See compatibility tables [CEP9] and [CEP11].
 
-    **Win:** `regedit > HKEY_CURRENT_USER/Software/Adobe/CSXS.11`,
+    **Win:** `regedit > HKEY_CURRENT_USER\Software\Adobe\CSXS.11`,
     then add a new entry `PlayerDebugMode` of type `string` with the value of `1`.
 
     **Mac:** In the terminal, type: `defaults write com.adobe.CSXS.11 PlayerDebugMode 1`
