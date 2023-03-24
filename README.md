@@ -8,7 +8,14 @@ Plugin designed to replace [Signcut] plugin for Adobe Illustrator to make work w
 * Support Symbols
 * Export 3 PDF versions: *PRINT*, *CUT* and *ALL* version.
 
-## Installation
+## Installation on Windows with cmd (recommended)
+
+1. [Download] repo, unzip to any folder.
+2. Run [install_windows.cmd](install_windows.cmd) from the extracted folder.
+5. Logout, login and Launch Adobe Illustrator.
+
+
+## Manual installation (Windows/MacOS)
 
 1. [Download] repo, unzip and move folder into the extensions folder
 
