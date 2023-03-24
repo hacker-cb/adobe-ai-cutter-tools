@@ -12,7 +12,7 @@ Plugin designed to replace [Signcut] plugin for Adobe Illustrator to make work w
 
 1. [Download] repo, unzip and move folder into the extensions folder
 
-    NOTE: You need to create folder if it does not exist.
+    **NOTE:** You need to create folder if it does not exist.
 
     **Win:** `%APPDATA%\AppData\Roaming\Adobe\CEP\extensions`
 
@@ -34,7 +34,7 @@ Plugin designed to replace [Signcut] plugin for Adobe Illustrator to make work w
 
 ## Usage
 
-*NOTE: *see [samples](samples/) directory with AI samples.
+**NOTE:** see [samples](samples/) directory with AI samples.
 
 1. Open *Window -> Extensions -> Cutter Tools* panel.
 
@@ -49,7 +49,17 @@ This layers will be used in the resulting PDFs.
 * *CUT* - Version for cutting. Default profile is *PDF/X-3:2002* which is acceptable to import to [SignCut].
 * *ALL* - Version for preview. Has Layers *Cut* and *Print*. Default profile is default AI multi-layer profile.
 
-NOTE: You can choose any other user-defined profile in the Export dialog.
+**NOTE:**  You can choose any other user-defined profile in the Export dialog.
+
+## Possible problems
+
+### Exension panel content does not shown.
+
+Make sure your set `PlayerDebugMode` to `1` as listed in **Installation** section and you have rebooted your computer.
+
+
+
+
 
 [Download]: https://github.com/hacker-cb/adobe-ai-cutter-tools/archive/master.zip
 [SignCut]: http://signcutpro.com
