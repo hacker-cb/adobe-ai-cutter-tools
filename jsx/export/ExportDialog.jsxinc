@@ -297,8 +297,8 @@ var ExportDialog = (function(){
                 path: exportFolderPath,
                 exportTypes: {
                     'ALL': pdfAllEnable.value,
-                    'CUT': pdfPrintEnable.value,
-                    'PRINT': pdfCutEnable.value
+                    'PRINT': pdfPrintEnable.value,
+                    'CUT': pdfCutEnable.value,
                 },
                 exportPresets: {
                     // FIXME: Fill from dialog elements
