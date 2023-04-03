@@ -8,6 +8,8 @@
 ExporterService = (function() {
     var ExporterService = {};
 
+    var pluginLayers = [CUT_LAYER_NAME, PRINT_LAYER_NAME, REGMARKS_LAYER_NAME];
+
     var splitObjectsToLayers = function(doc, progress) {
 
         var cutLayer = DocUtils.getOrCreateLayerByName(doc, CUT_LAYER_NAME);
@@ -28,8 +30,6 @@ ExporterService = (function() {
             }
             return result;
         }
-
-        var pluginLayers = [CUT_LAYER_NAME, PRINT_LAYER_NAME, REGMARKS_LAYER_NAME];
 
         // Save other layers
         var otherLayers = DocUtils.getAllLayers(doc, function(l){
@@ -161,9 +161,21 @@ ExporterService = (function() {
 
             // Remove unused layers
             $.writeln("Removing unused layers");
-            DocUtils.removeUnusedLayers(docCopy,
-                progress.subProgress("Remove unused layers", 90)
-            );
+            //
+            // We use before DocUtils.removeUnusedLayers
+            // but we need to keep plugin layers
+            progress = progress.subProgress("Remove unused layers", 90);
+            var unusedLayers = DocUtils.getAllLayers(docCopy, function(layer){
+                return layer.pageItems.length == 0 && _.indexOf(pluginLayers, layer.name) == -1;
+            });
+            for (var i = 0; i < unusedLayers.length; i++) {
+                var l = unusedLayers[i];
+                $.writeln("Removing unused layer: " + l.name);
+                l.remove();
+                progress.setPercent(i / unusedLayers.length * 100);
+            }
+            progress = progress.finish();
+
 
             // Export results
             $.writeln('Exporting to ' + exportFolder.fsName);
@@ -224,7 +236,7 @@ ExporterService = (function() {
 
         } catch (e) {
             $.writeln('ERROR: ' + e);
-            cleanup();
+            // cleanup();
             throw e;
         }
 
