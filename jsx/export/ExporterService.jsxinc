@@ -173,6 +173,7 @@ ExporterService = (function() {
 
             // Export ALL
             if (options.exportTypes.ALL){
+                $.writeln('Export ALL');
                 progress = progress.subProgress("Export ALL", 93);
                 cutLayer.visible = true;
                 printLayer.visible = true;
@@ -187,6 +188,7 @@ ExporterService = (function() {
 
             // Export PRINT
             if (options.exportTypes.PRINT){
+                $.writeln('Export PRINT');
                 progress = progress.subProgress("Export PRINT", 96);
                 cutLayer.visible = false;
                 printLayer.visible = true;
@@ -201,6 +203,7 @@ ExporterService = (function() {
 
             // Export CUT
             if (options.exportTypes.CUT){
+                $.writeln('Export CUT');
                 progress = progress.subProgress("Export CUT", 99);
                 cutLayer.visible = true;
                 printLayer.visible = false;
@@ -212,6 +215,8 @@ ExporterService = (function() {
                 });
                 progress = progress.finish();
             }
+
+            $.writeln('Cleanup...');
 
             cleanup();
 
