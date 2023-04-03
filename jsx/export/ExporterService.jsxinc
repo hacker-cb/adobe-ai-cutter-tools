@@ -76,7 +76,7 @@ ExporterService = (function() {
         if (!progress) {
             progress = new Progress();
         }
-        if (options.exportTypes.ALL && !options.exportTypes.CUT && !options.exportTypes.PRINT) {
+        if (!options.exportTypes.ALL && !options.exportTypes.CUT && !options.exportTypes.PRINT) {
             throw "No export types selected";
         }
         if (!options.path){
