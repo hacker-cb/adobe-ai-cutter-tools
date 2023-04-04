@@ -21,35 +21,51 @@ ExporterService = (function() {
         cutLayer.move(doc, ElementPlacement.PLACEATBEGINNING);
         printLayer.move(cutLayer, ElementPlacement.PLACEAFTER);
 
-        progress = progress.subProgress("prepare", 50);
+
         var itemsToMove = [];
+
+        // Check group items
+        progress = progress.subProgress("check groups", 25);
         for (var i = 0; i < doc.groupItems.length; i++) {
             var group = doc.groupItems[i];
 
-            var targetLayer = null;
             if (group.name == CUT_GROUP_NAME){
-                targetLayer = cutLayer;
+                itemsToMove.push({ item: group, targetLayer: cutLayer });
             }
             if (group.name == PRINT_GROUP_NAME){
-                targetLayer = printLayer;
+                itemsToMove.push({ item: group, targetLayer: printLayer });
             }
-            if (targetLayer){
-                itemsToMove.push({
-                    item: group,
-                    targetLayer: targetLayer
-                });
-            }
+
             progress.setPercent(100 * i / doc.groupItems.length);
         }
         progress = progress.finish();
 
+        // Check layer items
+        progress = progress.subProgress("check layers", 50);
+        for (var i = 0; i < doc.layers.length; i++) {
+            var layer = doc.layers[i];
+
+            if (layer.parent == doc || layer.hidden){
+                // Skip top level layers
+                continue;
+            }
+            if (layer.name == CUT_LAYER_NAME){
+                itemsToMove.push({ item: group, targetLayer: cutLayer });
+            }
+            if (layer.name == PRINT_LAYER_NAME){
+                itemsToMove.push({ item: group, targetLayer: printLayer });
+            }
+        }
+        progress = progress.subProgress("check groups", 25);
+
+        // Move items
         progress = progress.subProgress("move", 100);
         for (var i = 0; i < itemsToMove.length; i++) {
-            var item = itemsToMove[i];
+            var group = itemsToMove[i];
             try {
-                item.item.move(item.targetLayer, ElementPlacement.PLACEATEND);
+                group.item.move(group.targetLayer, ElementPlacement.PLACEATEND);
             } catch (e) {
-                throw "ERROR: moving group " + item.item.name + " from layer " + item.item.layer.name + " to layer " + item.targetLayer.name;
+                throw "ERROR: moving group " + group.item.name + " from layer " + group.item.layer.name + " to layer " + group.targetLayer.name;
             }
             progress.setPercent(100 * i / itemsToMove.length);
         };
