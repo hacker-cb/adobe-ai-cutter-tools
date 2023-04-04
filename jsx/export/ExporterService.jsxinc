@@ -21,21 +21,6 @@ ExporterService = (function() {
         cutLayer.move(doc, ElementPlacement.PLACEATBEGINNING);
         printLayer.move(cutLayer, ElementPlacement.PLACEAFTER);
 
-        function getAllLayers(layers){
-            var result = [];
-            for (var i = 0; i < layers.length; i++) {
-                var layer = layers[i];
-                result.push(layer);
-                result = result.concat(getAllLayers(layer.layers));
-            }
-            return result;
-        }
-
-        // Save other layers
-        var otherLayers = DocUtils.getAllLayers(doc, function(l){
-            return _.indexOf(pluginLayers, l.name) == -1;
-        });
-
         progress = progress.subProgress("prepare", 50);
         var itemsToMove = [];
         for (var i = 0; i < doc.groupItems.length; i++) {
