@@ -153,6 +153,14 @@ ExporterService = (function() {
                 progress.subProgress("Symbols to shapes", 40)
             );
 
+            // Unlock all layers - after symbols to shapes
+            $.writeln("Unlocking all layers (after symbols to shapes)");
+            var allLayers = DocUtils.getAllLayers(docCopy);
+            for (var i = 0; i < allLayers.length; i++) {
+                allLayers[i].locked = false;
+            }
+            progress.setPercent(42);
+
             // Split objects to layers
             $.writeln("Splitting objects to layers");
             splitObjectsToLayers(docCopy,
@@ -160,17 +168,24 @@ ExporterService = (function() {
             );
 
             // Remove unused layers
-            $.writeln("Removing unused layers");
+            $.writeln("Removing unused/hidden layers");
             //
             // We use before DocUtils.removeUnusedLayers
             // but we need to keep plugin layers
             progress = progress.subProgress("Remove unused layers", 90);
             var unusedLayers = DocUtils.getAllLayers(docCopy, function(layer){
-                return layer.pageItems.length == 0 && _.indexOf(pluginLayers, layer.name) == -1;
+                if (_.indexOf(pluginLayers, layer.name) == -1){
+                    // plugin layer - keep it
+                    return false;
+                }
+                return layer.pageItems.length == 0 || layer.hidden == true;
             });
             for (var i = 0; i < unusedLayers.length; i++) {
                 var l = unusedLayers[i];
-                $.writeln("Removing unused layer: " + l.name);
+                $.writeln("Removing unused layer: " + l.name, ' hidden: ' + l.hidden);
+                if (l.hidden){
+                    l.hidden = false;
+                }
                 l.remove();
                 progress.setPercent(i / unusedLayers.length * 100);
             }
