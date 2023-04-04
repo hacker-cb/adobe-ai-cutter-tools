@@ -123,16 +123,15 @@ DocUtils.setGroupsVisibility = function(doc, names, visible){
  * Unlock all layers
  *
  * @param doc Document
- * @returns Array of layers which were locked
  */
 DocUtils.unlockAllLayers = function(doc){
-    var lockedLayers = [];
-    for (var i = 0; i < doc.layers.length; i++) {
-        var layer = doc.layers[i];
-        layer.locked = false;
-        lockedLayers.push(layer);
+    var allLayers = DocUtils.getAllLayers(doc);
+    for (var i = 0; i < allLayers.length; i++) {
+        var l = allLayers[i];
+        if (l.locked){
+            l.locked = false;
+        }
     }
-    return lockedLayers;
 }
 
 /**
@@ -176,25 +175,4 @@ DocUtils.getAllLayers = function(doc, cbfilter){
     var layers = getAllLayers(doc.layers);
 
     return layers;
-}
-
-
-/**
- * Remove unused layers
- *
- * @param doc Document
- * @param progress
- */
-DocUtils.removeUnusedLayers = function(doc, progress){
-    // Set empty progress if not set
-    if (!progress) progress = new Progress();
-
-    var unusedLayers = DocUtils.getAllLayers(doc, function(layer){
-        return layer.pageItems.length == 0;
-    });
-
-    for (var i = 0; i < unusedLayers.length; i++) {
-        unusedLayers[i].remove();
-        progress.setPercent(i / unusedLayers.length * 100);
-    }
 }

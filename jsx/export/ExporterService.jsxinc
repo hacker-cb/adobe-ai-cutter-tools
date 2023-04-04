@@ -116,12 +116,9 @@ ExporterService = (function() {
 
             docCopy = DocUtils.duplicate(origDoc);
 
-            $.writeln("Unlocking all layers");
             // Unlock all layers
-            var allLayers = DocUtils.getAllLayers(docCopy);
-            for (var i = 0; i < allLayers.length; i++) {
-                allLayers[i].locked = false;
-            }
+            $.writeln("Unlocking all layers");
+            DocUtils.unlockAllLayers(docCopy);
 
             progress.setPercent(10);
 
@@ -156,42 +153,39 @@ ExporterService = (function() {
 
             // Unlock all layers - after symbols to shapes
             $.writeln("Unlocking all layers (after symbols to shapes)");
-            var allLayers = DocUtils.getAllLayers(docCopy);
-            for (var i = 0; i < allLayers.length; i++) {
-                allLayers[i].locked = false;
-            }
+            DocUtils.unlockAllLayers(docCopy);
             progress.setPercent(42);
 
             // Split objects to layers
             $.writeln("Splitting objects to layers");
             splitObjectsToLayers(docCopy,
-                progress.subProgress("Split to layers", 65)
+                progress.subProgress("Split to layers", 80)
             );
 
-            // Remove unused layers
+            // Remove unused/hidden layers
             $.writeln("Removing unused/hidden layers");
-            //
-            // We use before DocUtils.removeUnusedLayers
-            // but we need to keep plugin layers
             progress = progress.subProgress("Remove unused layers", 90);
-            var unusedLayers = DocUtils.getAllLayers(docCopy, function(layer){
-                if (_.indexOf(pluginLayers, layer.name) == -1){
-                    // plugin layer - keep it
-                    return false;
-                }
-                return layer.pageItems.length == 0 || layer.hidden == true;
-            });
-            for (var i = 0; i < unusedLayers.length; i++) {
-                var l = unusedLayers[i];
-                $.writeln("Removing unused layer: " + l.name, ' hidden: ' + l.hidden);
-                if (l.hidden){
-                    l.hidden = false;
-                }
-                l.remove();
-                progress.setPercent(i / unusedLayers.length * 100);
-            }
+            var removeUnusedOrHiddenLayers = function(docObj){
+                var len = docObj.layers.length;
+                //for (var i = 0; i < docCopy.artboards.length; i++) {
+                for (var i = len - 1; i >= 0; i--) {
+                    var layer = docObj.layers[i];
+                    if (layer.hidden){
+                        $.writeln("Removing hidden layer: " + layer.name);
+                        layer.removeAll();
+                        layer.remove();
+                    }
+                    else if (layer.pageItems.length == 0){
+                        $.writeln("Removing layer without page items: " + layer.name);
+                        layer.remove();
+                    }
+                    else {
+                        removeUnusedOrHiddenLayers(layer);
+                    }
+                };
+            };
+            removeUnusedOrHiddenLayers(docCopy);
             progress = progress.finish();
-
 
             // Export results
             $.writeln('Exporting to ' + exportFolder.fsName);
