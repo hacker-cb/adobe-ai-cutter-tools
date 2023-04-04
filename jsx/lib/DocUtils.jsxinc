@@ -154,10 +154,10 @@ DocUtils.getOrCreateLayerByName = function(doc, name){
 }
 
 /**
- * Get all layers, included inherited
+ * Get all layers recursively
  *
  * @param doc Document
- * @param cbfilter Callback filter
+ * @param cbfilter Callback filter (optional)
  * @returns Array of layers
  */
 DocUtils.getAllLayers = function(doc, cbfilter){
