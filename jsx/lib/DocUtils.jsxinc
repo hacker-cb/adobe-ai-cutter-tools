@@ -176,3 +176,36 @@ DocUtils.getAllLayers = function(doc, cbfilter){
 
     return layers;
 }
+
+/**
+ * Return name of object.
+ *
+ * @param obj
+ */
+DocUtils.objName = function(obj){
+    if (obj.typename == 'Layer'){
+        return obj.name ? '"' + obj.name + '"' : '<Layer>';
+    } else if (obj.typename == 'GroupItem'){
+        return obj.name ? '"' + obj.name + '"' : '<Group>';
+    } else {
+        return obj.name ? '"' + obj.name + '"' : '<Unknown>';
+    }
+}
+
+/**
+ * Return full path of object in format "layer1/layer2/group/item"
+ *
+ * @param obj
+ * @returns {String}
+ */
+DocUtils.objFullPath = function(obj){
+    var path = [];
+
+    var i = obj;
+    while (i && i.typename != 'Document'){
+        path.push(DocUtils.objName(i));
+        i = i.parent;
+    }
+    path.reverse();
+    return path.join('/');
+}
