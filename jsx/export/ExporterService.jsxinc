@@ -167,16 +167,20 @@ ExporterService = (function() {
             progress = progress.subProgress("Remove unused layers", 90);
             var removeUnusedOrHiddenLayers = function(docObj){
                 var len = docObj.layers.length;
-                //for (var i = 0; i < docCopy.artboards.length; i++) {
+
                 for (var i = len - 1; i >= 0; i--) {
                     var layer = docObj.layers[i];
+                    if (_.indexOf(pluginLayers, layer.name) != -1 && layer.parent == docCopy){
+                        $.writeln("Skipping empty plugin layer: " + DocUtils.objFullPath(layer));
+                        continue;
+                    }
                     if (layer.hidden){
-                        $.writeln("Removing hidden layer: " + layer.name);
+                        $.writeln("Removing hidden layer: " + DocUtils.objFullPath(layer));
                         layer.removeAll();
                         layer.remove();
                     }
-                    else if (layer.pageItems.length == 0){
-                        $.writeln("Removing layer without page items: " + layer.name);
+                    else if (layer.pageItems.length == 0 && layer.layers.length == 0){
+                        $.writeln("Removing layer without page items and sub-layers " + DocUtils.objFullPath(layer));
                         layer.remove();
                     }
                     else {
