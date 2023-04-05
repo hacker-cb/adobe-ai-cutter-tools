@@ -245,8 +245,8 @@ ExporterService = (function() {
             progress = progress.finish();
 
         } catch (e) {
-            $.writeln('ERROR: ' + e);
-            // cleanup();
+            $.writeln('ERROR: "' + e.message + '" ' + e.fileName + ":" + e.line);
+            cleanup();
             throw e;
         }
 
