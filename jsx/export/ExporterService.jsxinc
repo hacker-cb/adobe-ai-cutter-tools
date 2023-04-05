@@ -22,19 +22,23 @@ ExporterService = (function() {
         printLayer.move(cutLayer, ElementPlacement.PLACEAFTER);
 
 
+        // Prepare items to move
         var itemsToMove = [];
+        var processItem = function(item) {
+            if (item.name == CUT_GROUP_NAME){
+                itemsToMove.push({ item: item, targetLayer: cutLayer });
+            }
+            if (item.name == PRINT_GROUP_NAME){
+                itemsToMove.push({ item: item, targetLayer: printLayer });
+            }
+        };
 
         // Check group items
         progress = progress.subProgress("check groups", 25);
         for (var i = 0; i < doc.groupItems.length; i++) {
             var group = doc.groupItems[i];
 
-            if (group.name == CUT_GROUP_NAME){
-                itemsToMove.push({ item: group, targetLayer: cutLayer });
-            }
-            if (group.name == PRINT_GROUP_NAME){
-                itemsToMove.push({ item: group, targetLayer: printLayer });
-            }
+            processItem(group);
 
             progress.setPercent(100 * i / doc.groupItems.length);
         }
@@ -42,30 +46,31 @@ ExporterService = (function() {
 
         // Check layer items
         progress = progress.subProgress("check layers", 50);
-        for (var i = 0; i < doc.layers.length; i++) {
-            var layer = doc.layers[i];
+        var allLayers = DocUtils.getAllLayers(doc);
+        for (var i = 0; i < allLayers.length; i++) {
+            var layer = allLayers[i];
 
             if (layer.parent == doc || layer.hidden){
                 // Skip top level layers
                 continue;
             }
-            if (layer.name == CUT_LAYER_NAME){
-                itemsToMove.push({ item: group, targetLayer: cutLayer });
-            }
-            if (layer.name == PRINT_LAYER_NAME){
-                itemsToMove.push({ item: group, targetLayer: printLayer });
-            }
+            processItem(layer);
         }
         progress = progress.subProgress("check groups", 25);
 
         // Move items
         progress = progress.subProgress("move", 100);
+        $.writeln("Moving " + itemsToMove.length + " items");
         for (var i = 0; i < itemsToMove.length; i++) {
-            var group = itemsToMove[i];
+            var item = itemsToMove[i].item;
+            var oldLayer = item.layer;
+            var targetLayer = itemsToMove[i].targetLayer;
             try {
-                group.item.move(group.targetLayer, ElementPlacement.PLACEATEND);
+                item.move(targetLayer, ElementPlacement.PLACEATEND);
             } catch (e) {
-                throw "ERROR: moving group " + group.item.name + " from layer " + group.item.layer.name + " to layer " + group.targetLayer.name;
+                throw "ERROR: moving item " + DocUtils.objFullPath(item) +
+                     " from layer " + DocUtils.objFullPath(oldLayer) +
+                     " to layer " + DocUtils.objFullPath(targetLayer);
             }
             progress.setPercent(100 * i / itemsToMove.length);
         };
