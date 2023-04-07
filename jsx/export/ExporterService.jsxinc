@@ -107,11 +107,18 @@ ExporterService = (function() {
         $.writeln("Start export, folder: " + exportFolder.fsName);
 
         var docCopy = null;
+        var docCopyFileName = null;
 
         // Cleanup function to close the document copy
         var cleanup = function(){
             if (docCopy) {
                 docCopy.close(SaveOptions.DONOTSAVECHANGES);
+                // Delete the document copy file
+                var docCopyFile = new File(docCopyFileName);
+                if (docCopyFile.exists) {
+                    $.writeln("Deleting document copy file: " + docCopyFile.fsName);
+                    docCopyFile.remove();
+                }
             }
         };
 
@@ -120,6 +127,7 @@ ExporterService = (function() {
             $.writeln("Export: duplicating document");
 
             docCopy = DocUtils.duplicate(origDoc);
+            docCopyFileName = docCopy.fullName;
 
             // Unlock all layers
             $.writeln("Unlocking all layers");
