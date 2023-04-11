@@ -57,21 +57,28 @@ DocUtils.convertSymbolsToShapes = function(doc, progress){
     // Set empty progress if not set
     if (!progress) progress = new Progress();
 
-    var pass = 0;
-
     var totalItemsToProcess = doc.symbolItems.length;
     var totalItemsProcessed = 0;
 
     progress = progress.subProgress('Disassamble', 95);
 
     while (doc.symbolItems.length != 0){
-
         var lenBefore = doc.symbolItems.length;
 
         var symbolItem = doc.symbolItems[0];
+        var symbol = symbolItem.symbol;
+        var symbolName = symbolItem.name ? symbolItem.name : '<' + symbol.name + '>';
+
         symbolItem.breakLink();
 
         var diff = doc.symbolItems.length - lenBefore;
+
+        if (diff == 0){
+            $.writeln("ERROR: can't disassemble symbol \"" + symbolName);
+            throw "ERROR: can't disassemble symbol \"" + symbolName;
+        } else {
+            $.writeln("DEBUG: disassambled symbol \"" + symbolName + '", diff: ' + diff, ', left:', doc.symbolItems.length);
+        }
 
         totalItemsToProcess += diff + 1;
 
