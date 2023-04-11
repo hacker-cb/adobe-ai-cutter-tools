@@ -75,7 +75,7 @@ DocUtils.convertSymbolsToShapes = function(doc, progress){
 
         if (diff == 0){
             $.writeln("ERROR: can't disassemble symbol \"" + symbolName);
-            throw "ERROR: can't disassemble symbol \"" + symbolName;
+            throw "Can't disassemble symbol \"" + symbolName;
         } else {
             $.writeln("DEBUG: disassambled symbol \"" + symbolName + '", diff: ' + diff, ', left:', doc.symbolItems.length);
         }

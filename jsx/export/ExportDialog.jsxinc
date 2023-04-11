@@ -2,6 +2,7 @@
 //@include "../CutterToolsPrefs.jsxinc"
 //@include "../const.jsxinc"
 //@include "./ExporterService.jsxinc"
+//@include "../../lib/Utils.jsxinc"
 
 var ExportDialog = (function(){
     /*
@@ -319,8 +320,7 @@ var ExportDialog = (function(){
                 folder.execute();
             }
         } catch (e) {
-            $.writeln('ERROR: "' + e.message + '" ' + e.fileName + ":" + e.line);
-            alert(e.message + "\n(" + (new File(e.fileName)).name + " line " + e.line + ")");
+            Utils.handleException(e);
         }
 
         startButton.enabled = true;
