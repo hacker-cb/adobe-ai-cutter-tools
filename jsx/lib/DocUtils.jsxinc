@@ -59,6 +59,7 @@ DocUtils.convertSymbolsToShapes = function(doc, progress){
 
     var totalItemsToProcess = doc.symbolItems.length;
     var totalItemsProcessed = 0;
+    var lastSymbolItem = null;
 
     progress = progress.subProgress('Disassamble', 95);
 
@@ -68,6 +69,11 @@ DocUtils.convertSymbolsToShapes = function(doc, progress){
         var symbolItem = doc.symbolItems[0];
         var symbol = symbolItem.symbol;
         var symbolName = symbolItem.name ? symbolItem.name : '<' + symbol.name + '>';
+
+        if (symbolItem == lastSymbolItem){
+            throw "Last symbol was not disassembled: \"" + symbolName;
+        }
+        lastSymbolItem = symbolItem;
 
         symbolItem.breakLink();
 
