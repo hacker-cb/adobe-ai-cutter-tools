@@ -71,17 +71,20 @@ DocUtils.convertSymbolsToShapes = function(doc, progress){
         var symbolName = symbolItem.name ? symbolItem.name : '<' + symbol.name + '>';
 
         if (symbolItem == lastSymbolItem){
-            throw "Last symbol was not disassembled: \"" + symbolName;
+            $.writeln("Last symbol was not disassambled: \"" + symbolName);
+            throw "Last symbol was not disassambled: \"" + symbolName;
         }
         lastSymbolItem = symbolItem;
+
+        DocUtils.unlockObjAndParent(symbolItem);
 
         symbolItem.breakLink();
 
         var diff = doc.symbolItems.length - lenBefore;
 
         if (diff == 0){
-            $.writeln("ERROR: can't disassemble symbol \"" + symbolName);
-            throw "Can't disassemble symbol \"" + symbolName;
+            $.writeln("WARNING: can't disassamble symbol \"" + symbolName + ', before: ' + lenBefore + ', after: ' + doc.symbolItems.length);
+            // throw "Can't disassamble symbol \"" + symbolName;
         } else {
             $.writeln("DEBUG: disassambled symbol \"" + symbolName + '", diff: ' + diff, ', left:', doc.symbolItems.length);
         }
@@ -129,6 +132,21 @@ DocUtils.setGroupsVisibility = function(doc, names, visible){
         } else {
             // $.writeln("Skip group " + group.name);
         }
+    }
+}
+
+/**
+ * Object andd its parents recursively
+ *
+ * @param obj
+ */
+DocUtils.unlockObjAndParent = function(obj){
+    var o = obj;
+    while (o && o.typename != 'Document'){
+        if (o.locked){
+            o.locked = false;
+        }
+        o = o.parent;
     }
 }
 
