@@ -1,7 +1,9 @@
 @echo off
+cls 
 
 set plugin_folder_src_dir=%~p0%
 set plugin_dst_folder_basename=adobe-ai-cutter-tools
+
 
 echo Source dir: %plugin_folder_src_dir%
 
@@ -29,7 +31,7 @@ IF exist %cep_ext_dir% (
 
 set install_dir=%APPDATA%\Adobe\CEP\extensions\%plugin_dst_folder_basename%
 IF exist %install_dir% (
-	echo Removing old installation from %install_dir%
+	echo Removing old installation from %install_dir%	
     rmdir /s /q %install_dir% > nul
 	if %errorlevel% NEQ 0 (goto exit_error)
 	echo Old installation removed
@@ -40,9 +42,8 @@ mkdir %install_dir% > nul
 if %errorlevel% NEQ 0 (goto exit_error)
 echo Dir created: %install_dir%
 
-echo Copying plugin to %install_dir%
-
-xcopy /e /k /h /i %plugin_folder_src_dir% %install_dir% > nul
+echo Copying plugin to "%install_dir%"
+xcopy "%plugin_folder_src_dir%" "%install_dir%" /e /k /h /i > nul
 if %errorlevel% NEQ 0 (goto exit_error)
 
 echo Updating registry: CEP8
