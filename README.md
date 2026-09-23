@@ -42,8 +42,8 @@ Plugin designed to replace [Signcut] plugin for Adobe Illustrator to make work w
 
     | Illustrator | CEP runtime | Plist / registry key |
     |---|---|---|
-    | 2023-2025 | CEP 11 | `com.adobe.CSXS.11` |
-    | 2026 (v30.x) | CEP 12.1 | `com.adobe.CSXS.12` |
+    | 2023 - 2025 (up to v29.5) | CEP 11 | `com.adobe.CSXS.11` |
+    | 2025 (v29.5.1+), 2026 (v30.x) | CEP 12 | `com.adobe.CSXS.12` |
 
     See compatibility tables [CEP9], [CEP11] and [CEP12].
 
@@ -103,27 +103,30 @@ This layers will be used in the resulting PDFs.
 
 2. On macOS, remove the quarantine attribute (see *macOS specific* section above).
 
-3. Clear corrupted CEP caches (quit Illustrator first):
+3. Clear the CEP cache (quit Illustrator first):
 
    ```bash
-   rm -rf ~/Library/Caches/CEP
-   rm -rf ~/Library/Application\ Support/Adobe/CEP/extensions/*/cep_cache
+   rm -rf ~/Library/Caches/CSXS/cep_cache
    ```
 
-4. **Known Adobe bug**: on *Illustrator 2026 / CEP 12.1 / Apple Silicon* CEP panels may
-   randomly render as an empty grey pane for the whole session
+   On Windows the cache is `%LOCALAPPDATA%\Temp\cep_cache`.
+
+4. **Reported CEP issue** (not confirmed by Adobe yet): on *Illustrator 2026 / CEP 12.1 /
+   Apple Silicon* CEP panels may randomly render as an empty grey pane for the whole session
    ([Adobe-CEP/CEP-Resources issue #553][CEPBlankPanel]).
    Closing/reopening the panel does not help — only a **full restart of Illustrator**
    (quit with Cmd+Q, relaunch, open the panel again) clears it.
 
 5. To check whether CEP itself is broken, open a built-in CEP panel
-   (*Window -> Extensions -> Adobe Color Themes*). If it is blank too,
+   such as *Window -> Libraries*. If it is blank too,
    the problem is the Illustrator CEP runtime, not this plugin.
 
-6. CEP logs (the location may vary between CEP versions):
+6. CEP logs are in `~/Library/Logs/CSXS` (Windows: `%LOCALAPPDATA%\Temp`):
+   `CEP<N>-ILST.log` and `CEPHtmlEngine<N>-ILST-<version>-com.hackercb.cuttertools*.log`.
+   For more detail raise the log level and restart Illustrator:
 
    ```bash
-   find ~/Library/Logs ~/Library/Application\ Support/Adobe -maxdepth 4 -iname "*cep*" 2>/dev/null | head -30
+   defaults write com.adobe.CSXS.12 LogLevel 6
    ```
 
 ### Using the plugin without the panel
@@ -148,5 +151,5 @@ You can also bind the scripts to keyboard shortcuts through the *Actions* panel.
 [SignCut]: http://signcutpro.com
 [CEP9]: https://github.com/Adobe-CEP/CEP-Resources/blob/master/CEP_9.x/Documentation/CEP%209.0%20HTML%20Extension%20Cookbook.md#applications-integrated-with-cep
 [CEP11]: https://github.com/Adobe-CEP/CEP-Resources/blob/master/CEP_11.x/Documentation/CEP%2011.1%20HTML%20Extension%20Cookbook.md#applications-integrated-with-cep
-[CEP12]: https://github.com/Adobe-CEP/CEP-Resources/issues
+[CEP12]: https://github.com/Adobe-CEP/CEP-Resources/blob/master/CEP_12.x/Documentation/CEP%2012%20HTML%20Extension%20Cookbook.md#applications-integrated-with-cep
 [CEPBlankPanel]: https://github.com/Adobe-CEP/CEP-Resources/issues/553
