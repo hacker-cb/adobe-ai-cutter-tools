@@ -62,6 +62,14 @@ echo Updating registry: CEP11
 @REG ADD HKCU\Software\Adobe\CSXS.11 /f /v PlayerDebugMode /t REG_SZ /d 1 > nul
 if %errorlevel% NEQ 0 (goto exit_error)
 
+echo Updating registry: CEP12
+@REG ADD HKCU\Software\Adobe\CSXS.12 /f /v PlayerDebugMode /t REG_SZ /d 1 > nul
+if %errorlevel% NEQ 0 (goto exit_error)
+
+echo Updating registry: CEP13
+@REG ADD HKCU\Software\Adobe\CSXS.13 /f /v PlayerDebugMode /t REG_SZ /d 1 > nul
+if %errorlevel% NEQ 0 (goto exit_error)
+
 echo .
 echo =========================================
 echo Succsess: Plug-in installed

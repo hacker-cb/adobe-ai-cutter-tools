@@ -31,21 +31,48 @@ Plugin designed to replace [Signcut] plugin for Adobe Illustrator to make work w
 
     **Win:** Run [install/windows_debug_mode.cmd](install/windows_debug_mode.cmd)
 
-    **Mac:** Open [install/windows_debug_mode.cmd](install/windows_debug_mode.cmd) script and click *Run* in script editor.
+    **Mac:** Open [install/macos_debug_mode.scpt](install/macos_debug_mode.scpt) script and click *Run* in script editor.
+    **NOTE:** the script covers CSXS 8-13, including Illustrator 2026 (CEP 12.1).
 
     ### Manual
 
-    **CEP Version below (CEP 11) is suitable with AI 2023!**
-    You have to replace it with correct one for your application!
-    See compatibility tables [CEP9] and [CEP11].
+    `PlayerDebugMode` must be set for the **CEP version your Illustrator actually uses**.
+    The panel appears in the menu even with a wrong/missing flag, but stays blank,
+    so check the table:
 
-    **Win:** `regedit > HKEY_CURRENT_USER\Software\Adobe\CSXS.11`,
+    | Illustrator | CEP runtime | Plist / registry key |
+    |---|---|---|
+    | 2023-2025 | CEP 11 | `com.adobe.CSXS.11` |
+    | 2026 (v30.x) | CEP 12.1 | `com.adobe.CSXS.12` |
+
+    See compatibility tables [CEP9], [CEP11] and [CEP12].
+
+    **Win:** `regedit > HKEY_CURRENT_USER\Software\Adobe\CSXS.<N>`,
     then add a new entry `PlayerDebugMode` of type `string` with the value of `1`.
 
-    **Mac:** In the terminal, type: `defaults write com.adobe.CSXS.11 PlayerDebugMode 1`
-    (The plist is also located at `~/Library/Preferences/com.adobe.CSXS.11.plist`
+    **Mac:** In the terminal, type:
+
+    ```bash
+    # enable for all recent CEP versions at once
+    for v in 8 9 10 11 12 13; do defaults write com.adobe.CSXS.$v PlayerDebugMode 1; done
+    killall cfprefsd
+    ```
+
+    Verify with `defaults read com.adobe.CSXS.12 PlayerDebugMode` (must print `1` for your CEP version).
 
     **May require restart or log-out/in**
+
+### macOS specific: remove quarantine
+
+Files downloaded with a browser are marked with the `com.apple.quarantine`
+extended attribute, and the CEP HTML engine may refuse to load them
+(the panel opens as a blank grey pane). Remove the attribute:
+
+```bash
+xattr -dr com.apple.quarantine ~/Library/Application\ Support/Adobe/CEP/extensions/adobe-ai-cutter-tools
+```
+
+(adjust the folder name if you renamed it)
 
 ## Usage
 
@@ -66,17 +93,60 @@ This layers will be used in the resulting PDFs.
 
 **NOTE:**  You can choose any other user-defined profile in the Export dialog.
 
-## Possible problems
+## Troubleshooting
 
-### Exension panel content does not shown.
+### Extension panel content does not show (blank / grey panel)
 
-Make sure your set `PlayerDebugMode` to `1` as listed in **Installation** section and you have rebooted your computer.
+1. Make sure you set `PlayerDebugMode` to `1` for the **correct CSXS version**
+   (see the table above; Illustrator 2026 needs `CSXS.12`) and you have rebooted
+   your computer.
 
+2. On macOS, remove the quarantine attribute (see *macOS specific* section above).
 
+3. Clear corrupted CEP caches (quit Illustrator first):
 
+   ```bash
+   rm -rf ~/Library/Caches/CEP
+   rm -rf ~/Library/Application\ Support/Adobe/CEP/extensions/*/cep_cache
+   ```
 
+4. **Known Adobe bug**: on *Illustrator 2026 / CEP 12.1 / Apple Silicon* CEP panels may
+   randomly render as an empty grey pane for the whole session
+   ([Adobe-CEP/CEP-Resources issue #553][CEPBlankPanel]).
+   Closing/reopening the panel does not help — only a **full restart of Illustrator**
+   (quit with Cmd+Q, relaunch, open the panel again) clears it.
+
+5. To check whether CEP itself is broken, open a built-in CEP panel
+   (*Window -> Extensions -> Adobe Color Themes*). If it is blank too,
+   the problem is the Illustrator CEP runtime, not this plugin.
+
+6. CEP logs (the location may vary between CEP versions):
+
+   ```bash
+   find ~/Library/Logs ~/Library/Application\ Support/Adobe -maxdepth 4 -iname "*cep*" 2>/dev/null | head -30
+   ```
+
+### Using the plugin without the panel
+
+All functionality is implemented as ExtendScript scripts; the panel only calls them.
+You can run the scripts directly via *File -> Scripts -> Other Script (Cmd+F12)*:
+
+| Script | Action |
+|---|---|
+| `jsx/regmarks/fab/open_regmarks_dialog.jsx` | Registration marks dialog |
+| `jsx/export/fab/export_print_and_cut.jsx` | Export PRINT / CUT / ALL PDFs |
+| `jsx/fab/clear_prefs.jsx` | Reset plugin preferences |
+
+You can also bind the scripts to keyboard shortcuts through the *Actions* panel.
+
+## Tested with
+
+* macOS (Apple Silicon) + Adobe Illustrator 2026 (v30.x, CEP 12.1) — manual installation,
+  panel works after enabling `PlayerDebugMode` for `CSXS.12` and removing quarantine.
 
 [Download]: https://github.com/hacker-cb/adobe-ai-cutter-tools/archive/master.zip
 [SignCut]: http://signcutpro.com
 [CEP9]: https://github.com/Adobe-CEP/CEP-Resources/blob/master/CEP_9.x/Documentation/CEP%209.0%20HTML%20Extension%20Cookbook.md#applications-integrated-with-cep
 [CEP11]: https://github.com/Adobe-CEP/CEP-Resources/blob/master/CEP_11.x/Documentation/CEP%2011.1%20HTML%20Extension%20Cookbook.md#applications-integrated-with-cep
+[CEP12]: https://github.com/Adobe-CEP/CEP-Resources/issues
+[CEPBlankPanel]: https://github.com/Adobe-CEP/CEP-Resources/issues/553
